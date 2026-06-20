@@ -1,7 +1,28 @@
 import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+function getResendClient() {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return null;
+  return new Resend(apiKey);
+}
+
+/** Expéditeur — doit être un domaine vérifié dans Resend (ou onboarding@resend.dev en test). */
+export function getFromAddress(): string {
+  return process.env.RESEND_FROM_EMAIL || "Epi'AI <onboarding@resend.dev>";
+}
+
+export function getSiteUrl(): string {
+  return (process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3002').replace(/\/$/, '');
+}
+
+function ensureResend() {
+  const client = getResendClient();
+  if (!client) {
+    throw new Error('RESEND_API_KEY manquant — configure la variable sur Vercel');
+  }
+  return client;
+}
 
 interface WelcomeEmailParams {
   email: string;
@@ -10,8 +31,11 @@ interface WelcomeEmailParams {
 }
 
 export async function sendWelcomeEmail({ email, firstName, password }: WelcomeEmailParams) {
+  const resend = ensureResend();
+  const signInUrl = `${getSiteUrl()}/fr/sign-in`;
+
   const { data, error } = await resend.emails.send({
-    from: 'Epi\'AI <membership@epiai.eu>',
+    from: getFromAddress(),
     to: [email],
     subject: 'Bienvenue chez Epi\'AI - Tes identifiants de connexion',
     html: `
@@ -56,7 +80,7 @@ export async function sendWelcomeEmail({ email, firstName, password }: WelcomeEm
                   ⚠️ <strong>Important :</strong> Tu devras changer ton mot de passe lors de ta première connexion.
                 </p>
 
-                <a href="https://epiai.eu/fr/sign-in"
+                <a href="${signInUrl}"
                    style="display: inline-block; background-color: #3b82f6; color: #ffffff; text-decoration: none; padding: 14px 28px; border-radius: 8px; font-weight: 600; margin-top: 16px;">
                   Se connecter
                 </a>
@@ -87,8 +111,9 @@ export async function sendWelcomeEmail({ email, firstName, password }: WelcomeEm
 }
 
 export async function sendApplicationReceivedEmail(email: string, firstName: string) {
+  const resend = ensureResend();
   const { error } = await resend.emails.send({
-    from: 'Epi\'AI <membership@epiai.eu>',
+    from: getFromAddress(),
     to: [email],
     subject: 'Candidature reçue - Epi\'AI',
     html: `
@@ -136,12 +161,13 @@ interface GenericEmailParams {
 }
 
 export async function sendGenericEmail({ email, subject, html }: GenericEmailParams) {
-  if (!process.env.RESEND_API_KEY) {
+  const resend = getResendClient();
+  if (!resend) {
     logger.warn('RESEND_API_KEY missing, email skipped', { email, subject });
     return null;
   }
   const { error } = await resend.emails.send({
-    from: 'Epi\'AI <membership@epiai.eu>',
+    from: getFromAddress(),
     to: [email],
     subject,
     html,

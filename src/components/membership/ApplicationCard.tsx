@@ -40,6 +40,13 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [credentialsModal, setCredentialsModal] = useState<{
+    email: string;
+    password: string;
+    emailSent: boolean;
+    note?: string;
+  } | null>(null);
+  const [isResending, setIsResending] = useState(false);
 
   const handleApprove = async () => {
     setIsLoading(true);
@@ -56,6 +63,22 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
 
       if (!response.ok) {
         throw new Error(data.error || 'Failed to approve application');
+      }
+
+      if (data.credentials) {
+        setCredentialsModal({
+          email: data.credentials.email,
+          password: data.credentials.password,
+          emailSent: false,
+          note: data.credentials.note,
+        });
+      } else if (data.emailSent === false) {
+        setCredentialsModal({
+          email: application.email,
+          password: '',
+          emailSent: false,
+          note: "Compte créé mais l'email n'a pas pu être envoyé. Utilise « Renvoyer identifiants ».",
+        });
       }
 
       onUpdate();
@@ -92,6 +115,40 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
       setError(err.message);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendCredentials = async () => {
+    setIsResending(true);
+    setError(null);
+    try {
+      const response = await fetch('/api/admin/resend-credentials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: application.email }),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Échec du renvoi');
+
+      if (data.credentials) {
+        setCredentialsModal({
+          email: data.credentials.email,
+          password: data.credentials.password,
+          emailSent: false,
+          note: data.credentials.note,
+        });
+      } else {
+        setCredentialsModal({
+          email: application.email,
+          password: '',
+          emailSent: true,
+          note: 'Email envoyé avec succès.',
+        });
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Erreur');
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -217,6 +274,58 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
               </button>
             </div>
           )}
+          {application.status === 'approved' && (
+            <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
+              {error && (
+                <div className="w-full p-3 rounded-lg bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
+                  {error}
+                </div>
+              )}
+              <button
+                onClick={handleResendCredentials}
+                disabled={isResending}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/20 text-blue-400 font-medium hover:bg-blue-500/30 transition-all disabled:opacity-50"
+              >
+                {isResending ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <Mail className="w-4 h-4" />
+                )}
+                Renvoyer identifiants
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Identifiants (email échoué ou renvoi manuel) */}
+      {credentialsModal && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="w-full max-w-md p-6 rounded-2xl bg-zinc-900 border border-amber-500/30">
+            <h3 className="text-xl font-bold text-white mb-2">
+              {credentialsModal.emailSent ? 'Email envoyé' : 'Identifiants de connexion'}
+            </h3>
+            {credentialsModal.note && (
+              <p className="text-amber-400/90 text-sm mb-4">{credentialsModal.note}</p>
+            )}
+            {credentialsModal.password ? (
+              <div className="p-4 rounded-xl bg-white/5 space-y-2 text-sm font-mono">
+                <p className="text-white/80"><span className="text-white/50">Email :</span> {credentialsModal.email}</p>
+                <p className="text-white/80"><span className="text-white/50">Mot de passe :</span> {credentialsModal.password}</p>
+              </div>
+            ) : credentialsModal.emailSent ? (
+              <p className="text-white/70 text-sm">Le membre devrait recevoir un email sous peu. Vérifie aussi les spams.</p>
+            ) : null}
+            <p className="text-white/50 text-xs mt-4">
+              Transmets ces infos par WhatsApp si l&apos;email ne part pas. Le membre devra changer son mot de passe à la première connexion.
+            </p>
+            <button
+              onClick={() => setCredentialsModal(null)}
+              className="mt-4 w-full px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15"
+            >
+              Fermer
+            </button>
+          </div>
         </div>
       )}
 
