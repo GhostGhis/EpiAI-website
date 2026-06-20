@@ -21,6 +21,16 @@ describe('handleChatbotRequest', () => {
     expect(result.answer.length).toBeGreaterThan(20);
   });
 
+  it('handles greetings without fallback', async () => {
+    const result = await handleChatbotRequest({
+      message: 'salut',
+      locale: 'fr',
+    });
+    expect(result.source).toBe('smalltalk');
+    expect(result.answer).toContain('Salut');
+    expect(result.suggestions).toContain('join');
+  });
+
   it('returns fallback for unrelated input without AI key', async () => {
     const result = await handleChatbotRequest({
       message: 'xyzzy qwerty random nonsense 12345',

@@ -7,11 +7,12 @@ import {
   type ChatbotLocale,
 } from '@/lib/faq/content';
 import { matchFaq } from '@/lib/faq/match';
+import { detectSmallTalk } from '@/lib/chatbot/small-talk';
 import { chatCompletionJson, chatCompletionText, isChatbotAiEnabled } from './openai';
 
 export type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
-export type ChatbotSource = 'catalog' | 'ai' | 'fallback';
+export type ChatbotSource = 'catalog' | 'ai' | 'fallback' | 'smalltalk';
 
 export interface ChatbotResult {
   answer: string;
@@ -59,6 +60,7 @@ Rules:
 - faqIds must be from the allowed list only (max 2 entries if clearly related).
 - confidence is 0-1 (how sure you are).
 - offTopic=true if the question is NOT about Epi'AI / the association / membership / platform.
+- Greetings alone (salut, bonjour, hello) are NOT offTopic — return empty faqIds, offTopic=false, confidence=0, suggestions: ["about","join","events"].
 - If confidence < 0.65, return empty faqIds and suggest up to 3 relevant IDs in "suggestions".
 - Handle French and English, typos, slang, and paraphrases.
 - Use conversation history for follow-ups ("et les events ?", "how about resources?").`;
@@ -152,6 +154,17 @@ export async function handleChatbotRequest(params: {
       faqIds: [],
       suggestions: FAQ_CHIP_IDS.slice(0, 3),
       source: 'fallback',
+    };
+  }
+
+  const smallTalk = detectSmallTalk(message);
+  if (smallTalk) {
+    const key = smallTalk as 'greeting' | 'thanks' | 'goodbye';
+    return {
+      answer: copy[key],
+      faqIds: [],
+      suggestions: smallTalk === 'greeting' ? (['about', 'join', 'events'] as FaqId[]) : undefined,
+      source: 'smalltalk',
     };
   }
 
