@@ -70,14 +70,21 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
           email: data.credentials.email,
           password: data.credentials.password,
           emailSent: false,
-          note: data.credentials.note,
+          note: data.emailError || data.credentials.note,
         });
       } else if (data.emailSent === false) {
         setCredentialsModal({
           email: application.email,
           password: '',
           emailSent: false,
-          note: "Compte créé mais l'email n'a pas pu être envoyé. Utilise « Renvoyer identifiants ».",
+          note: data.emailError || "L'email n'a pas pu être envoyé. Utilise « Renvoyer identifiants ».",
+        });
+      } else if (data.emailSent) {
+        setCredentialsModal({
+          email: application.email,
+          password: '',
+          emailSent: true,
+          note: 'Email envoyé avec succès.',
         });
       }
 

@@ -16,7 +16,10 @@ const isProtectedRoute = createRouteMatcher([
   '/intranet(.*)',
   '/my-registrations(.*)',
   '/my-resources(.*)',
-  '/change-password(.*)',
+  '/attendance(.*)',
+  '/api/notifications(.*)',
+  '/api/onboarding(.*)',
+  '/api/admin/resend-credentials(.*)',
   '/api/dashboard(.*)',
   '/api/profile(.*)',
   '/api/settings(.*)',
@@ -39,6 +42,7 @@ const isProtectedRoute = createRouteMatcher([
   '/(fr|en)/intranet(.*)',
   '/(fr|en)/my-registrations(.*)',
   '/(fr|en)/my-resources(.*)',
+  '/(fr|en)/attendance(.*)',
   '/(fr|en)/change-password(.*)',
 ]);
 
@@ -56,6 +60,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/team-members(.*)',
   '/(fr|en)',
   '/(fr|en)/join',
+  '/(fr|en)/membership',
   '/(fr|en)/sign-in(.*)',
   '/(fr|en)/sign-up(.*)',
   '/(fr|en)/setup-admin',
@@ -67,6 +72,8 @@ const isPublicRoute = createRouteMatcher([
   '/(fr|en)/projects(.*)',
   '/(fr|en)/team(.*)',
   '/(fr|en)/about(.*)',
+  '/(fr|en)/calendar(.*)',
+  '/(fr|en)/partners(.*)',
   '/api/webhooks(.*)',
 ]);
 

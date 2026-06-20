@@ -56,7 +56,7 @@ export default function MyRegistrationsPage() {
         <h1 className="text-2xl font-bold text-white mb-2">{tNav('signInRequired')}</h1>
         <p className="text-white/60 mb-6">{t('signInToViewRegistrations')}</p>
         <Link
-          href={`/${locale}/sign-in`}
+          href="/sign-in"
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
         >
           {tNav('signIn')}
@@ -91,7 +91,7 @@ export default function MyRegistrationsPage() {
           <h3 className="text-lg font-semibold text-white mb-2">{t('noRegistrations')}</h3>
           <p className="text-white/60 mb-6">{t('noRegistrationsHint')}</p>
           <Link
-            href={`/${locale}/events`}
+            href="/events"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
           >
             {t('browseEvents')}
@@ -102,7 +102,7 @@ export default function MyRegistrationsPage() {
           {registrations.map((reg) => (
             <Link
               key={reg.id}
-              href={`/${locale}/events/${reg.eventId}`}
+              href={`/events/${reg.eventId}`}
               className="block p-6 rounded-2xl bg-white/5 border border-white/10 hover:border-white/20 transition-all"
             >
               <div className="flex items-start justify-between gap-4">

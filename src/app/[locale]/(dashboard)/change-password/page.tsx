@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { AlertCircle, Check, Eye, EyeOff, Lock } from 'lucide-react';
 
 export default function ChangePasswordPage() {
     const t = useTranslations();
     const router = useRouter();
+    const params = useParams();
+    const locale = (params.locale as string) || 'fr';
 
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -55,7 +57,7 @@ export default function ChangePasswordPage() {
 
             // Rediriger vers le dashboard après 2 secondes
             setTimeout(() => {
-                router.push('/dashboard');
+                router.push(`/${locale}/dashboard`);
             }, 2000);
         } catch (err: any) {
             setError(err.message);

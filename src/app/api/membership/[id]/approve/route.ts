@@ -88,18 +88,22 @@ export async function POST(
 
       // Envoyer l'email de bienvenu
       let emailSentSuccessfully = false;
-      try {
-        const emailResult = await sendWelcomeEmail({
-          email: application.email,
-          firstName: application.firstName,
-          password: generatedPassword,
-        });
-        console.log('[Approve API] Email sent successfully:', emailResult);
-        emailSentSuccessfully = true;
-      } catch (emailError) {
-        console.error('[Approve API] Failed to send welcome email:', emailError);
-        console.error('[Approve API] Email error details:', JSON.stringify(emailError, null, 2));
-        // Ne pas bloquer l'approbation si l'email échoue
+      let emailError: string | null = null;
+
+      if (!process.env.RESEND_API_KEY) {
+        emailError = 'RESEND_API_KEY manquante sur le serveur (Vercel → Environment Variables)';
+      } else {
+        try {
+          await sendWelcomeEmail({
+            email: application.email,
+            firstName: application.firstName,
+            password: generatedPassword,
+          });
+          emailSentSuccessfully = true;
+        } catch (err: unknown) {
+          emailError = err instanceof Error ? err.message : 'Échec envoi email';
+          console.error('[Approve API] Failed to send welcome email:', err);
+        }
       }
 
       // Mettre à jour le statut
@@ -120,10 +124,11 @@ export async function POST(
         message: 'Application approved and account created',
         accountId: clerkUser.id,
         emailSent: emailSentSuccessfully,
+        emailError,
         credentials: emailSentSuccessfully ? null : {
           email: application.email,
           password: generatedPassword,
-          note: 'Email failed to send. User must use these credentials to log in.',
+          note: emailError || 'Email failed to send. User must use these credentials to log in.',
         },
       });
     } else {

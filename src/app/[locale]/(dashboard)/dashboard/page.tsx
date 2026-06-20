@@ -125,11 +125,11 @@ export default function DashboardPage() {
               {stats.recentActivity.map((item) => {
                 const href =
                   item.type === 'thread'
-                    ? `/${locale}/forum/${item.id}`
+                    ? `/forum/${item.id}`
                     : item.type === 'event'
-                      ? `/${locale}/events/${item.id}`
+                      ? `/events/${item.id}`
                       : item.type === 'resource'
-                        ? `/${locale}/resources/${item.id}`
+                        ? `/resources/${item.id}`
                         : null;
                 return (
                   <li key={`${item.type}-${item.id}`}>
@@ -173,20 +173,20 @@ export default function DashboardPage() {
         <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
           <h2 className="text-lg font-semibold text-white mb-4">{t('quickActions')}</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Link href={`/${locale}/forum/new`} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
+            <Link href="/forum/new" className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
               <MessageSquare className="w-5 h-5 text-blue-400 mb-2" />
               <p className="text-white font-medium text-sm">{t('actions.newDiscussion')}</p>
             </Link>
-            <Link href={`/${locale}/events/new`} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
+            <Link href="/events/new" className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
               <Calendar className="w-5 h-5 text-purple-400 mb-2" />
               <p className="text-white font-medium text-sm">{t('actions.createEvent')}</p>
             </Link>
-            <Link href={`/${locale}/resources/new`} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
+            <Link href="/resources/new" className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-left">
               <FileText className="w-5 h-5 text-emerald-400 mb-2" />
               <p className="text-white font-medium text-sm">{t('actions.addResource')}</p>
             </Link>
             <PermissionGate permission="dashboard.admin">
-              <Link href={`/${locale}/admin/membership`} className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all text-left">
+              <Link href="/admin/membership" className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/20 hover:bg-amber-500/20 transition-all text-left">
                 <Users className="w-5 h-5 text-amber-400 mb-2" />
                 <p className="text-white font-medium text-sm">{t('actions.manageMembers')}</p>
               </Link>

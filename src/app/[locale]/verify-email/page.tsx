@@ -2,13 +2,15 @@
 
 import { useState } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, CheckCircle, AlertCircle, ArrowLeft } from 'lucide-react';
 
 export default function VerifyEmailPage() {
     const { user } = useUser();
     const router = useRouter();
+    const params = useParams();
+    const locale = (params.locale as string) || 'fr';
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
     const [error, setError] = useState('');
@@ -48,7 +50,7 @@ export default function VerifyEmailPage() {
 
     if (isVerified) {
         // Si déjà vérifié, rediriger vers le dashboard
-        router.push('/dashboard');
+        router.push(`/${locale}/dashboard`);
         return null;
     }
 

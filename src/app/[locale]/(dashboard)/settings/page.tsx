@@ -15,7 +15,7 @@ export default function SettingsPage() {
         <div className="max-w-6xl mx-auto">
             <div className="sticky top-0 z-20 mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 py-4 bg-zinc-950/95 backdrop-blur-xl border-b border-white/10 -mt-4 sm:-mt-0">
                 <Link
-                    href={`/${locale}/dashboard`}
+                    href="/dashboard"
                     className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 transition-all text-sm font-medium min-h-[44px]"
                 >
                     <ArrowLeft className="w-4 h-4 shrink-0" />
@@ -26,7 +26,7 @@ export default function SettingsPage() {
                     <p className="text-white/60 text-sm truncate">{t('overview')}</p>
                 </div>
                 <Link
-                    href={`/${locale}/dashboard`}
+                    href="/dashboard"
                     className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-white/80 hover:text-white hover:bg-white/10 transition-all text-sm font-medium min-h-[44px] shrink-0"
                     aria-label={locale === 'fr' ? 'Fermer les paramètres' : 'Close settings'}
                 >

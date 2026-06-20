@@ -48,7 +48,7 @@ export function ProtectedRoute({
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated && redirectToSignIn && !fallback) {
-      router.push(`/${locale}/sign-in?redirect_url=${encodeURIComponent(pathname)}`);
+      router.push(`/${locale}/sign-in?redirect_url=${encodeURIComponent(`/${locale}${pathname}`)}`);
     }
   }, [isLoading, isAuthenticated, redirectToSignIn, fallback, router, locale, pathname]);
 

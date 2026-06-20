@@ -103,7 +103,7 @@ export default function ProfilePage() {
 
               {/* Change Photo Button */}
               <Link
-                href={`/${locale}/settings`}
+                href="/settings"
                 className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl"
               >
                 <div className="text-center">
@@ -233,7 +233,7 @@ export default function ProfilePage() {
         )}
 
         <Link
-          href={`/${locale}/settings`}
+          href="/settings"
           className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-white/10 border border-white/20 text-white hover:bg-white/15 transition-all text-sm font-medium"
         >
           <Settings className="w-4 h-4" />

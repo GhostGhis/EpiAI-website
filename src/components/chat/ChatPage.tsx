@@ -13,6 +13,7 @@ import {
 } from 'stream-chat-react';
 import type { Channel as StreamChannel } from 'stream-chat';
 import { ChannelSidebar } from './ChannelSidebar';
+import { CHAT_CHANNEL_IDS } from '@/lib/chat/channels';
 import { Loader2, Menu } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import 'stream-chat-react/dist/css/v2/index.css';
@@ -31,6 +32,9 @@ function ChatClient({ tokenData }: { tokenData: TokenData }) {
     const [activeChannel, setActiveChannel] = useState<StreamChannel | undefined>();
     const [connected, setConnected] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [channelError, setChannelError] = useState<string | null>(null);
+    const [channelLoading, setChannelLoading] = useState(false);
+    const [channelRetry, setChannelRetry] = useState(0);
 
     const client = useCreateChatClient({
         apiKey: tokenData.apiKey,
@@ -71,20 +75,35 @@ function ChatClient({ tokenData }: { tokenData: TokenData }) {
         if (!client || !connected) return;
 
         let cancelled = false;
+        setChannelLoading(true);
+        setChannelError(null);
+        setActiveChannel(undefined);
+
         const ch = client.channel('messaging', activeChannelId);
 
         ch.watch()
             .then(() => {
-                if (!cancelled) setActiveChannel(ch);
+                if (!cancelled) {
+                    setActiveChannel(ch);
+                    setChannelLoading(false);
+                }
             })
             .catch((err: Error) => {
                 console.error('[ChatClient] channel.watch error:', err.message);
+                if (!cancelled) {
+                    setChannelError(
+                        err.message.includes('not found')
+                            ? 'Canal introuvable. Recharge la page dans quelques secondes.'
+                            : 'Impossible de rejoindre le canal. Recharge la page.'
+                    );
+                    setChannelLoading(false);
+                }
             });
 
         return () => {
             cancelled = true;
         };
-    }, [client, connected, activeChannelId]);
+    }, [client, connected, activeChannelId, channelRetry]);
 
     const handleChannelSelect = (id: string) => {
         setActiveChannelId(id);
@@ -137,11 +156,29 @@ function ChatClient({ tokenData }: { tokenData: TokenData }) {
                             <Menu className="w-5 h-5" />
                         </button>
                         <span className="text-sm font-medium text-white/80 truncate">
-                            {activeChannelId.replace(/-/g, ' ')}
+                            {CHAT_CHANNEL_IDS.includes(activeChannelId as typeof CHAT_CHANNEL_IDS[number])
+                                ? activeChannelId.replace(/-/g, ' ')
+                                : activeChannelId}
                         </span>
                     </div>
 
                     <div className="flex-1 min-h-0 overflow-hidden">
+                        {channelLoading ? (
+                            <div className="flex items-center justify-center h-full">
+                                <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
+                            </div>
+                        ) : channelError || !activeChannel ? (
+                            <div className="flex flex-col items-center justify-center h-full px-4 text-center gap-3">
+                                <p className="text-white/60 text-sm">{channelError ?? 'Connexion au canal...'}</p>
+                                <button
+                                    type="button"
+                                    onClick={() => setChannelRetry((n) => n + 1)}
+                                    className="px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/15"
+                                >
+                                    Réessayer
+                                </button>
+                            </div>
+                        ) : (
                         <Channel channel={activeChannel}>
                             <Window>
                                 <ChannelHeader />
@@ -150,6 +187,7 @@ function ChatClient({ tokenData }: { tokenData: TokenData }) {
                             </Window>
                             <Thread />
                         </Channel>
+                        )}
                     </div>
                 </div>
             </div>

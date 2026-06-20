@@ -5,7 +5,7 @@ const BASE = process.env.NEXT_PUBLIC_SITE_URL || 'https://epiai.eu';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const locales = ['fr', 'en'];
-  const staticPaths = ['', '/blog', '/partners', '/calendar', '/team', '/projects', '/membership', '/join'];
+  const staticPaths = ['', '/blog', '/partners', '/calendar', '/team', '/projects', '/join'];
 
   const entries: MetadataRoute.Sitemap = [];
 

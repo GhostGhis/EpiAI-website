@@ -105,7 +105,7 @@ export default function AdminProjectsPage() {
                     </div>
                     {/* Direct link - guaranteed to work */}
                     <a
-                        href={`/${locale}/admin/projects/new`}
+                        href="/admin/projects/new"
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -131,7 +131,7 @@ export default function AdminProjectsPage() {
                         <Plus className="w-16 h-16 text-white/20 mx-auto mb-4" />
                         <p className="text-white/40 mb-4">No projects yet</p>
                         <Link
-                            href={`/${locale}/admin/projects/new`}
+                            href="/admin/projects/new"
                             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors"
                         >
                             <Plus className="w-5 h-5" />

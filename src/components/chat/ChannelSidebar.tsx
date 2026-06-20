@@ -3,6 +3,7 @@
 import { StreamChat } from 'stream-chat';
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils/cn';
+import { CHAT_CHANNELS } from '@/lib/chat/channels';
 
 interface ChannelDef {
     id: string;
@@ -11,7 +12,7 @@ interface ChannelDef {
     description: string;
 }
 
-const CHANNELS: ChannelDef[] = [
+const CHANNEL_UI: ChannelDef[] = [
     { id: 'general', label: 'Général', icon: '💬', description: 'Canal principal' },
     { id: 'ai-discussion', label: 'Intelligence Artificielle', icon: '🧠', description: 'IA & ML' },
     { id: 'web-dev', label: 'Web & Mobile', icon: '🌐', description: 'Dev web et mobile' },
@@ -37,7 +38,7 @@ export function ChannelSidebar({ client, userId, activeChannelId, onChannelSelec
             try {
                 const channels = await client.queryChannels({
                     type: 'messaging',
-                    id: { $in: CHANNELS.map((c) => c.id) },
+                    id: { $in: CHAT_CHANNELS.map((c) => c.id) },
                     members: { $in: [userId] },
                 });
 
@@ -79,7 +80,7 @@ export function ChannelSidebar({ client, userId, activeChannelId, onChannelSelec
 
             {/* Channel list */}
             <div className="flex-1 overflow-y-auto py-2 space-y-0.5 px-2">
-                {CHANNELS.map((ch) => {
+                {CHANNEL_UI.map((ch) => {
                     const isActive = activeChannelId === ch.id;
                     const unread = unreadCounts[ch.id] || 0;
 
