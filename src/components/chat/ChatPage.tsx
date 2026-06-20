@@ -86,6 +86,8 @@ function ChatClient({ tokenData }: { tokenData: TokenData }) {
                 if (!cancelled) {
                     setActiveChannel(ch);
                     setChannelLoading(false);
+                    void ch.markRead().catch(() => {});
+                    window.dispatchEvent(new CustomEvent('chat-unread-changed'));
                 }
             })
             .catch((err: Error) => {

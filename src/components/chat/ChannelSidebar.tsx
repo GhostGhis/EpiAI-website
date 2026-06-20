@@ -1,9 +1,10 @@
 'use client';
 
 import { StreamChat } from 'stream-chat';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { cn } from '@/lib/utils/cn';
 import { CHAT_CHANNELS } from '@/lib/chat/channels';
+import { UnreadBadge } from './UnreadBadge';
 
 interface ChannelDef {
     id: string;
@@ -32,53 +33,69 @@ interface ChannelSidebarProps {
 export function ChannelSidebar({ client, userId, activeChannelId, onChannelSelect, className }: ChannelSidebarProps) {
     const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
+    const syncUnread = useCallback((channels: Awaited<ReturnType<StreamChat['queryChannels']>>) => {
+        const counts: Record<string, number> = {};
+        channels.forEach((ch) => {
+            if (ch.id) counts[ch.id] = ch.countUnread();
+        });
+        setUnreadCounts(counts);
+    }, []);
+
     useEffect(() => {
-        // Watch all channels to track unread counts
+        let mounted = true;
+        let watchedChannels: Awaited<ReturnType<StreamChat['queryChannels']>> = [];
+
         async function watchChannels() {
             try {
-                const channels = await client.queryChannels({
-                    type: 'messaging',
-                    id: { $in: CHAT_CHANNELS.map((c) => c.id) },
-                    members: { $in: [userId] },
-                });
+                const channels = await client.queryChannels(
+                    {
+                        type: 'messaging',
+                        id: { $in: CHAT_CHANNELS.map((c) => c.id) },
+                        members: { $in: [userId] },
+                    },
+                    { last_message_at: -1 },
+                    { watch: true, state: true }
+                );
 
-                const counts: Record<string, number> = {};
-                channels.forEach((ch) => {
-                    counts[ch.id!] = ch.countUnread();
-                });
-                setUnreadCounts(counts);
-
-                // Real-time update
-                const handleEvent = () => {
-                    const newCounts: Record<string, number> = {};
-                    channels.forEach((ch) => {
-                        newCounts[ch.id!] = ch.countUnread();
-                    });
-                    setUnreadCounts({ ...newCounts });
-                };
-
-                client.on('message.new', handleEvent);
-                return () => {
-                    client.off('message.new', handleEvent);
-                };
-            } catch (e) {
-                // Channels may not exist yet
+                if (!mounted) return;
+                watchedChannels = channels;
+                syncUnread(channels);
+            } catch {
+                // Canaux pas encore prêts
             }
         }
 
+        const handleUpdate = () => {
+            if (watchedChannels.length) syncUnread(watchedChannels);
+            window.dispatchEvent(new CustomEvent('chat-unread-changed'));
+        };
+
         watchChannels();
-    }, [client, userId]);
+
+        client.on('message.new', handleUpdate);
+        client.on('message.read', handleUpdate);
+        client.on('notification.message_new', handleUpdate);
+        client.on('notification.mark_read', handleUpdate);
+        client.on('notification.mark_unread', handleUpdate);
+
+        return () => {
+            mounted = false;
+            client.off('message.new', handleUpdate);
+            client.off('message.read', handleUpdate);
+            client.off('notification.message_new', handleUpdate);
+            client.off('notification.mark_read', handleUpdate);
+            client.off('notification.mark_unread', handleUpdate);
+        };
+    }, [client, userId, syncUnread]);
 
     return (
         <div className={cn('w-64 max-w-[85vw] shrink-0 border-r border-white/10 bg-zinc-900 lg:bg-black/30 flex flex-col h-full', className)}>
-            {/* Header */}
             <div className="p-4 border-b border-white/10">
                 <h2 className="text-white font-semibold text-sm uppercase tracking-wider opacity-60">
                     Canaux
                 </h2>
             </div>
 
-            {/* Channel list */}
             <div className="flex-1 overflow-y-auto py-2 space-y-0.5 px-2">
                 {CHANNEL_UI.map((ch) => {
                     const isActive = activeChannelId === ch.id;
@@ -92,28 +109,33 @@ export function ChannelSidebar({ client, userId, activeChannelId, onChannelSelec
                                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all group',
                                 isActive
                                     ? 'bg-white/10 text-white'
-                                    : 'text-white/50 hover:bg-white/5 hover:text-white/80'
+                                    : unread > 0
+                                      ? 'text-white/90 bg-white/[0.03] hover:bg-white/5'
+                                      : 'text-white/50 hover:bg-white/5 hover:text-white/80'
                             )}
                         >
-                            <span className="text-lg shrink-0">{ch.icon}</span>
+                            <span className="text-lg shrink-0 relative">
+                                {ch.icon}
+                                {unread > 0 && isActive && (
+                                    <span className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-indigo-500 ring-2 ring-zinc-900" />
+                                )}
+                            </span>
                             <div className="flex-1 min-w-0">
-                                <p className={cn('text-sm font-medium truncate', isActive ? 'text-white' : '')}>
+                                <p className={cn(
+                                    'text-sm font-medium truncate',
+                                    unread > 0 && !isActive ? 'text-white font-semibold' : isActive ? 'text-white' : ''
+                                )}>
                                     {ch.label}
                                 </p>
                             </div>
-                            {unread > 0 && !isActive && (
-                                <span className="shrink-0 min-w-[20px] h-5 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center px-1.5 font-medium">
-                                    {unread > 9 ? '9+' : unread}
-                                </span>
-                            )}
+                            <UnreadBadge count={unread} />
                         </button>
                     );
                 })}
             </div>
 
-            {/* Footer */}
             <div className="p-3 border-t border-white/10">
-                <p className="text-white/20 text-xs text-center">Epi'AI Chat • Temps réel</p>
+                <p className="text-white/20 text-xs text-center">Epi&apos;AI Chat • Temps réel</p>
             </div>
         </div>
     );

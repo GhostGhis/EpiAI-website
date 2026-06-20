@@ -37,6 +37,8 @@ import NotificationBell from '@/components/dashboard/NotificationBell';
 import OnboardingWizard from '@/components/dashboard/OnboardingWizard';
 import ThemeToggle from '@/components/ThemeToggle';
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav';
+import { UnreadBadge } from '@/components/chat/UnreadBadge';
+import { useChatUnreadCount } from '@/hooks/useChatUnreadCount';
 import { cn } from '@/lib/utils/cn';
 
 interface DashboardLayoutProps {
@@ -54,6 +56,8 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { user } = useUser();
 
   usePasswordResetCheck();
+
+  const { total: chatUnreadTotal } = useChatUnreadCount(!!isSignedIn);
 
   const t = useTranslations('Navigation');
 
@@ -86,6 +90,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: `/${locale}/chat`,
       icon: MessagesSquare,
       active: pathname.startsWith(`/${locale}/chat`),
+      badge: chatUnreadTotal,
     },
     {
       label: t('events'),
@@ -215,9 +220,12 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                     )}
                   >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium">{item.label}</span>
-                    {item.active && <ChevronRight className="w-4 h-4 ml-auto" />}
+                    <Icon className="w-5 h-5 shrink-0" />
+                    <span className="font-medium flex-1">{item.label}</span>
+                    {'badge' in item && typeof item.badge === 'number' && item.badge > 0 ? (
+                      <UnreadBadge count={item.badge} />
+                    ) : null}
+                    {item.active ? <ChevronRight className="w-4 h-4 shrink-0 opacity-60" /> : null}
                   </Link>
                 );
               })}
