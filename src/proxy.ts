@@ -58,6 +58,7 @@ const isPublicRoute = createRouteMatcher([
   '/api/webhooks(.*)',
   '/api/admin/invite(.*)', // Public pour la création du premier admin
   '/api/team-members(.*)',
+  '/api/chatbot(.*)',
   '/(fr|en)',
   '/(fr|en)/join',
   '/(fr|en)/membership',

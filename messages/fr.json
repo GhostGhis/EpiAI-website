@@ -72,6 +72,8 @@
         "welcome": "Bonjour ! Je suis l'assistant Epi'AI. Je réponds uniquement à partir de notre base de connaissances sur l'association — adhésion, pôles, événements, ressources, etc. Choisis une question ci-dessous ou écris la tienne.",
         "fallback": "Je n'ai pas trouvé de réponse précise dans notre catalogue. Essaie une des questions suggérées ci-dessous, ou contacte-nous via la page Rejoindre.",
         "fallbackSuggestions": "Peut-être cherchais-tu :",
+        "loading": "Réflexion en cours…",
+        "error": "Désolé, une erreur est survenue. Réessaie ou choisis une question ci-dessous.",
         "questions": {
             "about": "Qu'est-ce qu'Epi'AI ?",
             "join": "Comment rejoindre ?",

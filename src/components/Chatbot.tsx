@@ -4,7 +4,6 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslations } from 'next-intl';
 import { useParams, usePathname } from 'next/navigation';
 import { FAQ_CHIP_IDS, type FaqId } from '@/lib/faq/catalog';
-import { matchFaq } from '@/lib/faq/match';
 
 interface Message {
   role: 'bot' | 'user';
@@ -16,9 +15,11 @@ export default function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
   const t = useTranslations('Chatbot');
   const params = useParams();
   const pathname = usePathname();
+  const locale = (params.locale as string) === 'en' ? 'en' : 'fr';
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const isDashboard =
@@ -39,52 +40,82 @@ export default function Chatbot() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, loading]);
 
-  const replyForFaq = useCallback(
-    (faqId: FaqId): Message => ({
-      role: 'bot',
-      text: t(`faq.${faqId}`),
-    }),
+  const toApiHistory = useCallback(
+    (msgs: Message[]) =>
+      msgs
+        .filter((m) => m.text !== t('welcome'))
+        .slice(-8)
+        .map((m) => ({
+          role: m.role === 'user' ? ('user' as const) : ('assistant' as const),
+          content: m.text,
+        })),
     [t]
   );
 
-  const handleUserText = useCallback(
-    (text: string) => {
-      const trimmed = text.trim();
-      if (!trimmed) return;
+  const askAssistant = useCallback(
+    async (payload: { message?: string; faqId?: FaqId }, userLabel: string) => {
+      setLoading(true);
+      setMessages((prev) => [...prev, { role: 'user', text: userLabel }]);
 
-      const userMsg: Message = { role: 'user', text: trimmed };
-      const { match, suggestions } = matchFaq(trimmed);
+      try {
+        const history = toApiHistory(messages);
+        const res = await fetch('/api/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ ...payload, locale, history }),
+        });
 
-      if (match) {
-        setMessages((prev) => [...prev, userMsg, replyForFaq(match.id)]);
-        return;
+        if (!res.ok) throw new Error('chatbot failed');
+
+        const data = (await res.json()) as {
+          answer: string;
+          suggestions?: FaqId[];
+        };
+
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'bot',
+            text: data.answer,
+            suggestions: data.suggestions?.length ? data.suggestions : undefined,
+          },
+        ]);
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'bot',
+            text: t('error'),
+            suggestions: FAQ_CHIP_IDS.slice(0, 3),
+          },
+        ]);
+      } finally {
+        setLoading(false);
       }
-
-      const botMsg: Message = {
-        role: 'bot',
-        text: t('fallback'),
-        suggestions: suggestions.length > 0 ? suggestions : undefined,
-      };
-      setMessages((prev) => [...prev, userMsg, botMsg]);
     },
-    [replyForFaq, t]
+    [locale, messages, t, toApiHistory]
   );
 
   const sendMessage = () => {
-    handleUserText(input);
+    const text = input.trim();
+    if (!text || loading) return;
     setInput('');
+    void askAssistant({ message: text }, text);
   };
 
-  const askChip = (faqId: FaqId) => {
-    const label = t(`chips.${faqId}`);
-    setMessages((prev) => [...prev, { role: 'user', text: label }, replyForFaq(faqId)]);
+  const askChip = (faqId: FaqId, useShortLabel = true) => {
+    if (loading) return;
+    const label = useShortLabel && (FAQ_CHIP_IDS as readonly FaqId[]).includes(faqId)
+      ? t(`chips.${faqId}`)
+      : t(`questions.${faqId}`);
+    void askAssistant({ faqId }, label);
   };
 
   if (isDashboard) return null;
 
-  const showChips = messages.length <= 1;
+  const showChips = messages.length <= 1 && !loading;
 
   return (
     <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100] flex flex-col items-end max-w-[calc(100vw-2rem)]">
@@ -141,8 +172,9 @@ export default function Chatbot() {
                         <button
                           key={id}
                           type="button"
-                          onClick={() => askChip(id)}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] hover:bg-emerald-500/25 transition-colors"
+                          onClick={() => askChip(id, false)}
+                          disabled={loading}
+                          className="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
                         >
                           {t(`questions.${id}`)}
                         </button>
@@ -153,6 +185,12 @@ export default function Chatbot() {
               </div>
             ))}
 
+            {loading && (
+              <div className="rounded-2xl p-3 text-xs sm:text-sm bg-white/5 border border-white/10 text-white/50 max-w-[90%]">
+                {t('loading')}
+              </div>
+            )}
+
             {showChips && (
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {FAQ_CHIP_IDS.map((id) => (
@@ -160,7 +198,8 @@ export default function Chatbot() {
                     key={id}
                     type="button"
                     onClick={() => askChip(id)}
-                    className="px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-white/70 text-[11px] hover:bg-white/10 hover:text-white transition-colors"
+                    disabled={loading}
+                    className="px-2.5 py-1.5 rounded-xl bg-white/5 border border-white/10 text-white/70 text-[11px] hover:bg-white/10 hover:text-white transition-colors disabled:opacity-50"
                   >
                     {t(`chips.${id}`)}
                   </button>
@@ -184,11 +223,13 @@ export default function Chatbot() {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder={t('placeholder')}
-                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors pr-12"
+                disabled={loading}
+                className="w-full bg-black/40 border border-white/10 rounded-xl py-3 px-4 text-sm text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500/50 transition-colors pr-12 disabled:opacity-50"
               />
               <button
                 type="submit"
-                className="absolute right-2 top-1.5 p-2 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center"
+                disabled={loading || !input.trim()}
+                className="absolute right-2 top-1.5 p-2 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center disabled:opacity-40"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />

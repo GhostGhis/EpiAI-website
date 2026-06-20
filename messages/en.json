@@ -72,6 +72,8 @@
         "welcome": "Hello! I'm the Epi'AI assistant. I only answer from our curated knowledge base about the association — membership, poles, events, resources, and more. Pick a question below or type your own.",
         "fallback": "I couldn't find a precise answer in our catalog. Try one of the suggested questions below, or contact us via the Join page.",
         "fallbackSuggestions": "Maybe you meant:",
+        "loading": "Thinking…",
+        "error": "Sorry, something went wrong. Try again or pick a question below.",
         "questions": {
             "about": "What is Epi'AI?",
             "join": "How to join?",
