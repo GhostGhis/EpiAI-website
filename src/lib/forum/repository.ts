@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
+import { resolveAuthorNames } from '@/lib/users/display-name';
 import { CATEGORIES as FORUM_CATEGORIES, TAGS as FORUM_TAGS } from './categories';
 import type {
   ThreadWithAuthor,
@@ -96,8 +97,11 @@ export async function getThreads(
     prisma.thread.count({ where: query }),
   ]);
 
+  const transformed = threads.map(transformThread);
+  const data = await resolveAuthorNames(transformed);
+
   return {
-    data: threads.map(transformThread),
+    data,
     total,
     page: pagination.page,
     limit: pagination.limit,
@@ -115,7 +119,8 @@ export async function getThreadById(id: string): Promise<ThreadWithAuthor | null
     data: { views: { increment: 1 } },
   });
 
-  return transformThread(thread);
+  const [resolved] = await resolveAuthorNames([transformThread(thread)]);
+  return resolved;
 }
 
 export async function createThread(
@@ -213,8 +218,11 @@ export async function getRepliesByThreadId(
     prisma.reply.count({ where: { threadId } }),
   ]);
 
+  const transformed = replies.map(transformReply);
+  const data = await resolveAuthorNames(transformed);
+
   return {
-    data: replies.map(transformReply),
+    data,
     total,
     page: pagination.page,
     limit: pagination.limit,

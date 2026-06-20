@@ -69,13 +69,44 @@
         "title": "Epi'AI Assistant",
         "online": "Online",
         "placeholder": "Ask your question...",
-        "welcome": "Hello! I'm the Epi'AI assistant. Ask me about membership, poles, events, or learning resources.",
-        "fallback": "I'm not sure I understand. Try asking how to join, about our poles, events, or resources. You can also contact us via the Join page.",
+        "welcome": "Hello! I'm the Epi'AI assistant. I only answer from our curated knowledge base about the association — membership, poles, events, resources, and more. Pick a question below or type your own.",
+        "fallback": "I couldn't find a precise answer in our catalog. Try one of the suggested questions below, or contact us via the Join page.",
+        "fallbackSuggestions": "Maybe you meant:",
+        "questions": {
+            "about": "What is Epi'AI?",
+            "join": "How to join?",
+            "poles": "Our poles",
+            "events": "Events",
+            "resources": "Resources",
+            "dashboard": "Member area",
+            "membership_status": "Membership status",
+            "contact": "Contact",
+            "chat_forum": "Chat vs forum",
+            "roles": "Roles",
+            "partners": "Partners",
+            "attendance": "Attendance"
+        },
+        "chips": {
+            "join": "Join the asso",
+            "poles": "Our poles",
+            "events": "Events",
+            "resources": "Resources",
+            "dashboard": "Member area",
+            "contact": "Contact us"
+        },
         "faq": {
-            "join": "To join Epi'AI, go to the Join page and submit your application. The team will contact you for a motivation interview.",
-            "poles": "Epi'AI is organized into poles: Training, Tech & Projects, Research, International, Events, Communication, and Administration.",
-            "events": "We organize workshops, hackathons, and conferences. Members can register from the Events section in the dashboard.",
-            "resources": "Members have access to a library of learning resources (PDFs, videos, code) in the Resources section."
+            "about": "Epi'AI is the artificial intelligence association at the Epitech campus. We bring together students passionate about AI through projects, training, events, and tech watch.",
+            "join": "To join Epi'AI, go to the Join page and submit your application. The team will contact you for a motivation interview. Once approved, you'll receive login credentials by email.",
+            "poles": "Epi'AI is organized into poles: Training, Tech & Projects, Research, International, Events, Communication, and Administration. Each pole has leads and missions. See the homepage Poles section for details.",
+            "events": "We organize workshops, hackathons, and conferences. Members can browse the calendar and register from the Events section in the dashboard.",
+            "resources": "Members have access to a library of learning resources (PDFs, videos, code) in the Resources section of the dashboard.",
+            "dashboard": "Once your membership is approved, sign in with the email and password you received. You'll access the member area: forum, chat, events, resources, and intranet. You must change your password on first login.",
+            "membership_status": "After applying, your status is pending. Once approved, you become an active member with a trial period. Only active members get full dashboard access.",
+            "contact": "To reach us, use the form on the Join page or contact the team via WhatsApp (number on the site). Members can also use the internal chat to reach the board.",
+            "chat_forum": "The forum is for structured discussions (questions, announcements, debates). Chat is real-time messaging by channels (#general, #ai-discussion…). Both are available in the dashboard once signed in.",
+            "roles": "The association has a role hierarchy: President, Vice-president, Treasurer, Secretary, Pole leads, Mentor, and Member. Each role has different permissions on the platform.",
+            "partners": "Epi'AI works with companies and campus partners. The partner list is on the public Partners page.",
+            "attendance": "Attendance at mandatory events is tracked in the Attendance section of the dashboard. Admins can manage attendance sheets from the admin area."
         }
     },
     "Onboarding": {

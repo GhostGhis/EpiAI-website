@@ -17,6 +17,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { Modal } from '@/components/shared/Modal';
 
 interface ApplicationCardProps {
   application: {
@@ -305,76 +306,88 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
         </div>
       )}
 
-      {/* Identifiants (email échoué ou renvoi manuel) */}
-      {credentialsModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-zinc-900 border border-amber-500/30">
-            <h3 className="text-xl font-bold text-white mb-2">
-              {credentialsModal.emailSent ? 'Email envoyé' : 'Identifiants de connexion'}
-            </h3>
-            {credentialsModal.note && (
-              <p className="text-amber-400/90 text-sm mb-4">{credentialsModal.note}</p>
-            )}
-            {credentialsModal.password ? (
-              <div className="p-4 rounded-xl bg-white/5 space-y-2 text-sm font-mono">
-                <p className="text-white/80"><span className="text-white/50">Email :</span> {credentialsModal.email}</p>
-                <p className="text-white/80"><span className="text-white/50">Mot de passe :</span> {credentialsModal.password}</p>
-              </div>
-            ) : credentialsModal.emailSent ? (
-              <p className="text-white/70 text-sm">Le membre devrait recevoir un email sous peu. Vérifie aussi les spams.</p>
-            ) : null}
-            <p className="text-white/50 text-xs mt-4">
-              Transmets ces infos par WhatsApp si l&apos;email ne part pas. Le membre devra changer son mot de passe à la première connexion.
+      <Modal
+        open={!!credentialsModal}
+        onClose={() => setCredentialsModal(null)}
+        title={
+          credentialsModal?.emailSent ? 'Email envoyé' : 'Identifiants de connexion'
+        }
+        borderClassName="border-amber-500/30"
+      >
+        {credentialsModal?.note && (
+          <p className="text-amber-400/90 text-sm mb-4">{credentialsModal.note}</p>
+        )}
+        {credentialsModal?.password ? (
+          <div className="p-4 rounded-xl bg-white/5 space-y-2 text-sm font-mono">
+            <p className="text-white/80">
+              <span className="text-white/50">Email :</span> {credentialsModal.email}
             </p>
+            <p className="text-white/80">
+              <span className="text-white/50">Mot de passe :</span> {credentialsModal.password}
+            </p>
+          </div>
+        ) : credentialsModal?.emailSent ? (
+          <p className="text-white/70 text-sm">
+            Le membre devrait recevoir un email sous peu. Vérifie aussi les spams.
+          </p>
+        ) : null}
+        <p className="text-white/50 text-xs mt-4">
+          Transmets ces infos par WhatsApp si l&apos;email ne part pas. Le membre devra changer son
+          mot de passe à la première connexion.
+        </p>
+        <button
+          type="button"
+          onClick={() => setCredentialsModal(null)}
+          className="mt-4 w-full px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15"
+        >
+          Fermer
+        </button>
+      </Modal>
+
+      <Modal
+        open={showRejectModal}
+        onClose={() => {
+          setShowRejectModal(false);
+          setRejectReason('');
+        }}
+        title="Reject Application"
+      >
+        <div className="space-y-4 mt-2">
+          <div>
+            <label className="block text-sm font-medium text-white/70 mb-2">
+              Reason for rejection (will be sent to the applicant)
+            </label>
+            <textarea
+              value={rejectReason}
+              onChange={(e) => setRejectReason(e.target.value)}
+              rows={4}
+              className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30"
+              placeholder="Please provide a reason..."
+            />
+          </div>
+
+          <div className="flex gap-3">
             <button
-              onClick={() => setCredentialsModal(null)}
-              className="mt-4 w-full px-4 py-2 rounded-xl bg-white/10 text-white font-medium hover:bg-white/15"
+              type="button"
+              onClick={() => {
+                setShowRejectModal(false);
+                setRejectReason('');
+              }}
+              className="flex-1 px-4 py-2 rounded-xl bg-white/5 text-white font-medium hover:bg-white/10 transition-all"
             >
-              Fermer
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={handleReject}
+              disabled={isLoading || !rejectReason.trim()}
+              className="flex-1 px-4 py-2 rounded-xl bg-red-500/20 text-red-400 font-medium hover:bg-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? 'Rejecting...' : 'Reject'}
             </button>
           </div>
         </div>
-      )}
-
-      {/* Reject Modal */}
-      {showRejectModal && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="w-full max-w-md p-6 rounded-2xl bg-zinc-900 border border-white/10">
-            <h3 className="text-xl font-bold text-white mb-4">Reject Application</h3>
-
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white/70 mb-2">
-                  Reason for rejection (will be sent to the applicant)
-                </label>
-                <textarea
-                  value={rejectReason}
-                  onChange={(e) => setRejectReason(e.target.value)}
-                  rows={4}
-                  className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-white/30"
-                  placeholder="Please provide a reason..."
-                />
-              </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => { setShowRejectModal(false); setRejectReason(''); }}
-                  className="flex-1 px-4 py-2 rounded-xl bg-white/5 text-white font-medium hover:bg-white/10 transition-all"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleReject}
-                  disabled={isLoading || !rejectReason.trim()}
-                  className="flex-1 px-4 py-2 rounded-xl bg-red-500/20 text-red-400 font-medium hover:bg-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? 'Rejecting...' : 'Reject'}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      </Modal>
     </div>
   );
 }

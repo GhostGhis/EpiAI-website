@@ -14,7 +14,7 @@ import { getThreadById } from '@/lib/forum/repository';
 import { notifyUser } from '@/lib/notifications/service';
 import { sendForumReplyEmail } from '@/lib/email/resend';
 import { prisma } from '@/lib/prisma';
-import { clerkClient } from '@clerk/nextjs/server';
+import { getDisplayNameForClerkId } from '@/lib/users/display-name';
 
 // GET /api/forum/replies?threadId=xxx
 export async function GET(request: NextRequest) {
@@ -78,13 +78,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user name from Clerk
-    const client = await clerkClient();
-    const clerkUser = await client.users.getUser(userId);
-    const authorName =
-      `${clerkUser.firstName || ''} ${clerkUser.lastName || ''}`.trim() ||
-      clerkUser.emailAddresses[0]?.emailAddress ||
-      `User_${userId.slice(0, 8)}`;
+    const authorName = await getDisplayNameForClerkId(userId);
 
     const reply = await createReply(body, body.threadId, userId, authorName);
 

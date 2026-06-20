@@ -4,8 +4,10 @@ import {
   getUserNotifications,
   markNotificationRead,
   markAllNotificationsRead,
+  markNotificationsReadByType,
   getUnreadCount,
 } from '@/lib/notifications/repository';
+import type { NotificationType } from '@prisma/client';
 
 export async function GET() {
   try {
@@ -46,6 +48,8 @@ export async function PATCH(request: Request) {
     const body = await request.json();
     if (body.markAll) {
       await markAllNotificationsRead(dbUser.id);
+    } else if (body.type) {
+      await markNotificationsReadByType(dbUser.id, body.type as NotificationType);
     } else if (body.id) {
       await markNotificationRead(body.id, dbUser.id);
     }

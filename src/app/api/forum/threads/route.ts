@@ -11,6 +11,7 @@ import {
 } from '@/lib/forum/repository';
 import type { ThreadFilters, CreateThreadInput } from '@/lib/forum/types';
 import { rateLimit } from '@/lib/rate-limit';
+import { getDisplayNameForClerkId } from '@/lib/users/display-name';
 
 // GET /api/forum/threads - List threads or get one by id
 export async function GET(request: NextRequest) {
@@ -90,8 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get user name from Clerk (in a real app, you'd fetch this)
-    const authorName = `User_${userId.slice(0, 8)}`;
+    const authorName = await getDisplayNameForClerkId(userId);
 
     const thread = await createThread(body, userId, authorName);
 

@@ -7,7 +7,7 @@ import { ProtectedRoute } from '@/components/shared/ProtectedRoute';
 import { useRouter, usePathname } from 'next/navigation'; // Changed from '@/i18n/routing'
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl'; // Added
 import {
   LayoutDashboard,
@@ -39,6 +39,7 @@ import ThemeToggle from '@/components/ThemeToggle';
 import MobileBottomNav from '@/components/dashboard/MobileBottomNav';
 import { UnreadBadge } from '@/components/chat/UnreadBadge';
 import { useChatUnreadCount } from '@/hooks/useChatUnreadCount';
+import { markNotificationTypeRead, useNotificationCounts } from '@/hooks/useNotificationCounts';
 import { cn } from '@/lib/utils/cn';
 
 interface DashboardLayoutProps {
@@ -58,6 +59,21 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   usePasswordResetCheck();
 
   const { total: chatUnreadTotal } = useChatUnreadCount(!!isSignedIn);
+  const { counts: notifCounts } = useNotificationCounts(!!isSignedIn);
+
+  useEffect(() => {
+    if (!isSignedIn || !pathname) return;
+
+    if (pathname.includes('/forum')) {
+      void markNotificationTypeRead('forum');
+    } else if (pathname.includes('/events')) {
+      void markNotificationTypeRead('event');
+    } else if (pathname.includes('/intranet')) {
+      void markNotificationTypeRead('activity');
+    } else if (pathname.includes('/admin/membership')) {
+      void markNotificationTypeRead('membership');
+    }
+  }, [pathname, isSignedIn]);
 
   const t = useTranslations('Navigation');
 
@@ -83,6 +99,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: `/${locale}/dashboard`,
       icon: LayoutDashboard,
       active: pathname === `/${locale}/dashboard`,
+      badge: notifCounts.total + chatUnreadTotal,
     },
     {
       label: t('resources'),
@@ -95,6 +112,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: `/${locale}/forum`,
       icon: MessageSquare,
       active: pathname.startsWith(`/${locale}/forum`),
+      badge: notifCounts.forum,
     },
     {
       label: t('chat'),
@@ -108,12 +126,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       href: `/${locale}/events`,
       icon: Calendar,
       active: pathname.startsWith(`/${locale}/events`),
+      badge: notifCounts.event,
     },
     {
       label: t('intranet'),
       href: `/${locale}/intranet`,
       icon: ClipboardList,
       active: pathname.startsWith(`/${locale}/intranet`),
+      badge: notifCounts.activity,
     },
     {
       label: t('profile'),
@@ -136,6 +156,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       icon: UserPlus,
       active: pathname.startsWith(`/${locale}/admin/membership`),
       adminOnly: true,
+      badge: notifCounts.membership,
     },
     {
       label: t('projects'),
@@ -268,8 +289,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         )}
                       >
                         <Icon className="w-5 h-5" />
-                        <span className="font-medium">{item.label}</span>
-                        {item.active && <ChevronRight className="w-4 h-4 ml-auto" />}
+                        <span className="font-medium flex-1">{item.label}</span>
+                        {'badge' in item && typeof item.badge === 'number' && item.badge > 0 ? (
+                          <UnreadBadge count={item.badge} />
+                        ) : null}
+                        {item.active && <ChevronRight className="w-4 h-4 ml-auto shrink-0" />}
                       </Link>
                     );
                   })}

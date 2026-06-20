@@ -69,13 +69,44 @@
         "title": "Assistant Epi'AI",
         "online": "En ligne",
         "placeholder": "Posez votre question...",
-        "welcome": "Bonjour ! Je suis l'assistant Epi'AI. Posez-moi une question sur l'adhésion, les pôles, les événements ou les ressources.",
-        "fallback": "Je ne suis pas sûr de comprendre. Essayez de demander comment rejoindre l'association, nos pôles, les événements ou les ressources pédagogiques. Vous pouvez aussi nous contacter via la page Rejoindre.",
+        "welcome": "Bonjour ! Je suis l'assistant Epi'AI. Je réponds uniquement à partir de notre base de connaissances sur l'association — adhésion, pôles, événements, ressources, etc. Choisis une question ci-dessous ou écris la tienne.",
+        "fallback": "Je n'ai pas trouvé de réponse précise dans notre catalogue. Essaie une des questions suggérées ci-dessous, ou contacte-nous via la page Rejoindre.",
+        "fallbackSuggestions": "Peut-être cherchais-tu :",
+        "questions": {
+            "about": "Qu'est-ce qu'Epi'AI ?",
+            "join": "Comment rejoindre ?",
+            "poles": "Les pôles",
+            "events": "Les événements",
+            "resources": "Les ressources",
+            "dashboard": "Espace membre",
+            "membership_status": "Statut adhésion",
+            "contact": "Contact",
+            "chat_forum": "Chat vs forum",
+            "roles": "Les rôles",
+            "partners": "Partenaires",
+            "attendance": "Présences"
+        },
+        "chips": {
+            "join": "Rejoindre l'asso",
+            "poles": "Les pôles",
+            "events": "Événements",
+            "resources": "Ressources",
+            "dashboard": "Espace membre",
+            "contact": "Nous contacter"
+        },
         "faq": {
-            "join": "Pour rejoindre Epi'AI, rendez-vous sur la page « Rejoindre l'association » et remplissez le formulaire de candidature. L'équipe vous contactera pour un entretien de motivation.",
-            "poles": "Epi'AI est organisée en pôles : Formation, Technique & Projets, Recherche, International, Événementiel, Communication et Administration. Chaque pôle a ses responsables et ses missions.",
-            "events": "Nous organisons workshops, hackathons et conférences. Les membres peuvent s'inscrire aux événements depuis l'espace membre, section Événements.",
-            "resources": "Les membres ont accès à une bibliothèque de ressources pédagogiques (PDF, vidéos, code) dans l'espace membre, section Ressources."
+            "about": "Epi'AI est l'association d'intelligence artificielle du campus Epitech. Nous regroupons des étudiants passionnés d'IA autour de projets, formations, événements et veille technologique.",
+            "join": "Pour rejoindre Epi'AI, rendez-vous sur la page « Rejoindre l'association » et remplissez le formulaire de candidature. L'équipe te contactera pour un entretien de motivation. Après validation, tu recevras tes identifiants par email.",
+            "poles": "Epi'AI est organisée en pôles : Formation, Technique & Projets, Recherche, International, Événementiel, Communication et Administration. Chaque pôle a ses responsables et ses missions. Les détails sont sur la page d'accueil, section Pôles.",
+            "events": "Nous organisons workshops, hackathons et conférences. Les membres peuvent consulter le calendrier et s'inscrire depuis l'espace membre, section Événements.",
+            "resources": "Les membres ont accès à une bibliothèque de ressources pédagogiques (PDF, vidéos, code) dans l'espace membre, section Ressources.",
+            "dashboard": "Une fois ton adhésion validée, connecte-toi avec l'email et le mot de passe reçus. Tu accèdes à l'espace membre (dashboard) : forum, chat, événements, ressources et intranet. Tu devras changer ton mot de passe à la première connexion.",
+            "membership_status": "Après candidature, ton statut est « en attente ». Une fois approuvé, tu deviens membre actif avec une période d'essai. Seuls les membres actifs accèdent à l'espace membre complet.",
+            "contact": "Pour nous contacter, utilise le formulaire sur la page Rejoindre ou écris à l'équipe via WhatsApp (numéro indiqué sur le site). Pour les membres, le chat interne permet aussi de joindre le bureau.",
+            "chat_forum": "Le forum sert aux discussions structurées (questions, annonces, débats). Le chat est un messagerie temps réel par canaux (#general, #ai-discussion…). Les deux sont accessibles depuis l'espace membre une fois connecté.",
+            "roles": "L'association a une hiérarchie de rôles : Président, Vice-président, Trésorier, Secrétaire, Responsables de pôle, Mentor et Membre. Chaque rôle a des permissions différentes sur la plateforme.",
+            "partners": "Epi'AI collabore avec des entreprises et partenaires du campus. La liste des partenaires est disponible sur la page Partenaires du site public.",
+            "attendance": "Les présences aux événements obligatoires sont suivies dans l'espace membre, section Présences. Les admins peuvent aussi gérer les feuilles de présence depuis l'administration."
         }
     },
     "Onboarding": {

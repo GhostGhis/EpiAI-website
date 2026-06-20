@@ -12,12 +12,21 @@ import {
 import { cn } from '@/lib/utils/cn';
 import { UnreadBadge } from '@/components/chat/UnreadBadge';
 import { useChatUnreadCount } from '@/hooks/useChatUnreadCount';
+import { useNotificationCounts } from '@/hooks/useNotificationCounts';
 
-const items = [
+type NavItem = {
+  href: string;
+  icon: typeof LayoutDashboard;
+  labelFr: string;
+  labelEn: string;
+  seg: string;
+};
+
+const items: NavItem[] = [
   { href: '/dashboard', icon: LayoutDashboard, labelFr: 'Accueil', labelEn: 'Home', seg: 'dashboard' },
   { href: '/resources', icon: FolderOpen, labelFr: 'Ressources', labelEn: 'Resources', seg: 'resources' },
   { href: '/forum', icon: MessageSquare, labelFr: 'Forum', labelEn: 'Forum', seg: 'forum' },
-  { href: '/chat', icon: MessagesSquare, labelFr: 'Chat', labelEn: 'Chat', seg: 'chat', showChatBadge: true },
+  { href: '/chat', icon: MessagesSquare, labelFr: 'Chat', labelEn: 'Chat', seg: 'chat' },
   { href: '/events', icon: Calendar, labelFr: 'Events', labelEn: 'Events', seg: 'events' },
 ];
 
@@ -26,6 +35,15 @@ export default function MobileBottomNav() {
   const pathname = usePathname();
   const locale = (params.locale as string) || 'fr';
   const { total: chatUnread } = useChatUnreadCount(true);
+  const { counts: notifCounts } = useNotificationCounts(true);
+
+  const badgeFor = (seg: string) => {
+    if (seg === 'dashboard') return notifCounts.total + chatUnread;
+    if (seg === 'forum') return notifCounts.forum;
+    if (seg === 'chat') return chatUnread;
+    if (seg === 'events') return notifCounts.event;
+    return 0;
+  };
 
   return (
     <nav
@@ -33,9 +51,9 @@ export default function MobileBottomNav() {
       aria-label={locale === 'fr' ? 'Navigation principale' : 'Main navigation'}
     >
       <ul className="flex items-center justify-around py-2">
-        {items.map(({ href, icon: Icon, labelFr, labelEn, seg, showChatBadge }) => {
+        {items.map(({ href, icon: Icon, labelFr, labelEn, seg }) => {
           const active = pathname.includes(`/${seg}`);
-          const badge = showChatBadge ? chatUnread : 0;
+          const badge = badgeFor(seg);
           return (
             <li key={href}>
               <Link
