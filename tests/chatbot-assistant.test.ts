@@ -1,7 +1,24 @@
-import { describe, expect, it } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { handleChatbotRequest } from '@/lib/chatbot/assistant';
 
 describe('handleChatbotRequest', () => {
+  let savedOpenAi: string | undefined;
+  let savedGemini: string | undefined;
+
+  beforeEach(() => {
+    savedOpenAi = process.env.OPENAI_API_KEY;
+    savedGemini = process.env.GEMINI_API_KEY;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.GEMINI_API_KEY;
+  });
+
+  afterEach(() => {
+    if (savedOpenAi) process.env.OPENAI_API_KEY = savedOpenAi;
+    else delete process.env.OPENAI_API_KEY;
+    if (savedGemini) process.env.GEMINI_API_KEY = savedGemini;
+    else delete process.env.GEMINI_API_KEY;
+  });
+
   it('returns catalog answer for direct faqId', async () => {
     const result = await handleChatbotRequest({
       faqId: 'join',
@@ -21,7 +38,7 @@ describe('handleChatbotRequest', () => {
     expect(result.answer.length).toBeGreaterThan(20);
   });
 
-  it('handles greetings without fallback', async () => {
+  it('handles greetings without fallback when AI is off', async () => {
     const result = await handleChatbotRequest({
       message: 'salut',
       locale: 'fr',

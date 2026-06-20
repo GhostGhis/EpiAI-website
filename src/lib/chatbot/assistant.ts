@@ -7,8 +7,8 @@ import {
   type ChatbotLocale,
 } from '@/lib/faq/content';
 import { matchFaq } from '@/lib/faq/match';
-import { detectSmallTalk } from '@/lib/chatbot/small-talk';
-import { chatCompletionJson, chatCompletionText, isChatbotAiEnabled } from './openai';
+import { detectSmallTalk, type SmallTalkKind } from '@/lib/chatbot/small-talk';
+import { chatCompletionJson, isChatbotAiEnabled } from './openai';
 
 export type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
@@ -21,15 +21,11 @@ export interface ChatbotResult {
   source: ChatbotSource;
 }
 
-interface ClassifyResult {
+interface AiResponsePayload {
   faqIds?: string[];
-  confidence?: number;
-  offTopic?: boolean;
+  answer?: string;
   suggestions?: string[];
 }
-
-const CONFIDENCE_THRESHOLD = 0.65;
-const HIGH_MATCH_SCORE = 8;
 
 function uniqueFaqIds(ids: string[]): FaqId[] {
   const out: FaqId[] = [];
@@ -39,94 +35,149 @@ function uniqueFaqIds(ids: string[]): FaqId[] {
   return out;
 }
 
-async function classifyWithAi(
-  message: string,
-  locale: ChatbotLocale,
-  history: ChatMessage[]
-): Promise<{ faqIds: FaqId[]; suggestions: FaqId[] }> {
-  const catalog = buildCatalogContext(locale);
-  const allowedIds = FAQ_CATALOG.map((e) => e.id);
-
-  const system = `You are an intent classifier for the Epi'AI student association chatbot.
-Your ONLY job is to map user questions to FAQ catalog IDs. Never invent answers.
-
-Allowed FAQ IDs: ${allowedIds.join(', ')}
-
-FAQ CATALOG (ground truth):
-${catalog}
-
-Rules:
-- Return JSON: { "faqIds": string[], "confidence": number, "offTopic": boolean, "suggestions": string[] }
-- faqIds must be from the allowed list only (max 2 entries if clearly related).
-- confidence is 0-1 (how sure you are).
-- offTopic=true if the question is NOT about Epi'AI / the association / membership / platform.
-- Greetings alone (salut, bonjour, hello) are NOT offTopic — return empty faqIds, offTopic=false, confidence=0, suggestions: ["about","join","events"].
-- If confidence < 0.65, return empty faqIds and suggest up to 3 relevant IDs in "suggestions".
-- Handle French and English, typos, slang, and paraphrases.
-- Use conversation history for follow-ups ("et les events ?", "how about resources?").`;
-
-  const historyMessages = history.slice(-6).map((m) => ({
-    role: m.role as 'user' | 'assistant',
-    content: m.content,
-  }));
-
-  const parsed = await chatCompletionJson<ClassifyResult>({
-    system,
-    messages: [...historyMessages, { role: 'user', content: message }],
-    temperature: 0,
-  });
-
-  const faqIds = uniqueFaqIds(parsed.faqIds || []);
-  const suggestions = uniqueFaqIds(parsed.suggestions || []);
-
-  if (
-    parsed.offTopic ||
-    (parsed.confidence ?? 0) < CONFIDENCE_THRESHOLD ||
-    faqIds.length === 0
-  ) {
-    return { faqIds: [], suggestions: suggestions.slice(0, 3) };
-  }
-
-  return { faqIds: faqIds.slice(0, 2), suggestions: [] };
+function defaultSuggestions(
+  localSuggestions: FaqId[],
+  override?: FaqId[]
+): FaqId[] {
+  if (override && override.length > 0) return override.slice(0, 3);
+  if (localSuggestions.length > 0) return localSuggestions.slice(0, 3);
+  return FAQ_CHIP_IDS.slice(0, 3);
 }
 
-/** Rephrase catalog facts naturally — AI must not add new information. */
-async function rephraseAnswer(
-  message: string,
-  facts: string,
-  locale: ChatbotLocale,
-  history: ChatMessage[]
-): Promise<string> {
+/** Single AI call: natural conversation strictly grounded on the FAQ catalog. */
+async function generateConversationalAnswer(params: {
+  message: string;
+  locale: ChatbotLocale;
+  history: ChatMessage[];
+  hintFaqIds?: FaqId[];
+  smallTalk?: SmallTalkKind | null;
+}): Promise<ChatbotResult> {
+  const { message, locale, history, hintFaqIds, smallTalk } = params;
+  const copy = getChatbotCopy(locale);
+  const catalog = buildCatalogContext(locale);
   const lang = locale === 'fr' ? 'French' : 'English';
-  const system = `You are the Epi'AI association assistant. Rewrite the SOURCE FACTS to answer the user's message in ${lang}.
-STRICT RULES:
-- Use ONLY information from SOURCE FACTS. Do not add, guess, or infer anything else.
-- If SOURCE FACTS do not answer the question, reply exactly: "__FALLBACK__"
-- Keep 2-5 sentences, friendly and clear.
-- No markdown, no bullet lists unless in SOURCE FACTS.`;
+  const allowedIds = FAQ_CATALOG.map((e) => e.id).join(', ');
 
-  const historyMessages = history.slice(-4).map((m) => ({
+  const system = `You are the conversational assistant for Epi'AI, the AI & data science student association at Epitech.
+
+Your personality: warm, helpful, concise, human — not a rigid FAQ bot.
+
+STRICT GROUNDING RULES (never break these):
+1. Use ONLY facts from the FAQ CATALOG below. Do NOT invent names, dates, URLs, policies, or procedures.
+2. If the catalog does not contain the answer, say so honestly in a friendly way and invite the user to pick a related topic.
+3. Never mention "catalog", "FAQ", or "database" to the user.
+4. Respond in ${lang}. Use "tu" in French.
+
+CONVERSATION RULES:
+- Use chat history for follow-ups ("et les events ?", "autre chose ?", "merci").
+- Greetings: respond naturally and offer help (do not dump the whole FAQ).
+- Thanks / goodbye: respond briefly and warmly.
+- Unclear questions: ask ONE short clarifying question OR suggest 2-3 topics.
+- Answers: 2-6 sentences, conversational — synthesize relevant catalog entries, don't copy-paste verbatim unless necessary.
+
+Allowed FAQ IDs: ${allowedIds}
+
+FAQ CATALOG (sole source of truth):
+${catalog}
+
+Return JSON only:
+{
+  "faqIds": string[],       // catalog entries you used (empty if pure small talk)
+  "answer": string,         // natural reply to the user
+  "suggestions": string[]   // optional FAQ ids to suggest (max 3) when user needs guidance
+}`;
+
+  let userContent = message;
+  const hints: string[] = [];
+  if (hintFaqIds?.length) hints.push(`likely topics: ${hintFaqIds.join(', ')}`);
+  if (smallTalk) hints.push(`message type: ${smallTalk}`);
+  if (hints.length) userContent += `\n\n[Context for you: ${hints.join('; ')}]`;
+
+  const historyMessages = history.slice(-8).map((m) => ({
     role: m.role as 'user' | 'assistant',
     content: m.content,
   }));
 
-  const text = await chatCompletionText({
+  const parsed = await chatCompletionJson<AiResponsePayload>({
     system,
-    messages: [
-      ...historyMessages,
-      {
-        role: 'user',
-        content: `User question: ${message}\n\nSOURCE FACTS:\n${facts}`,
-      },
-    ],
-    temperature: 0.2,
+    messages: [...historyMessages, { role: 'user', content: userContent }],
+    temperature: 0.45,
   });
 
-  if (text.includes('__FALLBACK__')) {
-    return facts;
+  const faqIds = uniqueFaqIds([
+    ...(parsed.faqIds || []),
+    ...(hintFaqIds || []),
+  ]).slice(0, 2);
+
+  let answer = parsed.answer?.trim() || '';
+
+  if (!answer && faqIds.length > 0) {
+    answer = getAnswerForFaqIds(faqIds, locale);
   }
 
-  return text;
+  if (!answer) {
+    answer = copy.fallback;
+  }
+
+  const suggestions = uniqueFaqIds(parsed.suggestions || []);
+
+  return {
+    answer,
+    faqIds,
+    suggestions:
+      suggestions.length > 0
+        ? suggestions.slice(0, 3)
+        : faqIds.length === 0
+          ? defaultSuggestions([], FAQ_CHIP_IDS.slice(0, 3))
+          : undefined,
+    source: 'ai',
+  };
+}
+
+/** Offline path when no AI key — deterministic catalog matching. */
+function handleOfflineRequest(params: {
+  message: string;
+  faqId?: FaqId;
+  locale: ChatbotLocale;
+}): ChatbotResult {
+  const locale = params.locale;
+  const copy = getChatbotCopy(locale);
+
+  if (params.faqId && isValidFaqId(params.faqId)) {
+    return {
+      answer: getAnswerForFaqIds([params.faqId], locale),
+      faqIds: [params.faqId],
+      source: 'catalog',
+    };
+  }
+
+  const smallTalk = detectSmallTalk(params.message);
+  if (smallTalk) {
+    const key = smallTalk as 'greeting' | 'thanks' | 'goodbye';
+    return {
+      answer: copy[key],
+      faqIds: [],
+      suggestions:
+        smallTalk === 'greeting' ? (['about', 'join', 'events'] as FaqId[]) : undefined,
+      source: 'smalltalk',
+    };
+  }
+
+  const localMatch = matchFaq(params.message);
+  if (localMatch.match) {
+    return {
+      answer: getAnswerForFaqIds([localMatch.match.id], locale),
+      faqIds: [localMatch.match.id],
+      source: 'catalog',
+    };
+  }
+
+  return {
+    answer: copy.fallback,
+    faqIds: [],
+    suggestions: defaultSuggestions(localMatch.suggestions),
+    source: 'fallback',
+  };
 }
 
 export async function handleChatbotRequest(params: {
@@ -139,16 +190,10 @@ export async function handleChatbotRequest(params: {
   const copy = getChatbotCopy(locale);
   const history = params.history ?? [];
 
-  if (params.faqId && isValidFaqId(params.faqId)) {
-    return {
-      answer: getAnswerForFaqIds([params.faqId], locale),
-      faqIds: [params.faqId],
-      source: 'catalog',
-    };
-  }
-
   const message = params.message?.trim();
-  if (!message) {
+  const faqId = params.faqId && isValidFaqId(params.faqId) ? params.faqId : undefined;
+
+  if (!message && !faqId) {
     return {
       answer: copy.fallback,
       faqIds: [],
@@ -157,90 +202,30 @@ export async function handleChatbotRequest(params: {
     };
   }
 
-  const smallTalk = detectSmallTalk(message);
-  if (smallTalk) {
-    const key = smallTalk as 'greeting' | 'thanks' | 'goodbye';
-    return {
-      answer: copy[key],
-      faqIds: [],
-      suggestions: smallTalk === 'greeting' ? (['about', 'join', 'events'] as FaqId[]) : undefined,
-      source: 'smalltalk',
-    };
-  }
-
-  const localMatch = matchFaq(message);
-  if (localMatch.match && localMatch.match.score >= HIGH_MATCH_SCORE) {
-    const answer = getAnswerForFaqIds([localMatch.match.id], locale);
-    if (isChatbotAiEnabled() && history.length > 0) {
-      try {
-        const rephrased = await rephraseAnswer(message, answer, locale, history);
-        return {
-          answer: rephrased,
-          faqIds: [localMatch.match.id],
-          source: 'ai',
-        };
-      } catch {
-        // fall through to catalog
-      }
-    }
-    return {
-      answer,
-      faqIds: [localMatch.match.id],
-      source: 'catalog',
-    };
-  }
+  const localMatch = message ? matchFaq(message) : { match: null, suggestions: [] as FaqId[] };
+  const hintFaqIds: FaqId[] = faqId
+    ? [faqId]
+    : localMatch.match
+      ? [localMatch.match.id]
+      : localMatch.suggestions.slice(0, 2);
 
   if (isChatbotAiEnabled()) {
     try {
-      const { faqIds, suggestions } = await classifyWithAi(message, locale, history);
-
-      if (faqIds.length > 0) {
-        const facts = getAnswerForFaqIds(faqIds, locale);
-        const answer =
-          history.length > 0
-            ? await rephraseAnswer(message, facts, locale, history)
-            : facts;
-
-        return {
-          answer: answer.includes('__FALLBACK__') ? facts : answer,
-          faqIds,
-          source: history.length > 0 ? 'ai' : 'catalog',
-        };
-      }
-
-      const fallbackSuggestions =
-        suggestions.length > 0
-          ? suggestions
-          : localMatch.suggestions.length > 0
-            ? localMatch.suggestions
-            : FAQ_CHIP_IDS.slice(0, 3);
-
-      return {
-        answer: copy.fallback,
-        faqIds: [],
-        suggestions: fallbackSuggestions.slice(0, 3),
-        source: 'fallback',
-      };
+      return await generateConversationalAnswer({
+        message: message || copy.questions[faqId!] || faqId!,
+        locale,
+        history,
+        hintFaqIds,
+        smallTalk: message ? detectSmallTalk(message) : null,
+      });
     } catch (error) {
       console.error('[chatbot] AI error:', error);
     }
   }
 
-  if (localMatch.match) {
-    return {
-      answer: getAnswerForFaqIds([localMatch.match.id], locale),
-      faqIds: [localMatch.match.id],
-      source: 'catalog',
-    };
-  }
-
-  return {
-    answer: copy.fallback,
-    faqIds: [],
-    suggestions:
-      localMatch.suggestions.length > 0
-        ? localMatch.suggestions.slice(0, 3)
-        : FAQ_CHIP_IDS.slice(0, 3),
-    source: 'fallback',
-  };
+  return handleOfflineRequest({
+    message: message || '',
+    faqId,
+    locale,
+  });
 }
