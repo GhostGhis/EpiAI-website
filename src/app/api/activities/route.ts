@@ -3,7 +3,7 @@ import { auth, clerkClient } from '@clerk/nextjs/server';
 import { checkUserPermission } from '@/lib/auth/checkPermission';
 import { getActivities, createActivity } from '@/lib/activities/repository';
 import type { CreateActivityInput } from '@/lib/activities/types';
-import { notifyAllActiveMembers } from '@/lib/notifications/service';
+import { notifyAllActiveMembers, NOTIFIABLE_MEMBER_STATUSES } from '@/lib/notifications/service';
 import { sendMandatoryActivityEmail } from '@/lib/email/resend';
 import { prisma } from '@/lib/prisma';
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
         link,
       });
       const members = await prisma.user.findMany({
-        where: { memberStatus: 'active' },
+        where: { memberStatus: { in: NOTIFIABLE_MEMBER_STATUSES } },
         select: { email: true, firstName: true },
         take: 200,
       });

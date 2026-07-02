@@ -1,7 +1,14 @@
-import type { NotificationType } from '@prisma/client';
+import type { MemberStatus, NotificationType } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 import { createNotification } from './repository';
 import { logger } from '@/lib/logger';
+
+/**
+ * Statuts d'adhésion qui reçoivent les communications (emails + notifications).
+ * On inclut les membres en essai (`pending`) : ils sont connectés et doivent
+ * être tenus au courant, pas seulement les membres validés (`active`).
+ */
+export const NOTIFIABLE_MEMBER_STATUSES: MemberStatus[] = ['active', 'pending'];
 
 export async function notifyUser(params: {
   clerkId: string;
@@ -38,7 +45,7 @@ export async function notifyAllActiveMembers(params: {
   link?: string;
 }) {
   const users = await prisma.user.findMany({
-    where: { memberStatus: 'active' },
+    where: { memberStatus: { in: NOTIFIABLE_MEMBER_STATUSES } },
     select: { id: true },
   });
 

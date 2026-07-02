@@ -7,7 +7,7 @@ import {
 } from '@/lib/events/repository';
 import type { EventFilters, CreateEventInput } from '@/lib/events/types';
 import { checkUserPermission } from '@/lib/auth/checkPermission';
-import { notifyAllActiveMembers } from '@/lib/notifications/service';
+import { notifyAllActiveMembers, NOTIFIABLE_MEMBER_STATUSES } from '@/lib/notifications/service';
 import { sendNewEventEmail } from '@/lib/email/resend';
 import { prisma } from '@/lib/prisma';
 import { logger } from '@/lib/logger';
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
       });
 
       const members = await prisma.user.findMany({
-        where: { memberStatus: 'active' },
+        where: { memberStatus: { in: NOTIFIABLE_MEMBER_STATUSES } },
         select: { email: true, firstName: true },
         take: 200,
       });
