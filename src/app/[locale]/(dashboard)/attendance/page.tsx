@@ -5,7 +5,20 @@ import { useParams } from 'next/navigation';
 import { Link } from '@/i18n/routing';
 import { UserCheck, AlertTriangle, TrendingUp } from 'lucide-react';
 import type { MemberAttendanceSummary } from '@/lib/activities/types';
-import { PageHeader, StatCard, Card, Button } from '@/components/ui';
+import {
+  PageHeader,
+  StatCard,
+  Panel,
+  Badge,
+  Button,
+  DataTable,
+  DataTableHead,
+  DataTableHeadRow,
+  DataTableTh,
+  DataTableBody,
+  DataTableRow,
+  DataTableTd,
+} from '@/components/ui';
 
 export default function MyAttendancePage() {
   const params = useParams();
@@ -25,7 +38,7 @@ export default function MyAttendancePage() {
   const isLow = rate < 50 && totalActs > 0;
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-5 max-w-3xl">
       <PageHeader
         title={locale === 'fr' ? 'Mes présences' : 'My attendance'}
         description={
@@ -42,11 +55,11 @@ export default function MyAttendancePage() {
           ))}
         </div>
       ) : !summary ? (
-        <Card>
+        <Panel>
           <p className="text-muted text-center py-4">
             {locale === 'fr' ? 'Aucune donnée.' : 'No data.'}
           </p>
-        </Card>
+        </Panel>
       ) : (
         <>
           <div className="grid sm:grid-cols-3 gap-4">
@@ -81,32 +94,30 @@ export default function MyAttendancePage() {
           )}
 
           {summary.details && summary.details.length > 0 && (
-            <div className="rounded-2xl bg-card border border-default overflow-x-auto">
-              <table className="w-full text-sm min-w-[480px]">
-                <thead>
-                  <tr className="border-b border-default text-muted text-left">
-                    <th className="p-4 font-medium">
-                      {locale === 'fr' ? 'Activité' : 'Activity'}
-                    </th>
-                    <th className="p-4 font-medium">
-                      {locale === 'fr' ? 'Date' : 'Date'}
-                    </th>
-                    <th className="p-4 font-medium">
-                      {locale === 'fr' ? 'Statut' : 'Status'}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
+            <Panel
+              title={locale === 'fr' ? 'Historique' : 'Activity history'}
+              noPadding
+              bodyClassName="p-0"
+            >
+              <DataTable>
+                <DataTableHead>
+                  <DataTableHeadRow>
+                    <DataTableTh>{locale === 'fr' ? 'Activité' : 'Activity'}</DataTableTh>
+                    <DataTableTh>{locale === 'fr' ? 'Date' : 'Date'}</DataTableTh>
+                    <DataTableTh>{locale === 'fr' ? 'Statut' : 'Status'}</DataTableTh>
+                  </DataTableHeadRow>
+                </DataTableHead>
+                <DataTableBody>
                   {summary.details.map((r) => (
-                    <tr key={r.activityId} className="border-b border-subtle">
-                      <td className="p-4 text-primary">{r.activityTitle}</td>
-                      <td className="p-4 text-secondary">
+                    <DataTableRow key={r.activityId}>
+                      <DataTableTd className="text-primary">{r.activityTitle}</DataTableTd>
+                      <DataTableTd className="text-secondary">
                         {r.activityDate
                           ? new Date(r.activityDate).toLocaleDateString(locale)
                           : '—'}
-                      </td>
-                      <td className="p-4">
-                        <span className={r.isPresent ? 'text-brand-400' : 'text-red-400'}>
+                      </DataTableTd>
+                      <DataTableTd>
+                        <Badge variant={r.isPresent ? 'success' : 'danger'}>
                           {r.isPresent
                             ? locale === 'fr'
                               ? 'Présent'
@@ -114,13 +125,13 @@ export default function MyAttendancePage() {
                             : locale === 'fr'
                               ? 'Absent'
                               : 'Absent'}
-                        </span>
-                      </td>
-                    </tr>
+                        </Badge>
+                      </DataTableTd>
+                    </DataTableRow>
                   ))}
-                </tbody>
-              </table>
-            </div>
+                </DataTableBody>
+              </DataTable>
+            </Panel>
           )}
 
           <Link

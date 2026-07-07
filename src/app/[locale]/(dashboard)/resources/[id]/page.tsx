@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import type { ResourceWithDetails } from '@/lib/resources/types';
+import { PageHeader, Panel, Button, Badge } from '@/components/ui';
 
 const iconComponents: Record<string, any> = {
   FileText,
@@ -201,7 +202,7 @@ export default function ResourceDetailPage() {
   const fileExtension = (resource.fileUrl || resource.url || '').split('.').pop()?.toLowerCase();
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Secure file viewer modal */}
       {showViewer && (
         <FileViewerModal
@@ -213,21 +214,24 @@ export default function ResourceDetailPage() {
           onClose={() => setShowViewer(false)}
         />
       )}
-      {/* Back Link */}
-      <Link
-        href={`/${locale}/resources`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {t('backToResources')}
-      </Link>
+      <PageHeader
+        eyebrow="Resources"
+        title={resource.title}
+        description={resource.categoryName}
+        actions={
+          <Link
+            href={`/${locale}/resources`}
+            className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t('backToResources')}
+          </Link>
+        }
+      />
 
-      {/* Main Content */}
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Left Column - Main Info */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Header Card */}
-          <div className="p-6 rounded-2xl bg-card border border-default">
+      <div className="grid lg:grid-cols-3 gap-5">
+        <div className="lg:col-span-2 space-y-5">
+          <Panel>
             <div className="flex items-start gap-4">
               <div className={cn(
                 'p-4 rounded-xl flex-shrink-0',
@@ -237,22 +241,16 @@ export default function ResourceDetailPage() {
               </div>
 
               <div className="flex-1">
-                <h1 className="text-2xl font-bold text-primary mb-2">
-                  {resource.title}
-                </h1>
-
                 <div className="flex flex-wrap items-center gap-3 mb-4">
-                  <span className="px-3 py-1 rounded-lg bg-card-muted text-secondary text-sm">
+                  <Badge variant="default">
                     {getTypeLabel(resource.type, locale as 'en' | 'fr')}
-                  </span>
+                  </Badge>
                   <DifficultyBadge
                     difficulty={resource.difficulty}
                     locale={locale as 'en' | 'fr'}
                   />
                   {resource.isFeatured && (
-                    <span className="px-3 py-1 rounded-lg bg-amber-500/20 text-amber-400 text-sm border border-amber-500/30">
-                      Featured
-                    </span>
+                    <Badge variant="amber">Featured</Badge>
                   )}
                 </div>
 
@@ -261,53 +259,35 @@ export default function ResourceDetailPage() {
                 </p>
               </div>
             </div>
-          </div>
+          </Panel>
 
-          {/* Tags */}
           {resource.tags.length > 0 && (
-            <div className="p-6 rounded-2xl bg-card border border-default">
-              <h3 className="text-lg font-semibold text-primary mb-4 flex items-center gap-2">
-                <Tag className="w-5 h-5" />
-                {t('tags')}
-              </h3>
+            <Panel title={t('tags')}>
               <div className="flex flex-wrap gap-2">
                 {resource.tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="px-3 py-1 rounded-lg bg-card-muted text-secondary text-sm"
-                  >
-                    #{tag}
-                  </span>
+                  <Badge key={tag} variant="default">#{tag}</Badge>
                 ))}
               </div>
-            </div>
+            </Panel>
           )}
         </div>
 
-        {/* Right Column - Sidebar */}
-        <div className="space-y-6">
-          {/* Action Card */}
-          <div className="p-6 rounded-2xl bg-card border border-default">
+        <div className="space-y-5">
+          <Panel>
             <div className="space-y-4">
               {externalUrl && (
-                <button
-                  onClick={handleOpenLink}
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-                >
-                  <ExternalLink className="w-5 h-5" />
+                <Button onClick={handleOpenLink} className="w-full" size="lg">
+                  <ExternalLink className="w-4 h-4" />
                   {t('openLink')}
-                </button>
+                </Button>
               )}
 
               {/* View File — visible si fichier uploadé (downloadable ou non) */}
               {hasUploadedFile && (
-                <button
-                  onClick={handleViewFile}
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-                >
-                  <Eye className="w-5 h-5" />
+                <Button onClick={handleViewFile} className="w-full" size="lg">
+                  <Eye className="w-4 h-4" />
                   {locale === 'fr' ? 'Voir le fichier' : 'View File'}
-                </button>
+                </Button>
               )}
 
               {/* Download — uniquement si isDownloadable */}
@@ -363,11 +343,9 @@ export default function ResourceDetailPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Panel>
 
-          {/* Stats Card */}
-          <div className="p-6 rounded-2xl bg-card border border-default">
-            <h3 className="text-lg font-semibold text-primary mb-4">{t('stats')}</h3>
+          <Panel title={t('stats')}>
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-secondary flex items-center gap-2">
@@ -392,11 +370,9 @@ export default function ResourceDetailPage() {
                 </div>
               )}
             </div>
-          </div>
+          </Panel>
 
-          {/* Meta Card */}
-          <div className="p-6 rounded-2xl bg-card border border-default">
-            <h3 className="text-lg font-semibold text-primary mb-4">{t('information')}</h3>
+          <Panel title={t('information')}>
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Calendar className="w-5 h-5 text-muted" />
@@ -420,7 +396,7 @@ export default function ResourceDetailPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </Panel>
         </div>
       </div>
     </div>

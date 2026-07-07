@@ -6,16 +6,15 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { CATEGORIES } from '@/lib/events/categories';
-import { ArrowLeft, Calendar, MapPin, Globe, Image, Users, AlertCircle } from 'lucide-react';
-import { useTranslations } from 'next-intl';
+import { Calendar, Globe, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
+import { FormPageShell, EmptyState, Button, Input, Textarea } from '@/components/ui';
 
 export default function CreateEventPage() {
   const params = useParams();
   const router = useRouter();
   const locale = (params.locale as string) || 'en';
   const { hasPermission } = useAuth();
-  const t = useTranslations('Events');
 
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -38,24 +37,21 @@ export default function CreateEventPage() {
 
   if (!canCreate) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16">
-        <Calendar className="w-16 h-16 text-muted mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-primary mb-2">
-          {locale === 'fr' ? 'Accès refusé' : 'Access Denied'}
-        </h1>
-        <p className="text-secondary mb-6">
-          {locale === 'fr'
-            ? 'Vous n\'avez pas la permission de créer des événements.'
-            : 'You don\'t have permission to create events.'}
-        </p>
-        <Link
-          href={`/${locale}/events`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour aux événements' : 'Back to Events'}
-        </Link>
-      </div>
+      <EmptyState
+        icon={<Calendar className="w-12 h-12" />}
+        title={
+          locale === 'fr'
+            ? "Vous n'avez pas la permission de créer des événements."
+            : "You don't have permission to create events."
+        }
+        action={
+          <Link href={`/${locale}/events`}>
+            <Button variant="secondary">
+              {locale === 'fr' ? 'Retour aux événements' : 'Back to Events'}
+            </Button>
+          </Link>
+        }
+      />
     );
   }
 
@@ -117,7 +113,7 @@ export default function CreateEventPage() {
           throw new Error(data.error || 'Failed to create event');
         }
 
-        const event = await response.json();
+        await response.json();
         router.push(`/${locale}/events`);
       } catch (err: any) {
         setError(err.message);
@@ -130,47 +126,31 @@ export default function CreateEventPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Back Link */}
-      <Link
-        href={`/${locale}/events`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {locale === 'fr' ? 'Retour aux événements' : 'Back to Events'}
-      </Link>
-
-      <h1 className="text-3xl font-bold text-primary mb-8">
-        {locale === 'fr' ? 'Créer un événement' : 'Create Event'}
-      </h1>
-
-      {/* Error */}
+    <FormPageShell
+      backHref={`/${locale}/events`}
+      backLabel={locale === 'fr' ? 'Retour aux événements' : 'Back to Events'}
+      title={locale === 'fr' ? 'Créer un événement' : 'Create Event'}
+      maxWidth="lg"
+    >
       {error && (
-        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 mb-6">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm mb-5">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            {locale === 'fr' ? 'Titre *' : 'Title *'}
-          </label>
-          <input
-            type="text"
-            value={form.title}
-            onChange={(e) => updateForm('title', e.target.value)}
-            placeholder={locale === 'fr' ? 'Nom de l\'événement' : 'Event name'}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
-            required
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Input
+          label={locale === 'fr' ? 'Titre *' : 'Title *'}
+          type="text"
+          value={form.title}
+          onChange={(e) => updateForm('title', e.target.value)}
+          placeholder={locale === 'fr' ? "Nom de l'événement" : 'Event name'}
+          required
+        />
 
-        {/* Category */}
         <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
+          <label className="text-xs font-medium text-secondary mb-1.5 block">
             {locale === 'fr' ? 'Catégorie *' : 'Category *'}
           </label>
           <div className="flex flex-wrap gap-2">
@@ -180,9 +160,9 @@ export default function CreateEventPage() {
                 type="button"
                 onClick={() => updateForm('categoryId', cat.id)}
                 className={cn(
-                  'px-4 py-2 rounded-xl text-sm font-medium transition-all border',
+                  'px-3 py-1.5 rounded-lg text-sm font-medium transition-all border',
                   form.categoryId === cat.id
-                    ? 'bg-white/20 text-primary border-white/40'
+                    ? 'bg-brand-500/15 text-brand-400 border-brand-500/30'
                     : 'bg-card text-secondary border-default hover:bg-card-muted'
                 )}
               >
@@ -192,133 +172,94 @@ export default function CreateEventPage() {
           </div>
         </div>
 
-        {/* Description */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            {locale === 'fr' ? 'Description courte *' : 'Short description *'}
-          </label>
-          <textarea
-            value={form.description}
-            onChange={(e) => updateForm('description', e.target.value)}
-            placeholder={locale === 'fr' ? 'Brève description de l\'événement' : 'Brief event description'}
-            rows={3}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors resize-none"
-            required
-          />
-        </div>
+        <Textarea
+          label={locale === 'fr' ? 'Description courte *' : 'Short description *'}
+          value={form.description}
+          onChange={(e) => updateForm('description', e.target.value)}
+          placeholder={locale === 'fr' ? "Brève description de l'événement" : 'Brief event description'}
+          rows={3}
+          required
+        />
 
-        {/* Content */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            {locale === 'fr' ? 'Contenu détaillé *' : 'Detailed content *'}
-          </label>
-          <textarea
-            value={form.content}
-            onChange={(e) => updateForm('content', e.target.value)}
-            placeholder={locale === 'fr' ? 'Description complète, agenda, prérequis...' : 'Full description, agenda, prerequisites...'}
-            rows={6}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors resize-none"
-            required
-          />
-        </div>
+        <Textarea
+          label={locale === 'fr' ? 'Contenu détaillé *' : 'Detailed content *'}
+          value={form.content}
+          onChange={(e) => updateForm('content', e.target.value)}
+          placeholder={locale === 'fr' ? 'Description complète, agenda, prérequis...' : 'Full description, agenda, prerequisites...'}
+          rows={6}
+          required
+        />
 
-        {/* Date / End Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-secondary text-sm font-medium mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              {locale === 'fr' ? 'Date de début *' : 'Start date *'}
-            </label>
-            <input
-              type="datetime-local"
-              value={form.date}
-              onChange={(e) => updateForm('date', e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/40 transition-colors"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-secondary text-sm font-medium mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              {locale === 'fr' ? 'Date de fin' : 'End date'}
-            </label>
-            <input
-              type="datetime-local"
-              value={form.endDate}
-              onChange={(e) => updateForm('endDate', e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/40 transition-colors"
-            />
-          </div>
+          <Input
+            label={locale === 'fr' ? 'Date de début *' : 'Start date *'}
+            type="datetime-local"
+            value={form.date}
+            onChange={(e) => updateForm('date', e.target.value)}
+            required
+          />
+          <Input
+            label={locale === 'fr' ? 'Date de fin' : 'End date'}
+            type="datetime-local"
+            value={form.endDate}
+            onChange={(e) => updateForm('endDate', e.target.value)}
+          />
         </div>
 
-        {/* Location / Online */}
         <div>
-          <div className="flex items-center gap-3 mb-3">
-            <label className="block text-secondary text-sm font-medium">
-              <MapPin className="w-4 h-4 inline mr-1" />
+          <div className="flex items-center gap-3 mb-2">
+            <label className="text-xs font-medium text-secondary">
               {locale === 'fr' ? 'Lieu *' : 'Location *'}
             </label>
-            <label className="flex items-center gap-2 text-sm text-secondary cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-secondary cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.isOnline}
                 onChange={(e) => updateForm('isOnline', e.target.checked)}
                 className="rounded border-default"
               />
-              <Globe className="w-4 h-4" />
+              <Globe className="w-3.5 h-3.5" />
               {locale === 'fr' ? 'En ligne' : 'Online'}
             </label>
           </div>
-          <input
+          <Input
             type="text"
             value={form.location}
             onChange={(e) => updateForm('location', e.target.value)}
             placeholder={form.isOnline
               ? (locale === 'fr' ? 'Ex: Discord, Zoom...' : 'E.g. Discord, Zoom...')
               : (locale === 'fr' ? 'Adresse ou salle' : 'Address or room')}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
             required
           />
           {form.isOnline && (
-            <input
-              type="url"
-              value={form.onlineLink}
-              onChange={(e) => updateForm('onlineLink', e.target.value)}
-              placeholder={locale === 'fr' ? 'Lien de la réunion' : 'Meeting link'}
-              className="w-full mt-2 px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
-            />
+            <div className="mt-2">
+              <Input
+                type="url"
+                value={form.onlineLink}
+                onChange={(e) => updateForm('onlineLink', e.target.value)}
+                placeholder={locale === 'fr' ? 'Lien de la réunion' : 'Meeting link'}
+              />
+            </div>
           )}
         </div>
 
-        {/* Capacity */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            <Users className="w-4 h-4 inline mr-1" />
-            {locale === 'fr' ? 'Capacité *' : 'Capacity *'}
-          </label>
-          <input
-            type="number"
-            value={form.capacity}
-            onChange={(e) => updateForm('capacity', parseInt(e.target.value) || 1)}
-            min={1}
-            max={10000}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/40 transition-colors"
-            required
-          />
-        </div>
+        <Input
+          label={locale === 'fr' ? 'Capacité *' : 'Capacity *'}
+          type="number"
+          value={form.capacity}
+          onChange={(e) => updateForm('capacity', parseInt(e.target.value) || 1)}
+          min={1}
+          max={10000}
+          required
+        />
 
-        {/* Image URL */}
         <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            <Image className="w-4 h-4 inline mr-1" />
-            {locale === 'fr' ? 'URL de l\'image (optionnel)' : 'Image URL (optional)'}
-          </label>
-          <input
+          <Input
+            label={locale === 'fr' ? "URL de l'image (optionnel)" : 'Image URL (optional)'}
             type="url"
             value={form.imageUrl}
             onChange={(e) => updateForm('imageUrl', e.target.value)}
             placeholder="https://... (Google Drive, Dropbox, lien direct)"
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
           />
           {form.imageUrl.trim() && (
             <div className="mt-3 rounded-xl overflow-hidden border border-default h-40">
@@ -341,29 +282,19 @@ export default function CreateEventPage() {
           </p>
         </div>
 
-        {/* Submit */}
-        <div className="flex gap-3 pt-4">
-          <button
-            type="submit"
-            disabled={isPending}
-            className={cn(
-              'flex-1 py-3 rounded-xl font-semibold transition-all',
-              'bg-white text-black hover:bg-white/90',
-              isPending && 'opacity-50 cursor-not-allowed'
-            )}
-          >
+        <div className="flex gap-3 pt-2">
+          <Button type="submit" disabled={isPending} className="flex-1" size="lg">
             {isPending
               ? (locale === 'fr' ? 'Création...' : 'Creating...')
-              : (locale === 'fr' ? 'Créer l\'événement' : 'Create Event')}
-          </button>
-          <Link
-            href={`/${locale}/events`}
-            className="px-6 py-3 rounded-xl bg-card text-primary border border-default hover:bg-card-muted transition-all font-medium"
-          >
-            {locale === 'fr' ? 'Annuler' : 'Cancel'}
+              : (locale === 'fr' ? "Créer l'événement" : 'Create Event')}
+          </Button>
+          <Link href={`/${locale}/events`}>
+            <Button variant="secondary" size="lg">
+              {locale === 'fr' ? 'Annuler' : 'Cancel'}
+            </Button>
           </Link>
         </div>
       </form>
-    </div>
+    </FormPageShell>
   );
 }

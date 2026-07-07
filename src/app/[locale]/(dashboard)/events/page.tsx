@@ -10,7 +10,7 @@ import type { EventWithDetails, PaginatedResponse } from '@/lib/events/types';
 import { Plus, Filter, SortDesc, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { PageHeader, Button, FilterBar } from '@/components/ui';
+import { PageHeader, Button, FilterBar, Panel, Pagination } from '@/components/ui';
 
 export default function EventsPage() {
   const params = useParams();
@@ -61,8 +61,9 @@ export default function EventsPage() {
   const canCreateEvent = hasPermission('dashboard.admin');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
+        eyebrow="Calendar"
         title={t('title')}
         description={`${total} ${total === 1 ? 'event' : 'events'}`}
         actions={
@@ -70,13 +71,14 @@ export default function EventsPage() {
             <a
               href="/api/events/calendar"
               download
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-card border border-default text-secondary hover:text-primary text-sm"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-card border border-default text-secondary hover:text-primary text-xs font-medium shadow-sm"
             >
-              <Calendar className="w-4 h-4" aria-hidden />
+              <Calendar className="w-3.5 h-3.5" aria-hidden />
               iCal
             </a>
-            <button
-              type="button"
+            <Button
+              variant={showPast ? 'primary' : 'secondary'}
+              size="sm"
               onClick={() => {
                 startTransition(() => {
                   const newParams = new URLSearchParams(searchParams.toString());
@@ -84,18 +86,13 @@ export default function EventsPage() {
                   router.push(`/${locale}/events?${newParams.toString()}`);
                 });
               }}
-              className={`px-4 py-2.5 rounded-xl text-sm font-medium transition-all border ${
-                showPast
-                  ? 'bg-brand-600 text-white border-brand-600'
-                  : 'bg-card text-primary hover:bg-card-muted border-default'
-              }`}
             >
               {showPast ? t('upcoming') : t('past')}
-            </button>
+            </Button>
             {canCreateEvent ? (
               <Link href={`/${locale}/events/new`}>
-                <Button>
-                  <Plus className="w-5 h-5" />
+                <Button size="sm">
+                  <Plus className="w-4 h-4" />
                   {t('createEvent')}
                 </Button>
               </Link>
@@ -104,36 +101,25 @@ export default function EventsPage() {
         }
       />
 
-      <FilterBar>
-        <CategoryFilter />
-      </FilterBar>
+      <Panel noPadding bodyClassName="p-4">
+        <FilterBar>
+          <CategoryFilter />
+        </FilterBar>
+      </Panel>
 
-      {/* Event List */}
       <EventList events={events} isLoading={isLoading} />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => {
-                startTransition(() => {
-                  const newParams = new URLSearchParams(searchParams.toString());
-                  newParams.set('page', page.toString());
-                  router.push(`/${locale}/events?${newParams.toString()}`);
-                });
-              }}
-              className={`w-10 h-10 rounded-xl font-medium transition-all border ${page === currentPage
-                ? 'bg-brand-600 text-white border-brand-600'
-                : 'bg-card text-primary hover:bg-card-muted border-default'
-                }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          startTransition(() => {
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.set('page', page.toString());
+            router.push(`/${locale}/events?${newParams.toString()}`);
+          });
+        }}
+      />
     </div>
   );
 }

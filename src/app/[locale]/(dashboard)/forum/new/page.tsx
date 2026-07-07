@@ -4,8 +4,8 @@ import { useParams } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { CreateThreadForm } from '@/components/forum/CreateThreadForm';
 import { useTranslations } from 'next-intl';
-import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { FormPageShell, EmptyState, Button } from '@/components/ui';
 
 export default function NewThreadPage() {
   const params = useParams();
@@ -15,65 +15,38 @@ export default function NewThreadPage() {
 
   if (!isSignedIn) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16">
-        <h1 className="text-2xl font-bold text-primary mb-4">
-          Sign In Required
-        </h1>
-        <p className="text-secondary mb-6">
-          You need to be signed in to create a new discussion.
-        </p>
-        <Link
-          href={`/${locale}/sign-in`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Go Back
-        </Link>
-      </div>
+      <EmptyState
+        title="You need to be signed in to create a new discussion."
+        action={
+          <Link href={`/${locale}/sign-in`}>
+            <Button>Sign In</Button>
+          </Link>
+        }
+      />
     );
   }
 
   if (!hasPermission('content.create')) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16">
-        <h1 className="text-2xl font-bold text-primary mb-4">
-          Permission Required
-        </h1>
-        <p className="text-secondary mb-6">
-          You don&apos;t have permission to create new discussions.
-        </p>
-        <Link
-          href={`/${locale}/forum`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Forum
-        </Link>
-      </div>
+      <EmptyState
+        title="You don't have permission to create new discussions."
+        action={
+          <Link href={`/${locale}/forum`}>
+            <Button variant="secondary">{t('backToForum')}</Button>
+          </Link>
+        }
+      />
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <Link
-          href={`/${locale}/forum`}
-          className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {t('backToForum')}
-        </Link>
-        <h1 className="text-3xl font-bold text-primary">{t('createNewThread')}</h1>
-        <p className="text-secondary mt-2">
-          Start a new discussion with the community.
-        </p>
-      </div>
-
-      {/* Form */}
-      <div className="p-6 rounded-2xl bg-card border border-default">
-        <CreateThreadForm />
-      </div>
-    </div>
+    <FormPageShell
+      backHref={`/${locale}/forum`}
+      backLabel={t('backToForum')}
+      title={t('createNewThread')}
+      description="Start a new discussion with the community."
+    >
+      <CreateThreadForm />
+    </FormPageShell>
   );
 }

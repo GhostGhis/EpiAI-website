@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { FormPageShell, Button, Input, Textarea, Select } from '@/components/ui';
 
 const empty = {
   titleFr: '',
@@ -47,78 +46,85 @@ export default function NewBlogPostPage() {
     }
   };
 
-  const field = (name: keyof typeof empty, label: string, multiline = false) => (
-    <div>
-      <label className="block text-sm text-secondary mb-1">{label}</label>
-      {multiline ? (
-        <textarea
-          required={name.includes('title') || name.includes('content')}
-          rows={name.includes('content') ? 8 : 3}
-          value={form[name] as string}
-          onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary outline-none focus:border-blue-500/50"
-        />
-      ) : (
-        <input
-          required={name.includes('title') || name === 'authorName'}
-          value={form[name] as string}
-          onChange={(e) => setForm({ ...form, [name]: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary outline-none focus:border-blue-500/50"
-        />
-      )}
-    </div>
-  );
-
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <Link
-          href={`/${locale}/admin/blog`}
-          className="p-2 rounded-lg bg-card text-secondary hover:text-primary"
-          aria-label="Back"
+    <FormPageShell
+      backHref={`/${locale}/admin/blog`}
+      backLabel={locale === 'fr' ? 'Retour au blog' : 'Back to blog'}
+      title={locale === 'fr' ? 'Nouvel article' : 'New post'}
+      maxWidth="lg"
+    >
+      <form onSubmit={submit} className="space-y-5">
+        <Input
+          label="Titre (FR)"
+          required
+          value={form.titleFr}
+          onChange={(e) => setForm({ ...form, titleFr: e.target.value })}
+        />
+        <Input
+          label="Title (EN)"
+          required
+          value={form.titleEn}
+          onChange={(e) => setForm({ ...form, titleEn: e.target.value })}
+        />
+        <Textarea
+          label="Extrait (FR)"
+          rows={3}
+          value={form.excerptFr}
+          onChange={(e) => setForm({ ...form, excerptFr: e.target.value })}
+        />
+        <Textarea
+          label="Excerpt (EN)"
+          rows={3}
+          value={form.excerptEn}
+          onChange={(e) => setForm({ ...form, excerptEn: e.target.value })}
+        />
+        <Textarea
+          label="Contenu (FR)"
+          required
+          rows={8}
+          value={form.contentFr}
+          onChange={(e) => setForm({ ...form, contentFr: e.target.value })}
+        />
+        <Textarea
+          label="Content (EN)"
+          required
+          rows={8}
+          value={form.contentEn}
+          onChange={(e) => setForm({ ...form, contentEn: e.target.value })}
+        />
+        <Input
+          label="Catégorie"
+          value={form.category}
+          onChange={(e) => setForm({ ...form, category: e.target.value })}
+        />
+        <Input
+          label={locale === 'fr' ? 'Auteur' : 'Author'}
+          required
+          value={form.authorName}
+          onChange={(e) => setForm({ ...form, authorName: e.target.value })}
+        />
+        <Input
+          label="URL image (optionnel)"
+          value={form.imageUrl}
+          onChange={(e) => setForm({ ...form, imageUrl: e.target.value })}
+        />
+        <Select
+          label="Status"
+          value={form.status}
+          onChange={(e) =>
+            setForm({ ...form, status: e.target.value as 'draft' | 'published' })
+          }
         >
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <h1 className="text-2xl font-bold text-primary">
-          {locale === 'fr' ? 'Nouvel article' : 'New post'}
-        </h1>
-      </div>
-
-      <form onSubmit={submit} className="space-y-4">
-        {field('titleFr', 'Titre (FR)')}
-        {field('titleEn', 'Title (EN)')}
-        {field('excerptFr', 'Extrait (FR)', true)}
-        {field('excerptEn', 'Excerpt (EN)', true)}
-        {field('contentFr', 'Contenu (FR)', true)}
-        {field('contentEn', 'Content (EN)', true)}
-        {field('category', 'Catégorie')}
-        {field('authorName', locale === 'fr' ? 'Auteur' : 'Author')}
-        {field('imageUrl', 'URL image (optionnel)')}
-
-        <div>
-          <label className="block text-sm text-secondary mb-1">Status</label>
-          <select
-            value={form.status}
-            onChange={(e) =>
-              setForm({ ...form, status: e.target.value as 'draft' | 'published' })
-            }
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
-          >
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
-          </select>
-        </div>
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+        </Select>
 
         {error && <p className="text-red-400 text-sm" role="alert">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium disabled:opacity-50"
-        >
+        <Button type="submit" disabled={loading} className="w-full" size="lg">
           {loading ? '…' : locale === 'fr' ? 'Publier' : 'Save'}
-        </button>
+        </Button>
       </form>
-    </div>
+    </FormPageShell>
   );
 }

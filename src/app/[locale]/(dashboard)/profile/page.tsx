@@ -1,7 +1,8 @@
 'use client';
 
 import { useAuth } from '@/hooks/useAuth';
-import { getRoleName, getRoleColor, getRoleLevel } from '@/lib/roles/utils';
+import { getRoleName, getRoleLevel } from '@/lib/roles/utils';
+import { getRoleChipClass } from '@/lib/ui/role-styles';
 import { useParams } from 'next/navigation';
 import { UserButton, useUser } from '@clerk/nextjs';
 import { userButtonProps } from '@/lib/clerk/user-button';
@@ -19,7 +20,7 @@ import {
   Settings,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
-import { PageHeader, Card } from '@/components/ui';
+import { PageHeader, Panel, Badge } from '@/components/ui';
 
 export default function ProfilePage() {
   const params = useParams();
@@ -30,7 +31,6 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   const roleName = roleId ? getRoleName(roleId, locale as 'en' | 'fr') : 'Member';
-  const roleColor = roleId ? getRoleColor(roleId) : 'text-gray-400';
   const roleLevel = roleId ? getRoleLevel(roleId) : 1;
 
   // Fetch member data from API
@@ -76,7 +76,7 @@ export default function ProfilePage() {
   }) : 'N/A';
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-5 max-w-4xl">
         <PageHeader
           title="Profile"
           description={
@@ -86,7 +86,7 @@ export default function ProfilePage() {
           }
         />
 
-        <Card>
+        <Panel>
             <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
             {/* Avatar */}
             <div className="relative group">
@@ -131,7 +131,7 @@ export default function ProfilePage() {
             <div className="flex-1">
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h2 className="text-2xl font-bold text-primary flex items-center gap-2">
+                  <h2 className="text-lg font-semibold text-primary flex items-center gap-2">
                     {userName}
                     {user?.emailAddresses[0]?.verification?.status === 'verified' && (
                       <BadgeCheck className="w-5 h-5 text-brand-400" />
@@ -143,28 +143,25 @@ export default function ProfilePage() {
 
               {/* Role Badge */}
               <div className="flex items-center gap-3 mb-6 flex-wrap">
-                <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-default ${roleColor}`}>
+                <span className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium border ${getRoleChipClass(roleLevel)}`}>
                   <Shield className="w-4 h-4" />
-                  <span className="font-medium">{roleName}</span>
+                  <span>{roleName}</span>
                 </span>
                 <span className="text-muted text-sm">
                   Level {roleLevel}
                 </span>
                 {isAdmin && (
-                  <span className="px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-medium border border-amber-500/30">
-                    Administrator
-                  </span>
+                  <Badge variant="amber">Administrator</Badge>
                 )}
               </div>
             </div>
           </div>
-        </Card>
+        </Panel>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <h3 className="text-lg font-semibold text-primary mb-4">
-              {locale === 'fr' ? 'Informations Personnelles' : 'Personal Information'}
-            </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Panel
+            title={locale === 'fr' ? 'Informations Personnelles' : 'Personal Information'}
+          >
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Mail className="w-5 h-5 text-muted" />
@@ -183,12 +180,11 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-          </Card>
+          </Panel>
 
-          <Card>
-            <h3 className="text-lg font-semibold text-primary mb-4">
-              {locale === 'fr' ? 'Équipe & Pôle' : 'Team & Department'}
-            </h3>
+          <Panel
+            title={locale === 'fr' ? 'Équipe & Pôle' : 'Team & Department'}
+          >
             <div className="space-y-4">
               <div className="flex items-center gap-3">
                 <Building2 className="w-5 h-5 text-muted" />
@@ -209,12 +205,11 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-          </Card>
+          </Panel>
         </div>
 
         {role && role.permissions && role.permissions.length > 0 ? (
-          <Card>
-            <h3 className="text-lg font-semibold text-primary mb-4">Permissions</h3>
+          <Panel title="Permissions">
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {role.permissions.map((permission) => (
                 <div
@@ -226,12 +221,12 @@ export default function ProfilePage() {
                 </div>
               ))}
             </div>
-          </Card>
+          </Panel>
         ) : null}
 
         <Link
           href="/settings"
-          className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-card-muted border border-default text-primary hover:bg-card transition-all text-sm font-medium"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-card text-primary border border-default hover:bg-card-muted transition-colors text-sm font-semibold shadow-sm"
         >
           <Settings className="w-4 h-4" />
           {locale === 'fr' ? 'Gérer mon compte Clerk' : 'Manage Clerk account'}

@@ -58,8 +58,9 @@ export default function MyResourcesPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
+        eyebrow="Resources"
         title={t('myResources')}
         description={`${resources.length} ${resources.length === 1 ? 'resource' : 'resources'} uploaded`}
         actions={

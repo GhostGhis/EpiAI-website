@@ -10,6 +10,7 @@ import { Countdown } from '@/components/events/Countdown';
 import type { EventWithDetails } from '@/lib/events/types';
 import { ArrowLeft, Calendar, Users, Clock, ClipboardList } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { PageHeader, Panel, Button } from '@/components/ui';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -66,45 +67,44 @@ export default function EventDetailPage() {
         <p className="text-secondary mb-6">
           {error || 'This event does not exist or has been deleted.'}
         </p>
-        <Link
-          href={`/${locale}/events`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Events
+        <Link href={`/${locale}/events`}>
+          <Button>
+            <ArrowLeft className="w-4 h-4" />
+            Back to Events
+          </Button>
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Back Link */}
-      <Link
-        href={`/${locale}/events`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {t('backToEvents')}
-      </Link>
+    <div className="space-y-5 max-w-4xl mx-auto">
+      <PageHeader
+        eyebrow="Events"
+        title={event.title}
+        description={event.location || undefined}
+        actions={
+          <Link
+            href={`/${locale}/events`}
+            className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t('backToEvents')}
+          </Link>
+        }
+      />
 
-      {/* Countdown for upcoming events */}
       {!event.isPast && (
-        <div className="mb-8 p-6 rounded-2xl bg-card border border-default">
-          <div className="text-center mb-4">
-            <p className="text-secondary text-sm uppercase tracking-wide">
-              {t('startsIn')}
-            </p>
-          </div>
+        <Panel title={t('startsIn')}>
           <Countdown targetDate={event.date} />
-        </div>
+        </Panel>
       )}
 
-      {/* Event Details */}
-      <EventDetail event={event} />
+      <Panel>
+        <EventDetail event={event} />
+      </Panel>
 
-      {/* Registration Form */}
-      <div className="mt-8">
+      <Panel title={locale === 'fr' ? 'Inscription' : 'Registration'}>
         <RegistrationForm
           eventId={event.id}
           eventTitle={event.title}
@@ -114,30 +114,24 @@ export default function EventDetailPage() {
           isPast={event.isPast}
           isFull={event.spotsLeft <= 0}
         />
-      </div>
+      </Panel>
 
-      {/* Admin Actions */}
       {isAdmin && (
-        <div className="mt-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-          <h3 className="text-amber-400 font-medium mb-2">Admin Actions</h3>
+        <Panel title="Admin Actions">
           <div className="flex gap-2">
-            <Link
-              href={`/${locale}/events/${event.id}/edit`}
-              className="px-4 py-2 rounded-lg bg-card-muted text-primary hover:bg-card-muted transition-colors text-sm"
-            >
-              Edit Event
+            <Link href={`/${locale}/events/${event.id}/edit`}>
+              <Button variant="secondary" size="sm">Edit Event</Button>
             </Link>
             {event.linkedActivityId && (
-              <Link
-                href={`/${locale}/intranet/${event.linkedActivityId}`}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 transition-colors text-sm border border-brand-500/30"
-              >
-                <ClipboardList className="w-4 h-4" />
-                {locale === 'fr' ? 'Gérer présence' : 'Manage Attendance'}
+              <Link href={`/${locale}/intranet/${event.linkedActivityId}`}>
+                <Button variant="secondary" size="sm">
+                  <ClipboardList className="w-4 h-4" />
+                  {locale === 'fr' ? 'Gérer présence' : 'Manage Attendance'}
+                </Button>
               </Link>
             )}
           </div>
-        </div>
+        </Panel>
       )}
     </div>
   );

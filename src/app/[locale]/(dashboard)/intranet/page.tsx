@@ -11,13 +11,11 @@ import {
   Clock,
   Users,
   Plus,
-  ChevronLeft,
-  ChevronRight,
   CheckCircle,
   AlertCircle,
 } from 'lucide-react';
 import type { IActivity, PaginatedResponse } from '@/lib/activities/types';
-import { PageHeader, Button, Card, EmptyState, Badge } from '@/components/ui';
+import { PageHeader, Button, Card, EmptyState, Badge, Panel, Pagination } from '@/components/ui';
 
 export default function IntranetPage() {
   const params = useParams();
@@ -90,8 +88,9 @@ export default function IntranetPage() {
   const totalPages = Math.ceil(total / 10);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
+        eyebrow="Intranet"
         title={locale === 'fr' ? 'Intranet — Activités' : 'Intranet — Activities'}
         description={
           locale === 'fr'
@@ -135,7 +134,7 @@ export default function IntranetPage() {
       {loading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="p-6 rounded-2xl bg-card border border-default animate-pulse">
+            <div key={i} className="p-4 rounded-xl bg-card border border-default animate-pulse shadow-card">
               <div className="h-6 w-48 bg-card-muted rounded mb-3" />
               <div className="h-4 w-32 bg-card-muted rounded" />
             </div>
@@ -259,29 +258,11 @@ export default function IntranetPage() {
       )}
 
       {totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage(p => Math.max(1, p - 1))}
-            disabled={page === 1}
-            aria-label="Previous page"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
-          <span className="px-3 py-1.5 text-secondary text-sm tabular-nums">
-            {page} / {totalPages}
-          </span>
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setPage(p => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-            aria-label="Next page"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       )}
     </div>
   );

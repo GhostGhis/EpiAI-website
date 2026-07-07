@@ -43,26 +43,26 @@ export function ResourceCard({ resource, className }: ResourceCardProps) {
     <Link
       href={`/${locale}/resources/${resource.id}`}
       className={cn(
-        'block p-5 rounded-2xl bg-card border border-default',
-        'hover:border-default hover:bg-card-muted transition-all',
+        'block p-4 rounded-xl bg-card border border-default shadow-card',
+        'hover:border-brand-500/20 hover:shadow-card transition-all',
         'group',
         className
       )}
     >
       {/* Header */}
-      <div className="flex items-start gap-4">
+      <div className="flex items-start gap-3">
         {/* Type Icon */}
         <div className={cn(
-          'p-3 rounded-xl flex-shrink-0',
+          'p-2.5 rounded-xl flex-shrink-0',
           getTypeColor(resource.type)
         )}>
-          <TypeIcon className="w-6 h-6" />
+          <TypeIcon className="w-5 h-5" />
         </div>
 
         {/* Content */}
         <div className="flex-1 min-w-0">
           {/* Title */}
-          <h3 className="text-lg font-semibold text-primary group-hover:text-brand-600 transition-colors line-clamp-2 mb-2">
+          <h3 className="text-sm font-semibold text-primary group-hover:text-brand-600 transition-colors line-clamp-2 mb-1.5">
             {resource.title}
           </h3>
 

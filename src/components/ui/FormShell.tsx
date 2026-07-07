@@ -36,7 +36,7 @@ export function FilterBar({ children, className }: FilterBarProps) {
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row flex-wrap gap-3 p-4 rounded-2xl bg-card border border-default',
+        'flex flex-col sm:flex-row flex-wrap gap-2.5',
         className
       )}
     >

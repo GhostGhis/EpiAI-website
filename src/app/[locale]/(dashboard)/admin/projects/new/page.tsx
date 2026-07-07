@@ -2,7 +2,9 @@
 
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Plus, X } from 'lucide-react';
+import Link from 'next/link';
+import { Plus, X } from 'lucide-react';
+import { FormPageShell, Button, Input, Textarea, Select } from '@/components/ui';
 
 export default function NewProjectPage() {
     const router = useRouter();
@@ -67,89 +69,67 @@ export default function NewProjectPage() {
     };
 
     return (
-        <div className="max-w-4xl mx-auto space-y-6">
-            <div className="flex items-center gap-4">
-                <button
-                    onClick={() => router.back()}
-                    className="p-2 rounded-lg bg-card hover:bg-card-muted text-secondary hover:text-primary transition-colors"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                </button>
-                <div>
-                    <h1 className="text-3xl font-bold text-primary">New Project</h1>
-                    <p className="text-secondary">Create a new project for the homepage</p>
-                </div>
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Title EN/FR */}
-                <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                    <h2 className="text-lg font-semibold text-primary">Title</h2>
+        <FormPageShell
+            backHref={`/${locale}/admin/projects`}
+            backLabel="Back to projects"
+            title="New Project"
+            description="Create a new project for the homepage"
+            maxWidth="lg"
+            className="max-w-4xl"
+        >
+            <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="space-y-4">
+                    <h2 className="text-sm font-semibold text-primary">Title</h2>
                     <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-secondary text-sm mb-2">English</label>
-                            <input
-                                type="text"
-                                required
-                                value={formData.title.en}
-                                onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
-                                placeholder="Traffic Sign Recognition"
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-secondary text-sm mb-2">Français</label>
-                            <input
-                                type="text"
-                                required
-                                value={formData.title.fr}
-                                onChange={(e) => setFormData({ ...formData, title: { ...formData.title, fr: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
-                                placeholder="Reconnaissance de Panneaux Routiers"
-                            />
-                        </div>
+                        <Input
+                            label="English"
+                            type="text"
+                            required
+                            value={formData.title.en}
+                            onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })}
+                            placeholder="Traffic Sign Recognition"
+                        />
+                        <Input
+                            label="Français"
+                            type="text"
+                            required
+                            value={formData.title.fr}
+                            onChange={(e) => setFormData({ ...formData, title: { ...formData.title, fr: e.target.value } })}
+                            placeholder="Reconnaissance de Panneaux Routiers"
+                        />
                     </div>
                 </div>
 
-                {/* Description EN/FR */}
-                <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                    <h2 className="text-lg font-semibold text-primary">Description</h2>
+                <div className="space-y-4">
+                    <h2 className="text-sm font-semibold text-primary">Description</h2>
                     <div className="grid md:grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-secondary text-sm mb-2">English</label>
-                            <textarea
-                                required
-                                rows={4}
-                                value={formData.description.en}
-                                onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50 resize-none"
-                                placeholder="A computer vision model achieving 98% accuracy..."
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-secondary text-sm mb-2">Français</label>
-                            <textarea
-                                required
-                                rows={4}
-                                value={formData.description.fr}
-                                onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50 resize-none"
-                                placeholder="Un modèle de vision par ordinateur atteignant 98% de précision..."
-                            />
-                        </div>
+                        <Textarea
+                            label="English"
+                            required
+                            rows={4}
+                            value={formData.description.en}
+                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
+                            placeholder="A computer vision model achieving 98% accuracy..."
+                        />
+                        <Textarea
+                            label="Français"
+                            required
+                            rows={4}
+                            value={formData.description.fr}
+                            onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
+                            placeholder="Un modèle de vision par ordinateur atteignant 98% de précision..."
+                        />
                     </div>
                 </div>
 
-                {/* Image & Status */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                        <h2 className="text-lg font-semibold text-primary">Cover Image</h2>
-                        <input
+                <div className="grid md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                        <h2 className="text-sm font-semibold text-primary">Cover Image</h2>
+                        <Input
                             type="url"
                             required
                             value={formData.imageUrl}
                             onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
                             placeholder="https://images.unsplash.com/..."
                         />
                         {formData.imageUrl && (
@@ -157,42 +137,36 @@ export default function NewProjectPage() {
                         )}
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                        <h2 className="text-lg font-semibold text-primary">Status</h2>
-                        <select
+                    <div className="space-y-3">
+                        <Select
+                            label="Status"
                             value={formData.status}
                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/50"
                         >
                             <option value="Live">Live</option>
                             <option value="Beta">Beta</option>
                             <option value="In Development">In Development</option>
                             <option value="Prototype">Prototype</option>
                             <option value="Archived">Archived</option>
-                        </select>
+                        </Select>
                     </div>
                 </div>
 
-                {/* Tech Stack */}
-                <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                    <h2 className="text-lg font-semibold text-primary">Tech Stack</h2>
+                <div className="space-y-3">
+                    <h2 className="text-sm font-semibold text-primary">Tech Stack</h2>
                     <div className="flex gap-2">
-                        <input
+                        <Input
                             type="text"
                             value={techInput}
                             onChange={(e) => setTechInput(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTech())}
-                            className="flex-1 px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
+                            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTech())}
                             placeholder="Python, TensorFlow, OpenCV..."
+                            className="flex-1"
                         />
-                        <button
-                            type="button"
-                            onClick={addTech}
-                            className="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-colors flex items-center gap-2"
-                        >
-                            <Plus className="w-5 h-5" />
+                        <Button type="button" onClick={addTech} size="md">
+                            <Plus className="w-4 h-4" />
                             Add
-                        </button>
+                        </Button>
                     </div>
                     <div className="flex flex-wrap gap-2">
                         {formData.techStack.map((tech) => (
@@ -209,65 +183,45 @@ export default function NewProjectPage() {
                     </div>
                 </div>
 
-                {/* Links */}
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                        <h2 className="text-lg font-semibold text-primary">GitHub URL</h2>
-                        <input
-                            type="url"
-                            value={formData.githubUrl}
-                            onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
-                            placeholder="https://github.com/..."
-                        />
-                    </div>
-
-                    <div className="p-6 rounded-2xl bg-card border border-default space-y-4">
-                        <h2 className="text-lg font-semibold text-primary">Discovery/Demo URL</h2>
-                        <input
-                            type="url"
-                            value={formData.discoveryUrl}
-                            onChange={(e) => setFormData({ ...formData, discoveryUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/50"
-                            placeholder="https://..."
-                        />
-                    </div>
+                <div className="grid md:grid-cols-2 gap-4">
+                    <Input
+                        label="GitHub URL"
+                        type="url"
+                        value={formData.githubUrl}
+                        onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
+                        placeholder="https://github.com/..."
+                    />
+                    <Input
+                        label="Discovery/Demo URL"
+                        type="url"
+                        value={formData.discoveryUrl}
+                        onChange={(e) => setFormData({ ...formData, discoveryUrl: e.target.value })}
+                        placeholder="https://..."
+                    />
                 </div>
 
-                {/* Publish Toggle */}
-                <div className="p-6 rounded-2xl bg-card border border-default">
-                    <label className="flex items-center gap-3 cursor-pointer">
-                        <input
-                            type="checkbox"
-                            checked={formData.published}
-                            onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                            className="w-5 h-5 rounded bg-card border-default text-brand-600 focus:ring-brand-500"
-                        />
-                        <div>
-                            <p className="text-primary font-semibold">Publish immediately</p>
-                            <p className="text-secondary text-sm">Make this project visible on the homepage</p>
-                        </div>
-                    </label>
-                </div>
+                <label className="flex items-center gap-3 cursor-pointer">
+                    <input
+                        type="checkbox"
+                        checked={formData.published}
+                        onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
+                        className="w-4 h-4 rounded bg-input border-default text-brand-600 focus:ring-brand-500"
+                    />
+                    <div>
+                        <p className="text-primary text-sm font-semibold">Publish immediately</p>
+                        <p className="text-secondary text-xs">Make this project visible on the homepage</p>
+                    </div>
+                </label>
 
-                {/* Actions */}
-                <div className="flex gap-4">
-                    <button
-                        type="button"
-                        onClick={() => router.back()}
-                        className="px-6 py-3 rounded-xl bg-card hover:bg-card-muted text-primary font-semibold transition-colors"
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        className="flex-1 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:bg-brand-600/50 text-primary font-semibold transition-colors"
-                    >
+                <div className="flex gap-3 pt-2">
+                    <Link href={`/${locale}/admin/projects`}>
+                        <Button variant="secondary" size="lg">Cancel</Button>
+                    </Link>
+                    <Button type="submit" disabled={loading} className="flex-1" size="lg">
                         {loading ? 'Creating...' : 'Create Project'}
-                    </button>
+                    </Button>
                 </div>
             </form>
-        </div>
+        </FormPageShell>
     );
 }

@@ -21,6 +21,8 @@
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
   --brand-50: #f0fdfa;
   --brand-100: #ccfbf1;
@@ -59,6 +61,8 @@ html.light {
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-inset: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 
   --surface: #ffffff;
   --surface-elevated: #ffffff;
@@ -135,8 +139,22 @@ iframe {
   .border-default { border-color: var(--border-default); }
   .border-subtle { border-color: var(--border-subtle); }
 
-  .shadow-card { box-shadow: var(--shadow-sm); }
+  .shadow-card { box-shadow: var(--shadow-card); }
   .shadow-elevated { box-shadow: var(--shadow-md); }
+
+  /* Dashboard nav */
+  .nav-item {
+    @apply flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors;
+  }
+  .nav-item-active {
+    @apply bg-brand-500/10 text-primary border-l-2 border-brand-600 pl-[10px];
+  }
+  .nav-item-inactive {
+    @apply text-secondary hover:text-primary hover:bg-card-muted border-l-2 border-transparent pl-[10px];
+  }
+  .nav-item-admin-active {
+    @apply bg-card-muted text-primary border-l-2 border-amber-600 pl-[10px];
+  }
 
   .surface-card {
     background-color: var(--bg-card);

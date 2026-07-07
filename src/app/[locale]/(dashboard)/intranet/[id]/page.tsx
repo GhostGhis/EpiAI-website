@@ -18,6 +18,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import type { IActivity, IActivityRegistration, IAttendance } from '@/lib/activities/types';
+import { PageHeader, Panel, Button, Badge } from '@/components/ui';
 
 export default function ActivityDetailPage() {
   const params = useParams();
@@ -154,87 +155,72 @@ export default function ActivityDetailPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      {/* Back */}
-      <Link
-        href={`/${locale}/intranet`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors text-sm"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {locale === 'fr' ? 'Retour aux activités' : 'Back to activities'}
-      </Link>
-
-      {/* Activity Info */}
-      <div className="p-6 rounded-2xl bg-card border border-default">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-2xl font-bold text-primary mb-2">{activity.title}</h1>
-            <p className="text-secondary mb-4">{activity.description}</p>
-            <div className="flex flex-wrap gap-4 text-muted text-sm">
-              <span className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                {new Date(activity.date).toLocaleDateString(locale, {
-                  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
-                })}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <MapPin className="w-4 h-4" />
-                {activity.location}
-              </span>
-              <span className="flex items-center gap-1.5">
-                <Users className="w-4 h-4" />
-                {activity.registeredCount} {locale === 'fr' ? 'inscrits' : 'registered'}
-              </span>
-            </div>
-          </div>
-
+    <div className="space-y-5 max-w-4xl">
+      <PageHeader
+        eyebrow="Intranet"
+        title={activity.title}
+        description={activity.description}
+        actions={
           <div className="flex items-center gap-2">
+            <Link
+              href={`/${locale}/intranet`}
+              className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {locale === 'fr' ? 'Retour' : 'Back'}
+            </Link>
             {activity.linkedEventId && (
-              <Link
-                href={`/${locale}/events/${activity.linkedEventId}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500/15 text-brand-400 text-sm hover:bg-brand-500/30 transition-colors border border-brand-500/25"
-              >
-                <ExternalLink className="w-4 h-4" />
-                {locale === 'fr' ? 'Voir l\'événement' : 'View Event'}
+              <Link href={`/${locale}/events/${activity.linkedEventId}`}>
+                <Button variant="secondary" size="sm">
+                  <ExternalLink className="w-4 h-4" />
+                  {locale === 'fr' ? 'Voir l\'événement' : 'View Event'}
+                </Button>
               </Link>
             )}
             <PermissionGate permission="activities.manage">
-              <button
-                onClick={handleDelete}
-                className="p-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors"
-              >
-                <Trash2 className="w-5 h-5" />
-              </button>
+              <Button variant="danger" size="sm" onClick={handleDelete}>
+                <Trash2 className="w-4 h-4" />
+              </Button>
             </PermissionGate>
           </div>
-        </div>
-      </div>
+        }
+      />
 
-      {/* Admin: Attendance Management */}
+      <Panel title={locale === 'fr' ? 'Détails' : 'Details'}>
+        <div className="flex flex-wrap gap-4 text-muted text-sm">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-4 h-4" />
+            {new Date(activity.date).toLocaleDateString(locale, {
+              weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit',
+            })}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <MapPin className="w-4 h-4" />
+            {activity.location}
+          </span>
+          <span className="flex items-center gap-1.5">
+            <Users className="w-4 h-4" />
+            {activity.registeredCount} {locale === 'fr' ? 'inscrits' : 'registered'}
+          </span>
+        </div>
+      </Panel>
+
       <PermissionGate permission="attendance.manage">
-        <div className="p-6 rounded-2xl bg-card border border-amber-500/20">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-amber-400">
-              {locale === 'fr' ? 'Gestion de la présence' : 'Attendance Management'}
-            </h2>
+        <Panel
+          title={locale === 'fr' ? 'Gestion de la présence' : 'Attendance Management'}
+          actions={
             <div className="flex gap-2">
-              <button
-                onClick={() => setShowForceForm(!showForceForm)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-400 text-sm hover:bg-brand-600/30 transition-colors border border-brand-500/25"
-              >
+              <Button variant="secondary" size="sm" onClick={() => setShowForceForm(!showForceForm)}>
                 <UserPlus className="w-4 h-4" />
                 {locale === 'fr' ? 'Inscrire de force' : 'Force Register'}
-              </button>
-              <button
-                onClick={handleSaveAttendance}
-                disabled={saving}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-600 text-white text-sm hover:bg-brand-700 transition-colors disabled:opacity-50"
-              >
+              </Button>
+              <Button size="sm" onClick={handleSaveAttendance} disabled={saving}>
                 <Save className="w-4 h-4" />
                 {saving ? '...' : (locale === 'fr' ? 'Sauvegarder' : 'Save')}
-              </button>
+              </Button>
             </div>
-          </div>
+          }
+        >
 
           {/* Force Register Form */}
           {showForceForm && (
@@ -298,9 +284,9 @@ export default function ActivityDetailPage() {
                     <p className="text-primary text-sm font-medium">{reg.userName}</p>
                     <p className="text-muted text-xs">{reg.userEmail}</p>
                     {reg.isForcedRegistration && (
-                      <span className="text-amber-400 text-[10px]">
-                        {locale === 'fr' ? '(Inscription forcée)' : '(Force registered)'}
-                      </span>
+                      <Badge variant="amber">
+                        {locale === 'fr' ? 'Inscription forcée' : 'Force registered'}
+                      </Badge>
                     )}
                   </div>
                   <button
@@ -327,7 +313,7 @@ export default function ActivityDetailPage() {
               ))
             )}
           </div>
-        </div>
+        </Panel>
       </PermissionGate>
     </div>
   );

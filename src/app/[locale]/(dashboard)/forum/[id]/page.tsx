@@ -11,6 +11,7 @@ import type { ThreadWithAuthor, ReplyWithAuthor } from '@/lib/forum/types';
 import { ArrowLeft, MessageSquare, Eye, Clock, Pin, Lock, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { CATEGORIES, TAGS } from '@/lib/forum/categories';
+import { PageHeader, Panel, Button, Badge } from '@/components/ui';
 import {
   MessageSquare as MsgIcon,
   Brain,
@@ -153,12 +154,11 @@ export default function ThreadDetailPage() {
         <p className="text-secondary mb-6">
           {error || 'This thread does not exist or has been deleted.'}
         </p>
-        <Link
-          href={`/${locale}/forum`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          Back to Forum
+        <Link href={`/${locale}/forum`}>
+          <Button>
+            <ArrowLeft className="w-4 h-4" />
+            Back to Forum
+          </Button>
         </Link>
       </div>
     );
@@ -170,46 +170,41 @@ export default function ThreadDetailPage() {
   const canDelete = isAuthor || canModerate;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Back Link */}
-      <Link
-        href={`/${locale}/forum`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {t('backToForum')}
-      </Link>
-
-      {/* Thread Content */}
-      <article className="p-6 rounded-2xl bg-card border border-default mb-6">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-xl bg-card-muted ${thread.categoryColor}`}>
-              <Icon className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-primary">{thread.title}</h1>
-              <p className="text-muted text-sm">
-                {formatDistanceToNow(thread.createdAt, locale as 'en' | 'fr')}
-              </p>
-            </div>
-          </div>
-
-          {/* Badges */}
-          <div className="flex gap-2">
+    <div className="space-y-5 max-w-4xl mx-auto">
+      <PageHeader
+        eyebrow="Forum"
+        title={thread.title}
+        description={formatDistanceToNow(thread.createdAt, locale as 'en' | 'fr')}
+        actions={
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/${locale}/forum`}
+              className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors text-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              {t('backToForum')}
+            </Link>
             {thread.isPinned && (
-              <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-amber-500/20 text-amber-400 text-xs font-medium border border-amber-500/30">
+              <Badge variant="amber" className="gap-1">
                 <Pin className="w-3 h-3" />
                 Pinned
-              </span>
+              </Badge>
             )}
             {thread.isLocked && (
-              <span className="flex items-center gap-1 px-2 py-1 rounded-lg bg-red-500/20 text-red-400 text-xs font-medium border border-red-500/30">
+              <Badge variant="danger" className="gap-1">
                 <Lock className="w-3 h-3" />
                 Locked
-              </span>
+              </Badge>
             )}
+          </div>
+        }
+      />
+
+      <Panel>
+        <article>
+        <div className="flex items-center gap-3 mb-6">
+          <div className={`p-2.5 rounded-xl bg-card-muted ${thread.categoryColor}`}>
+            <Icon className="w-5 h-5" />
           </div>
         </div>
 
@@ -242,12 +237,7 @@ export default function ThreadDetailPage() {
         {thread.tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-6 pt-4 border-t border-default">
             {thread.tags.map((tag) => (
-              <span
-                key={tag}
-                className="px-2.5 py-1 rounded-lg bg-card-muted text-secondary text-sm border border-default"
-              >
-                #{tag}
-              </span>
+              <Badge key={tag} variant="default">#{tag}</Badge>
             ))}
           </div>
         )}
@@ -255,32 +245,31 @@ export default function ThreadDetailPage() {
         {/* Actions */}
         {canDelete && (
           <div className="flex justify-end mt-6 pt-4 border-t border-default">
-            <button
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDeleteThread}
               disabled={isPending}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg text-red-400 hover:bg-red-500/10 transition-colors"
             >
               <Trash2 className="w-4 h-4" />
               {isPending ? 'Deleting...' : 'Delete Thread'}
-            </button>
+            </Button>
           </div>
         )}
-      </article>
+        </article>
+      </Panel>
 
-      {/* Replies */}
-      <div className="mb-6">
-        <h2 className="text-lg font-semibold text-primary mb-4">
-          {t('replies')} ({thread.replyCount})
-        </h2>
+      <Panel title={`${t('replies')} (${thread.replyCount})`}>
         <ReplyList replies={replies} onDeleteReply={handleDeleteReply} />
-      </div>
+      </Panel>
 
-      {/* Reply Form */}
-      <ReplyForm
-        threadId={threadId}
-        threadLocked={thread.isLocked}
-        onSuccess={handleReplySuccess}
-      />
+      <Panel title={locale === 'fr' ? 'Répondre' : 'Reply'}>
+        <ReplyForm
+          threadId={threadId}
+          threadLocked={thread.isLocked}
+          onSuccess={handleReplySuccess}
+        />
+      </Panel>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { CategoryFilter } from '@/components/resources/CategoryFilter';
 import { TypeFilter } from '@/components/resources/TypeFilter';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { PageHeader, Button, FilterBar } from '@/components/ui';
+import { PageHeader, Button, FilterBar, Panel, Pagination } from '@/components/ui';
 import type { ResourceWithDetails, PaginatedResponse } from '@/lib/resources/types';
 
 export default function ResourcesPage() {
@@ -66,15 +66,16 @@ export default function ResourcesPage() {
   const canCreateResource = hasPermission('resources.create');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
+        eyebrow="Library"
         title={t('title')}
         description={`${total} ${total === 1 ? 'resource' : 'resources'}`}
         actions={
           canCreateResource ? (
             <Link href={`/${locale}/resources/new`}>
               <Button>
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4" />
                 {t('addResource')}
               </Button>
             </Link>
@@ -82,39 +83,27 @@ export default function ResourcesPage() {
         }
       />
 
-      <SearchBar placeholder={t('searchPlaceholder')} />
+      <Panel noPadding bodyClassName="p-4 space-y-3">
+        <SearchBar placeholder={t('searchPlaceholder')} />
+        <FilterBar>
+          <CategoryFilter />
+          <TypeFilter />
+        </FilterBar>
+      </Panel>
 
-      <FilterBar>
-        <CategoryFilter />
-        <TypeFilter />
-      </FilterBar>
-
-      {/* Resources Grid */}
       <ResourceGrid resources={resources} isLoading={isLoading} />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => {
-                startTransition(() => {
-                  const newParams = new URLSearchParams(searchParams.toString());
-                  newParams.set('page', page.toString());
-                  router.push(`/${locale}/resources?${newParams.toString()}`);
-                });
-              }}
-              className={`w-10 h-10 rounded-xl font-medium transition-all ${page === currentPage
-                ? 'bg-brand-600 text-white'
-                : 'bg-card text-primary hover:bg-card-muted border border-default'
-                }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          startTransition(() => {
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.set('page', page.toString());
+            router.push(`/${locale}/resources?${newParams.toString()}`);
+          });
+        }}
+      />
     </div>
   );
 }

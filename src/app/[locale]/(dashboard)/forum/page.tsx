@@ -10,7 +10,7 @@ import { SearchBar } from '@/components/forum/SearchBar';
 import type { ThreadWithAuthor, PaginatedResponse } from '@/lib/forum/types';
 import { Plus } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { PageHeader, Button, FilterBar } from '@/components/ui';
+import { PageHeader, Button, FilterBar, Panel, Pagination, Select } from '@/components/ui';
 
 export default function ForumPage() {
   const params = useParams();
@@ -73,15 +73,16 @@ export default function ForumPage() {
   const canCreateThread = hasPermission('content.create');
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader
+        eyebrow="Community"
         title={t('title')}
         description={`${total} ${total === 1 ? t('discussionSingular') : t('discussionPlural')}`}
         actions={
           canCreateThread ? (
             <Link href={`/${locale}/forum/new`}>
               <Button>
-                <Plus className="w-5 h-5" />
+                <Plus className="w-4 h-4" />
                 {t('newThread')}
               </Button>
             </Link>
@@ -89,50 +90,39 @@ export default function ForumPage() {
         }
       />
 
-      <div className="flex flex-col lg:flex-row gap-4">
-        <div className="flex-1">
-          <SearchBar placeholder={t('searchPlaceholder')} />
+      <Panel noPadding bodyClassName="p-4 space-y-3">
+        <div className="flex flex-col sm:flex-row gap-2.5">
+          <div className="flex-1">
+            <SearchBar placeholder={t('searchPlaceholder')} />
+          </div>
+          <Select
+            value={sortBy}
+            onChange={(e) => handleSortChange(e.target.value as 'latest' | 'oldest' | 'popular')}
+            className="sm:w-40 h-9 text-sm"
+          >
+            <option value="latest">{t('sortLatest')}</option>
+            <option value="oldest">{t('sortOldest')}</option>
+            <option value="popular">{t('sortPopular')}</option>
+          </Select>
         </div>
-        <select
-          value={sortBy}
-          onChange={(e) => handleSortChange(e.target.value as 'latest' | 'oldest' | 'popular')}
-          className="px-4 py-2.5 rounded-xl bg-card border border-default text-primary focus-ring"
-        >
-          <option value="latest">{t('sortLatest')}</option>
-          <option value="oldest">{t('sortOldest')}</option>
-          <option value="popular">{t('sortPopular')}</option>
-        </select>
-      </div>
-
-      <FilterBar>
-        <CategoryFilter />
-      </FilterBar>
+        <FilterBar>
+          <CategoryFilter />
+        </FilterBar>
+      </Panel>
 
       <ThreadList threads={threads} isLoading={isLoading} />
 
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => {
-                startTransition(() => {
-                  const newParams = new URLSearchParams(searchParams.toString());
-                  newParams.set('page', page.toString());
-                  router.push(`/${locale}/forum?${newParams.toString()}`);
-                });
-              }}
-              className={`w-10 h-10 rounded-xl font-medium transition-all border ${
-                page === currentPage
-                  ? 'bg-brand-600 text-white border-brand-600'
-                  : 'bg-card text-primary hover:bg-card-muted border-default'
-              }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          startTransition(() => {
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.set('page', page.toString());
+            router.push(`/${locale}/forum?${newParams.toString()}`);
+          });
+        }}
+      />
     </div>
   );
 }

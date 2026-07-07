@@ -14,11 +14,11 @@ interface ResourceGridProps {
 export function ResourceGrid({ resources, isLoading, className }: ResourceGridProps) {
   if (isLoading) {
     return (
-      <div className={cn('grid gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>
+      <div className={cn('grid gap-3 md:grid-cols-2 lg:grid-cols-3', className)}>
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl bg-card border border-default animate-pulse"
+            className="p-4 rounded-xl bg-card border border-default shadow-card animate-pulse"
           >
             <div className="flex items-start gap-4">
               <div className="w-12 h-12 rounded-xl bg-card-muted" />
@@ -55,7 +55,7 @@ export function ResourceGrid({ resources, isLoading, className }: ResourceGridPr
   }
 
   return (
-    <div className={cn('grid gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>
+    <div className={cn('grid gap-3 md:grid-cols-2 lg:grid-cols-3', className)}>
       {resources.map((resource) => (
         <ResourceCard key={resource.id} resource={resource} />
       ))}

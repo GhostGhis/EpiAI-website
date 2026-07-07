@@ -10,15 +10,15 @@ interface CardProps {
 const paddingMap = {
   none: '',
   sm: 'p-4',
-  md: 'p-6',
-  lg: 'p-8',
+  md: 'p-5',
+  lg: 'p-6',
 };
 
 export function Card({ children, className, padding = 'md', muted }: CardProps) {
   return (
     <div
       className={cn(
-        'rounded-2xl border border-default shadow-card',
+        'rounded-xl border border-default shadow-card',
         muted ? 'bg-card-muted' : 'bg-card',
         paddingMap[padding],
         className

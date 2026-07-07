@@ -8,7 +8,7 @@ import { Users, MessageSquare, Calendar, FileText, Award } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
 import type { Permission } from '@/lib/roles/types';
-import { PageHeader, Card, StatCard, Badge, ActionCard } from '@/components/ui';
+import { PageHeader, Card, StatCard, Badge, ActionCard, Panel } from '@/components/ui';
 
 interface DashboardStats {
   members: number;
@@ -64,7 +64,7 @@ export default function DashboardPage() {
   ].filter((action) => hasPermission(action.permission));
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-5">
       <PageHeader title={t('title')} description={t('overview')} />
 
       <Card padding="sm" className="flex flex-wrap items-center gap-3">
@@ -78,7 +78,7 @@ export default function DashboardPage() {
         {isAdmin ? <Badge variant="amber">{t('admin')}</Badge> : null}
       </Card>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {statsConfig.map((stat) => (
           <StatCard
             key={stat.label}
@@ -90,9 +90,8 @@ export default function DashboardPage() {
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <h2 className="text-lg font-semibold text-primary mb-4">{t('recentActivity')}</h2>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <Panel title={t('recentActivity')} noPadding bodyClassName="p-4">
           {loading ? (
             <div className="animate-pulse space-y-3">
               {[1, 2, 3].map((i) => (
@@ -140,16 +139,15 @@ export default function DashboardPage() {
               })}
             </ul>
           ) : (
-            <div className="flex flex-col items-center justify-center py-12 text-center">
+            <div className="flex flex-col items-center justify-center py-10 text-center">
               <MessageSquare className="w-8 h-8 text-muted mb-3" />
               <p className="text-muted text-sm">{t('noActivity')}</p>
             </div>
           )}
-        </Card>
+        </Panel>
 
         {quickActions.length > 0 ? (
-          <Card>
-            <h2 className="text-lg font-semibold text-primary mb-4">{t('quickActions')}</h2>
+          <Panel title={t('quickActions')} noPadding bodyClassName="p-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {quickActions.map((action) => (
                 <ActionCard
@@ -160,7 +158,7 @@ export default function DashboardPage() {
                 />
               ))}
             </div>
-          </Card>
+          </Panel>
         ) : null}
       </div>
     </div>

@@ -9,7 +9,7 @@ import { BulkInviteForm } from '@/components/admin/BulkInviteForm';
 import { formatDistanceToNow } from '@/lib/utils/date';
 import { Users, Clock, CheckCircle, XCircle, FileSpreadsheet } from 'lucide-react';
 import type { PaginatedResponse } from '@/lib/membership/types';
-import { PageHeader, StatCard, Button, EmptyState, Card } from '@/components/ui';
+import { PageHeader, StatCard, Button, EmptyState, Panel, Pagination } from '@/components/ui';
 
 interface Application {
   id: string;
@@ -90,7 +90,7 @@ export default function MembershipAdminClient() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       <PageHeader title={t('title')} description={t('description')} actions={<InviteUserForm />} />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -125,61 +125,49 @@ export default function MembershipAdminClient() {
         ))}
       </div>
 
-      {/* Applications List */}
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="p-6 rounded-xl bg-card border border-default animate-pulse">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-card-muted" />
-                <div className="flex-1 space-y-3">
-                  <div className="h-5 w-1/3 bg-card-muted rounded" />
-                  <div className="h-4 w-1/2 bg-card-muted rounded" />
-                  <div className="h-20 w-full bg-card-muted rounded" />
+      <Panel
+        title={filter === 'all' ? t('all') : t(filter)}
+      >
+        {isLoading ? (
+          <div className="space-y-4">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="p-6 rounded-xl bg-card border border-default animate-pulse">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-card-muted" />
+                  <div className="flex-1 space-y-3">
+                    <div className="h-5 w-1/3 bg-card-muted rounded" />
+                    <div className="h-4 w-1/2 bg-card-muted rounded" />
+                    <div className="h-20 w-full bg-card-muted rounded" />
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : applications.length === 0 ? (
-        <EmptyState icon={<Users className="w-12 h-12" />} title={t('noApplicationsDescription')} />
-      ) : (
-        <div className="space-y-4">
-          {applications.map((application) => (
-            <ApplicationCard
-              key={application.id}
-              application={application}
-              locale={locale as 'en' | 'fr'}
-              onUpdate={handleApplicationUpdate}
-            />
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        ) : applications.length === 0 ? (
+          <EmptyState icon={<Users className="w-12 h-12" />} title={t('noApplicationsDescription')} />
+        ) : (
+          <div className="space-y-4">
+            {applications.map((application) => (
+              <ApplicationCard
+                key={application.id}
+                application={application}
+                locale={locale as 'en' | 'fr'}
+                onUpdate={handleApplicationUpdate}
+              />
+            ))}
+          </div>
+        )}
 
-      <Card className="pt-8 border-t border-subtle">
-        <h2 className="text-xl font-bold text-primary flex items-center gap-2 mb-2">
-          <FileSpreadsheet className="w-5 h-5 text-brand-600" />
-          {t('bulkInvite')}
-        </h2>
-        <p className="text-secondary text-sm mb-4">{t('bulkInviteDescription')}</p>
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      </Panel>
+
+      <Panel
+        title={t('bulkInvite')}
+        description={t('bulkInviteDescription')}
+        actions={<FileSpreadsheet className="w-4 h-4 text-brand-600" />}
+      >
         <BulkInviteForm />
-      </Card>
-
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-            <Button
-              key={p}
-              variant={page === p ? 'primary' : 'secondary'}
-              size="sm"
-              onClick={() => setPage(p)}
-              className="w-10 h-10 p-0"
-            >
-              {p}
-            </Button>
-          ))}
-        </div>
-      )}
+      </Panel>
     </div>
   );
 }

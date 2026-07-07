@@ -15,21 +15,17 @@ export function ThreadList({ threads: threadsProp, isLoading, className }: Threa
   const threads = threadsProp ?? [];
   if (isLoading) {
     return (
-      <div className={cn('space-y-4', className)}>
+      <div className={cn('space-y-3', className)}>
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            className="p-5 rounded-2xl bg-card border border-default animate-pulse"
+            className="p-3 sm:p-4 rounded-xl bg-card border border-default shadow-card animate-pulse"
           >
-            <div className="flex items-start gap-4">
-              <div className="w-10 h-10 rounded-xl bg-card-muted" />
-              <div className="flex-1 space-y-3">
-                <div className="h-5 w-3/4 bg-card-muted rounded" />
-                <div className="h-4 w-1/2 bg-card-muted rounded" />
-                <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-card-muted rounded" />
-                  <div className="h-6 w-16 bg-card-muted rounded" />
-                </div>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-xl bg-card-muted shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-3/4 bg-card-muted rounded" />
+                <div className="h-3 w-1/2 bg-card-muted rounded" />
               </div>
             </div>
           </div>
@@ -59,7 +55,7 @@ export function ThreadList({ threads: threadsProp, isLoading, className }: Threa
   }
 
   return (
-    <div className={cn('space-y-4', className)}>
+    <div className={cn('space-y-3', className)}>
       {threads.map((thread) => (
         <ThreadCard key={thread.id} thread={thread} />
       ))}

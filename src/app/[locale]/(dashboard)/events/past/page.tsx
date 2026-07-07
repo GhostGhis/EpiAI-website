@@ -8,6 +8,7 @@ import type { EventWithDetails, PaginatedResponse } from '@/lib/events/types';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useTransition } from 'react';
+import { PageHeader, Button, Panel, FilterBar, Pagination } from '@/components/ui';
 
 export default function PastEventsPage() {
   const params = useParams();
@@ -15,7 +16,7 @@ export default function PastEventsPage() {
   const router = useRouter();
   const locale = (params.locale as string) || 'en';
   const t = useTranslations('Events');
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const [events, setEvents] = useState<EventWithDetails[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -53,52 +54,39 @@ export default function PastEventsPage() {
   }, [currentPage, selectedCategory]);
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold text-primary mb-2">{t('pastEvents')}</h1>
-          <p className="text-secondary">
-            {total} {total === 1 ? 'event' : 'events'} from the past
-          </p>
-        </div>
-        <Link
-          href={`/${locale}/events`}
-          className="px-4 py-2.5 rounded-xl bg-card text-primary hover:bg-card-muted border border-default transition-all"
-        >
-          {t('upcoming')}
-        </Link>
-      </div>
+    <div className="space-y-5">
+      <PageHeader
+        eyebrow="Calendar"
+        title={t('pastEvents')}
+        description={`${total} ${total === 1 ? 'event' : 'events'} from the past`}
+        actions={
+          <Link href={`/${locale}/events`}>
+            <Button variant="secondary" size="sm">
+              {t('upcoming')}
+            </Button>
+          </Link>
+        }
+      />
 
-      {/* Category Filter */}
-      <CategoryFilter />
+      <Panel noPadding bodyClassName="p-4">
+        <FilterBar>
+          <CategoryFilter />
+        </FilterBar>
+      </Panel>
 
-      {/* Event List */}
       <EventList events={events} isLoading={isLoading} />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <div className="flex justify-center gap-2 pt-4">
-          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-            <button
-              key={page}
-              onClick={() => {
-                startTransition(() => {
-                  const newParams = new URLSearchParams(searchParams.toString());
-                  newParams.set('page', page.toString());
-                  router.push(`/${locale}/events/past?${newParams.toString()}`);
-                });
-              }}
-              className={`w-10 h-10 rounded-xl font-medium transition-all ${page === currentPage
-                  ? 'bg-white text-black'
-                  : 'bg-card text-primary hover:bg-card-muted'
-                }`}
-            >
-              {page}
-            </button>
-          ))}
-        </div>
-      )}
+      <Pagination
+        page={currentPage}
+        totalPages={totalPages}
+        onPageChange={(page) => {
+          startTransition(() => {
+            const newParams = new URLSearchParams(searchParams.toString());
+            newParams.set('page', page.toString());
+            router.push(`/${locale}/events/past?${newParams.toString()}`);
+          });
+        }}
+      />
     </div>
   );
 }

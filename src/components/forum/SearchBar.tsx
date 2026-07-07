@@ -48,8 +48,8 @@ export function SearchBar({
     <form onSubmit={handleSearch} className={cn('relative', className)}>
       <Search
         className={cn(
-          'absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors',
-          isPending ? 'text-muted' : 'text-muted'
+          'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted transition-colors',
+          isPending && 'opacity-60'
         )}
       />
       <input
@@ -58,10 +58,9 @@ export function SearchBar({
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
         className={cn(
-          'w-full pl-10 pr-10 py-2.5 rounded-xl bg-card border border-default',
-          'text-primary placeholder:text-muted',
-          'focus:outline-none focus:border-brand-500/40 focus:bg-card-muted',
-          'transition-all'
+          'h-9 w-full pl-9 pr-9 rounded-xl bg-input border border-default',
+          'text-primary text-sm placeholder:text-muted focus-ring',
+          'transition-colors'
         )}
       />
       {query && (
@@ -70,7 +69,7 @@ export function SearchBar({
           onClick={handleClear}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-primary transition-colors"
         >
-          <X className="w-5 h-5" />
+          <X className="w-4 h-4" />
         </button>
       )}
     </form>

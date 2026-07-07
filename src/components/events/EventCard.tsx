@@ -38,8 +38,8 @@ export function EventCard({ event, className }: EventCardProps) {
   return (
     <div
       className={cn(
-        'group rounded-2xl bg-card border border-default overflow-hidden',
-        'hover:bg-card-muted hover:border-default transition-all duration-300',
+        'group rounded-xl bg-card border border-default shadow-card overflow-hidden',
+        'hover:border-brand-500/20 transition-all duration-300',
         className
       )}
     >
@@ -47,54 +47,54 @@ export function EventCard({ event, className }: EventCardProps) {
         <EventCoverImage
           src={event.imageUrl}
           alt={event.title}
-          className="h-48 w-full"
+          className="h-40 w-full"
           imgClassName="group-hover:scale-105 transition-transform duration-500"
         />
 
-        <div className="absolute top-4 left-4 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/50 backdrop-blur-sm border border-default">
-          <Icon className={cn('w-4 h-4', event.categoryColor)} />
-          <span className="text-primary text-sm font-medium">{event.categoryName}</span>
+        <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-black/50 backdrop-blur-sm border border-default">
+          <Icon className={cn('w-3.5 h-3.5', event.categoryColor)} />
+          <span className="text-primary text-xs font-medium">{event.categoryName}</span>
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-5 space-y-4">
-        <h3 className="text-lg font-bold text-primary line-clamp-2 group-hover:text-white/90 transition-colors">
+      <div className="p-4 space-y-3">
+        <h3 className="text-sm font-semibold text-primary line-clamp-2 group-hover:text-brand-600 transition-colors">
           {event.title}
         </h3>
 
-        <div className="flex flex-wrap gap-3 text-sm text-secondary">
+        <div className="flex flex-wrap gap-2.5 text-xs text-secondary">
           <div className="flex items-center gap-1.5">
-            <Calendar className="w-4 h-4" />
+            <Calendar className="w-3.5 h-3.5" />
             <span>{formatDate(event.date)}</span>
           </div>
           <div className="flex items-center gap-1.5">
             {event.isOnline ? (
               <>
-                <Globe className="w-4 h-4" />
+                <Globe className="w-3.5 h-3.5" />
                 <span>Online</span>
               </>
             ) : (
               <>
-                <MapPin className="w-4 h-4" />
+                <MapPin className="w-3.5 h-3.5" />
                 <span className="truncate max-w-[120px]">{event.location}</span>
               </>
             )}
           </div>
         </div>
 
-        <p className="text-muted text-sm line-clamp-2 leading-relaxed">
+        <p className="text-muted text-xs line-clamp-2 leading-relaxed">
           {event.description}
         </p>
 
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between text-xs">
             <div className="flex items-center gap-1.5 text-secondary">
-              <Users className="w-4 h-4" />
+              <Users className="w-3.5 h-3.5" />
               <span>{event.registeredCount} / {event.capacity}</span>
             </div>
             <span className={cn(
-              'font-medium text-sm',
+              'font-medium text-xs',
               isFull ? 'text-red-400' : 'text-brand-400'
             )}>
               {event.spotsLeft} spots left

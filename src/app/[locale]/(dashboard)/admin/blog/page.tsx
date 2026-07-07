@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Plus, Pencil, Trash2, FileText } from 'lucide-react';
 import { PermissionGate } from '@/components/shared/PermissionGate';
-import { PageHeader, Card, EmptyState, Button } from '@/components/ui';
+import { PageHeader, EmptyState, Button, Panel, ListRow, Badge } from '@/components/ui';
 
 interface BlogPost {
   id: string;
@@ -39,7 +39,7 @@ export default function AdminBlogPage() {
 
   return (
     <PermissionGate permission="content.create">
-      <div className="space-y-6">
+      <div className="space-y-5">
         <PageHeader
           title={locale === 'fr' ? 'Gestion du blog' : 'Blog management'}
           description={
@@ -70,41 +70,50 @@ export default function AdminBlogPage() {
             title={locale === 'fr' ? 'Aucun article.' : 'No posts yet.'}
           />
         ) : (
-          <ul className="space-y-3">
-            {posts.map((post) => (
-              <li key={post.id}>
-                <Card padding="sm" className="flex items-center justify-between gap-4">
-                <div className="min-w-0">
-                  <p className="text-primary font-medium truncate">
-                    {locale === 'fr' ? post.titleFr : post.titleEn}
-                  </p>
-                  <p className="text-muted text-xs mt-1">
-                    {post.category} · {post.status}
-                    {post.publishedAt &&
-                      ` · ${new Date(post.publishedAt).toLocaleDateString(locale)}`}
-                  </p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Link
-                    href={`/${locale}/admin/blog/${post.slug}/edit`}
-                    className="p-2 rounded-lg bg-card hover:bg-card-muted text-secondary"
-                    aria-label={locale === 'fr' ? 'Modifier' : 'Edit'}
+          <Panel title={locale === 'fr' ? 'Articles' : 'Posts'} description={`${posts.length} ${locale === 'fr' ? 'article(s)' : 'post(s)'}`}>
+            <ul className="space-y-3">
+              {posts.map((post) => (
+                <li key={post.id}>
+                  <ListRow
+                    actions={
+                      <>
+                        <Link
+                          href={`/${locale}/admin/blog/${post.slug}/edit`}
+                          className="p-2 rounded-lg bg-card hover:bg-card-muted text-secondary"
+                          aria-label={locale === 'fr' ? 'Modifier' : 'Edit'}
+                        >
+                          <Pencil className="w-4 h-4" />
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => remove(post.slug)}
+                          className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500"
+                          aria-label={locale === 'fr' ? 'Supprimer' : 'Delete'}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </>
+                    }
                   >
-                    <Pencil className="w-4 h-4" />
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => remove(post.slug)}
-                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-500"
-                    aria-label={locale === 'fr' ? 'Supprimer' : 'Delete'}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-                </Card>
-              </li>
-            ))}
-          </ul>
+                    <div className="min-w-0">
+                      <p className="text-primary font-medium truncate">
+                        {locale === 'fr' ? post.titleFr : post.titleEn}
+                      </p>
+                      <div className="flex flex-wrap items-center gap-2 mt-1">
+                        <Badge variant="default">{post.category}</Badge>
+                        <Badge variant={post.status === 'published' ? 'success' : 'muted'}>{post.status}</Badge>
+                        {post.publishedAt && (
+                          <span className="text-muted text-xs">
+                            {new Date(post.publishedAt).toLocaleDateString(locale)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </ListRow>
+                </li>
+              ))}
+            </ul>
+          </Panel>
         )}
       </div>
     </PermissionGate>

@@ -5,8 +5,8 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { hasPermission } from '@/lib/roles/utils';
-import { ArrowLeft, Calendar, MapPin, Globe, AlertCircle } from 'lucide-react';
-import { cn } from '@/lib/utils/cn';
+import { Calendar, Globe, AlertCircle } from 'lucide-react';
+import { FormPageShell, EmptyState, Button, Input, Textarea } from '@/components/ui';
 
 export default function CreateActivityPage() {
   const params = useParams();
@@ -32,24 +32,21 @@ export default function CreateActivityPage() {
 
   if (!canCreate) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16">
-        <Calendar className="w-16 h-16 text-muted mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-primary mb-2">
-          {locale === 'fr' ? 'Accès refusé' : 'Access Denied'}
-        </h1>
-        <p className="text-secondary mb-6">
-          {locale === 'fr'
-            ? 'Vous n\'avez pas la permission de créer des activités.'
-            : 'You don\'t have permission to create activities.'}
-        </p>
-        <Link
-          href={`/${locale}/intranet`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour à l\'intranet' : 'Back to Intranet'}
-        </Link>
-      </div>
+      <EmptyState
+        icon={<Calendar className="w-12 h-12" />}
+        title={
+          locale === 'fr'
+            ? "Vous n'avez pas la permission de créer des activités."
+            : "You don't have permission to create activities."
+        }
+        action={
+          <Link href={`/${locale}/intranet`}>
+            <Button variant="secondary">
+              {locale === 'fr' ? "Retour à l'intranet" : 'Back to Intranet'}
+            </Button>
+          </Link>
+        }
+      />
     );
   }
 
@@ -110,65 +107,43 @@ export default function CreateActivityPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Back Link */}
-      <Link
-        href={`/${locale}/intranet`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {locale === 'fr' ? 'Retour à l\'intranet' : 'Back to Intranet'}
-      </Link>
-
-      <h1 className="text-3xl font-bold text-primary mb-2">
-        {locale === 'fr' ? 'Nouvelle activité' : 'New Activity'}
-      </h1>
-      <p className="text-secondary mb-8">
-        {locale === 'fr'
-          ? 'La deadline d\'inscription sera automatiquement fixée à 24h avant l\'activité.'
-          : 'Registration deadline will be automatically set to 24h before the activity.'}
-      </p>
-
-      {/* Error */}
+    <FormPageShell
+      backHref={`/${locale}/intranet`}
+      backLabel={locale === 'fr' ? "Retour à l'intranet" : 'Back to Intranet'}
+      title={locale === 'fr' ? 'Nouvelle activité' : 'New Activity'}
+      description={
+        locale === 'fr'
+          ? "La deadline d'inscription sera automatiquement fixée à 24h avant l'activité."
+          : 'Registration deadline will be automatically set to 24h before the activity.'
+      }
+      maxWidth="lg"
+    >
       {error && (
-        <div className="flex items-center gap-2 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 mb-6">
-          <AlertCircle className="w-5 h-5 flex-shrink-0" />
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm mb-5">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Title */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            {locale === 'fr' ? 'Titre *' : 'Title *'}
-          </label>
-          <input
-            type="text"
-            value={form.title}
-            onChange={(e) => updateForm('title', e.target.value)}
-            placeholder={locale === 'fr' ? 'Nom de l\'activité' : 'Activity name'}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
-            required
-          />
-        </div>
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Input
+          label={locale === 'fr' ? 'Titre *' : 'Title *'}
+          type="text"
+          value={form.title}
+          onChange={(e) => updateForm('title', e.target.value)}
+          placeholder={locale === 'fr' ? "Nom de l'activité" : 'Activity name'}
+          required
+        />
 
-        {/* Description */}
-        <div>
-          <label className="block text-secondary text-sm font-medium mb-2">
-            {locale === 'fr' ? 'Description *' : 'Description *'}
-          </label>
-          <textarea
-            value={form.description}
-            onChange={(e) => updateForm('description', e.target.value)}
-            placeholder={locale === 'fr' ? 'Décrivez l\'activité...' : 'Describe the activity...'}
-            rows={4}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors resize-none"
-            required
-          />
-        </div>
+        <Textarea
+          label={locale === 'fr' ? 'Description *' : 'Description *'}
+          value={form.description}
+          onChange={(e) => updateForm('description', e.target.value)}
+          placeholder={locale === 'fr' ? "Décrivez l'activité..." : 'Describe the activity...'}
+          rows={4}
+          required
+        />
 
-        {/* Mandatory */}
         <div className="flex items-center gap-3">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -188,104 +163,78 @@ export default function CreateActivityPage() {
           </span>
         </div>
 
-        {/* Date / End Date */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-secondary text-sm font-medium mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              {locale === 'fr' ? 'Date de début *' : 'Start date *'}
-            </label>
-            <input
-              type="datetime-local"
-              value={form.date}
-              onChange={(e) => updateForm('date', e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/40 transition-colors"
-              required
-            />
-          </div>
-          <div>
-            <label className="block text-secondary text-sm font-medium mb-2">
-              <Calendar className="w-4 h-4 inline mr-1" />
-              {locale === 'fr' ? 'Date de fin' : 'End date'}
-            </label>
-            <input
-              type="datetime-local"
-              value={form.endDate}
-              onChange={(e) => updateForm('endDate', e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary focus:outline-none focus:border-brand-500/40 transition-colors"
-            />
-          </div>
+          <Input
+            label={locale === 'fr' ? 'Date de début *' : 'Start date *'}
+            type="datetime-local"
+            value={form.date}
+            onChange={(e) => updateForm('date', e.target.value)}
+            required
+          />
+          <Input
+            label={locale === 'fr' ? 'Date de fin' : 'End date'}
+            type="datetime-local"
+            value={form.endDate}
+            onChange={(e) => updateForm('endDate', e.target.value)}
+          />
         </div>
 
-        {/* Location / Online */}
         <div>
-          <div className="flex items-center gap-3 mb-3">
-            <label className="block text-secondary text-sm font-medium">
-              <MapPin className="w-4 h-4 inline mr-1" />
+          <div className="flex items-center gap-3 mb-2">
+            <label className="text-xs font-medium text-secondary">
               {locale === 'fr' ? 'Lieu *' : 'Location *'}
             </label>
-            <label className="flex items-center gap-2 text-sm text-secondary cursor-pointer">
+            <label className="flex items-center gap-2 text-xs text-secondary cursor-pointer">
               <input
                 type="checkbox"
                 checked={form.isOnline}
                 onChange={(e) => updateForm('isOnline', e.target.checked)}
                 className="rounded border-default"
               />
-              <Globe className="w-4 h-4" />
+              <Globe className="w-3.5 h-3.5" />
               {locale === 'fr' ? 'En ligne' : 'Online'}
             </label>
           </div>
-          <input
+          <Input
             type="text"
             value={form.location}
             onChange={(e) => updateForm('location', e.target.value)}
             placeholder={form.isOnline
               ? (locale === 'fr' ? 'Ex: Discord, Zoom...' : 'E.g. Discord, Zoom...')
               : (locale === 'fr' ? 'Adresse ou salle' : 'Address or room')}
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
             required
           />
           {form.isOnline && (
-            <input
-              type="url"
-              value={form.onlineLink}
-              onChange={(e) => updateForm('onlineLink', e.target.value)}
-              placeholder={locale === 'fr' ? 'Lien de la réunion' : 'Meeting link'}
-              className="w-full mt-2 px-4 py-3 rounded-xl bg-card border border-default text-primary placeholder:text-muted focus:outline-none focus:border-brand-500/40 transition-colors"
-            />
+            <div className="mt-2">
+              <Input
+                type="url"
+                value={form.onlineLink}
+                onChange={(e) => updateForm('onlineLink', e.target.value)}
+                placeholder={locale === 'fr' ? 'Lien de la réunion' : 'Meeting link'}
+              />
+            </div>
           )}
         </div>
 
-        {/* Info box about deadline */}
-        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-400 text-sm">
+        <div className="p-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-400 text-sm">
           {locale === 'fr'
-            ? 'La deadline d\'inscription sera automatiquement calculée à 24h avant la date de l\'activité. Les membres devront s\'inscrire avant cette deadline.'
+            ? "La deadline d'inscription sera automatiquement calculée à 24h avant la date de l'activité. Les membres devront s'inscrire avant cette deadline."
             : 'The registration deadline will be automatically calculated to 24h before the activity date. Members must register before this deadline.'}
         </div>
 
-        {/* Submit */}
-        <div className="flex gap-3 pt-4">
-          <button
-            type="submit"
-            disabled={isPending}
-            className={cn(
-              'flex-1 py-3 rounded-xl font-semibold transition-all',
-              'bg-brand-600 text-white hover:bg-brand-700',
-              isPending && 'opacity-50 cursor-not-allowed'
-            )}
-          >
+        <div className="flex gap-3 pt-2">
+          <Button type="submit" disabled={isPending} className="flex-1" size="lg">
             {isPending
               ? (locale === 'fr' ? 'Création...' : 'Creating...')
-              : (locale === 'fr' ? 'Créer l\'activité' : 'Create Activity')}
-          </button>
-          <Link
-            href={`/${locale}/intranet`}
-            className="px-6 py-3 rounded-xl bg-card text-primary border border-default hover:bg-card-muted transition-all font-medium"
-          >
-            {locale === 'fr' ? 'Annuler' : 'Cancel'}
+              : (locale === 'fr' ? "Créer l'activité" : 'Create Activity')}
+          </Button>
+          <Link href={`/${locale}/intranet`}>
+            <Button variant="secondary" size="lg">
+              {locale === 'fr' ? 'Annuler' : 'Cancel'}
+            </Button>
           </Link>
         </div>
       </form>
-    </div>
+    </FormPageShell>
   );
 }

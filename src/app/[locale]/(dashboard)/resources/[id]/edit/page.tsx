@@ -9,8 +9,8 @@ import { CATEGORIES } from '@/lib/resources/categories';
 import { cn } from '@/lib/utils/cn';
 import { getTypeLabel, formatFileSize } from '@/lib/resources/utils';
 import type { ResourceWithDetails } from '@/lib/resources/types';
+import { FormPageShell, EmptyState, Button } from '@/components/ui';
 import {
-  ArrowLeft,
   FileText,
   Code,
   Play,
@@ -258,62 +258,42 @@ export default function EditResourcePage() {
 
   if (error && !resource) {
     return (
-      <div className="flex flex-col items-center justify-center py-16">
-        <h2 className="text-2xl font-bold text-primary mb-4">
-          {locale === 'fr' ? 'Ressource introuvable' : 'Resource not found'}
-        </h2>
-        <Link
-          href={`/${locale}/resources`}
-          className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {t('backToResources')}
-        </Link>
-      </div>
+      <EmptyState
+        title={locale === 'fr' ? 'Ressource introuvable' : 'Resource not found'}
+        action={
+          <Link href={`/${locale}/resources`}>
+            <Button variant="secondary">{t('backToResources')}</Button>
+          </Link>
+        }
+      />
     );
   }
 
   if (!isSignedIn || !canEdit) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16">
-        <h1 className="text-2xl font-bold text-primary mb-4">
-          {locale === 'fr' ? 'Permission requise' : 'Permission Required'}
-        </h1>
-        <p className="text-secondary mb-6">
-          {locale === 'fr'
+      <EmptyState
+        title={
+          locale === 'fr'
             ? "Vous n'avez pas la permission de modifier cette ressource."
-            : "You don't have permission to edit this resource."}
-        </p>
-        <Link
-          href={`/${locale}/resources/${resourceId}`}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour' : 'Go Back'}
-        </Link>
-      </div>
+            : "You don't have permission to edit this resource."
+        }
+        action={
+          <Link href={`/${locale}/resources/${resourceId}`}>
+            <Button variant="secondary">{locale === 'fr' ? 'Retour' : 'Go Back'}</Button>
+          </Link>
+        }
+      />
     );
   }
 
   return (
-    <div className="max-w-3xl mx-auto">
-      {/* Header */}
-      <div className="mb-8">
-        <Link
-          href={`/${locale}/resources/${resourceId}`}
-          className="inline-flex items-center gap-2 text-secondary hover:text-primary transition-colors mb-4"
-        >
-          <ArrowLeft className="w-4 h-4" />
-          {locale === 'fr' ? 'Retour à la ressource' : 'Back to resource'}
-        </Link>
-        <h1 className="text-3xl font-bold text-primary">
-          {locale === 'fr' ? 'Modifier la ressource' : 'Edit Resource'}
-        </h1>
-      </div>
-
-      {/* Form */}
-      <div className="p-6 rounded-2xl bg-card border border-default">
-        <form onSubmit={handleSubmit} className="space-y-6">
+    <FormPageShell
+      backHref={`/${locale}/resources/${resourceId}`}
+      backLabel={locale === 'fr' ? 'Retour à la ressource' : 'Back to resource'}
+      title={locale === 'fr' ? 'Modifier la ressource' : 'Edit Resource'}
+      maxWidth="lg"
+    >
+      <form onSubmit={handleSubmit} className="space-y-5">
           {error && (
             <div className="p-4 rounded-xl bg-red-500/20 border border-red-500/30 text-red-400">
               {error}
@@ -631,17 +611,17 @@ export default function EditResourcePage() {
           )}
 
           {/* Submit */}
-          <div className="flex gap-4 pt-4">
-            <Link
-              href={`/${locale}/resources/${resourceId}`}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-card-muted text-primary font-medium hover:bg-card-muted transition-all"
-            >
-              {locale === 'fr' ? 'Annuler' : 'Cancel'}
+          <div className="flex gap-3 pt-2">
+            <Link href={`/${locale}/resources/${resourceId}`} className="flex-1">
+              <Button variant="secondary" className="w-full" size="lg">
+                {locale === 'fr' ? 'Annuler' : 'Cancel'}
+              </Button>
             </Link>
-            <button
+            <Button
               type="submit"
               disabled={isLoading || isUploading}
-              className="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-white text-black font-semibold hover:bg-white/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1"
+              size="lg"
             >
               {isLoading ? (
                 <>
@@ -654,10 +634,9 @@ export default function EditResourcePage() {
                   {locale === 'fr' ? 'Enregistrer' : 'Save Changes'}
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </FormPageShell>
   );
 }

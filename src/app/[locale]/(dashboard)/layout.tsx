@@ -17,7 +17,6 @@ import {
   Users,
   LogOut,
   Menu,
-  ChevronRight,
   MessageSquare,
   Calendar,
   FolderOpen,
@@ -221,29 +220,27 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         {/* Sidebar */}
         <aside
           className={cn(
-            'fixed top-0 left-0 z-50 h-full w-72 bg-surface/95 backdrop-blur-xl border-r border-default transform transition-transform duration-300 lg:translate-x-0',
+            'fixed top-0 left-0 z-50 h-full w-64 bg-surface border-r border-default shadow-sm transform transition-transform duration-300 lg:translate-x-0',
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
           <div className="flex flex-col h-full">
-            {/* Logo */}
-            <div className="p-6 border-b border-default">
+            <div className="px-4 py-4 border-b border-subtle">
               <Link
                 href={dashboardHref}
                 onClick={handleLogoClick}
-                className="flex items-center gap-3"
+                className="flex items-center gap-2.5"
                 aria-label={locale === 'fr' ? 'Tableau de bord EPI\'AI' : 'EPI\'AI dashboard'}
               >
                 <BrandLogo size="md" />
                 <div>
-                  <span className="text-primary font-bold text-lg">EPI&apos;AI</span>
-                  <p className="text-muted text-xs">Dashboard</p>
+                  <span className="text-primary font-semibold text-base tracking-tight">EPI&apos;AI</span>
+                  <p className="text-muted text-[11px] font-medium uppercase tracking-wider">Dashboard</p>
                 </div>
               </Link>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+            <nav className="flex-1 px-3 py-3 space-y-0.5 overflow-y-auto">
               {navItems.map((item) => {
                 const Icon = item.icon;
                 return (
@@ -251,27 +248,23 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     key={item.href}
                     href={item.href}
                     className={cn(
-                      'flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
-                      item.active
-                        ? 'bg-brand-500/10 text-primary border border-brand-500/20'
-                        : 'text-secondary hover:text-primary hover:bg-card'
+                      'nav-item',
+                      item.active ? 'nav-item-active' : 'nav-item-inactive'
                     )}
                   >
-                    <Icon className="w-5 h-5 shrink-0" />
-                    <span className="font-medium flex-1">{item.label}</span>
+                    <Icon className="w-4 h-4 shrink-0 opacity-80" />
+                    <span className="flex-1 truncate">{item.label}</span>
                     {'badge' in item && typeof item.badge === 'number' && item.badge > 0 ? (
                       <UnreadBadge count={item.badge} />
                     ) : null}
-                    {item.active ? <ChevronRight className="w-4 h-4 shrink-0 opacity-60" /> : null}
                   </Link>
                 );
               })}
 
-              {/* Admin Section */}
               {isAdmin && (
                 <>
-                  <div className="pt-4 pb-2">
-                    <p className="px-4 text-xs font-semibold text-muted uppercase tracking-wider">
+                  <div className="pt-4 pb-1.5">
+                    <p className="px-3 text-[10px] font-bold text-muted uppercase tracking-widest">
                       {t('adminSection')}
                     </p>
                   </div>
@@ -282,30 +275,26 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                         key={item.href}
                         href={item.href}
                         className={cn(
-                          'flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
-                          item.active
-                            ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                            : 'text-secondary hover:text-amber-400 hover:bg-amber-500/5'
+                          'nav-item',
+                          item.active ? 'nav-item-admin-active' : 'nav-item-inactive'
                         )}
                       >
-                        <Icon className="w-5 h-5" />
-                        <span className="font-medium flex-1">{item.label}</span>
+                        <Icon className="w-4 h-4 shrink-0 opacity-80" />
+                        <span className="flex-1 truncate">{item.label}</span>
                         {'badge' in item && typeof item.badge === 'number' && item.badge > 0 ? (
                           <UnreadBadge count={item.badge} />
                         ) : null}
-                        {item.active && <ChevronRight className="w-4 h-4 ml-auto shrink-0" />}
                       </Link>
                     );
                   })}
 
-                  {/* New Project Button - Always visible for admins */}
                   {isAdmin && (
-                    <div className="px-4 pt-2">
+                    <div className="px-1 pt-3">
                       <a
                         href={`/${locale}/admin/projects/new`}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold transition-all no-underline shadow-lg"
+                        className="flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-brand-600 hover:bg-brand-500 text-white text-xs font-semibold transition-colors no-underline"
                       >
-                        <Plus className="w-5 h-5" />
+                        <Plus className="w-4 h-4" />
                         <span>{t('newProject')}</span>
                       </a>
                     </div>
@@ -314,42 +303,38 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               )}
             </nav>
 
-            {/* User Info */}
-            <div className="p-4 border-t border-default">
-              <div className="flex items-center gap-3 mb-3">
+            <div className="p-3 border-t border-subtle bg-card-muted/30">
+              <div className="flex items-center gap-2.5 mb-3 px-1">
                 <UserButton
                   {...userButtonProps(locale)}
                   appearance={{
                     elements: {
-                      avatarBox: 'w-10 h-10 rounded-full',
+                      avatarBox: 'w-9 h-9 rounded-full ring-2 ring-default',
                     },
                   }}
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="text-primary font-medium text-sm truncate">
+                  <p className="text-primary font-medium text-sm truncate leading-tight">
                     {user?.firstName || user?.username || user?.emailAddresses[0]?.emailAddress || 'User'}
                   </p>
-                  <p className={cn(
-                    'text-xs truncate',
-                    roleId ? 'text-amber-400' : 'text-muted'
-                  )}>
+                  <p className={cn('text-[11px] truncate mt-0.5', roleId ? 'text-brand-700' : 'text-muted')}>
                     {roleId ? getRoleName(roleId, locale as 'en' | 'fr') : 'Member'}
                   </p>
                 </div>
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Link
                   href={`/${locale}`}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-brand-600/10 text-brand-400 hover:text-primary hover:bg-brand-600 transition-all text-sm font-medium border border-brand-600/20 hover:border-brand-600"
+                  className="flex items-center justify-center gap-2 w-full py-2 rounded-lg border border-default bg-card text-secondary hover:text-primary hover:bg-card-muted transition-colors text-xs font-medium"
                 >
-                  <ArrowLeft className="w-4 h-4" />
+                  <ArrowLeft className="w-3.5 h-3.5" />
                   {t('backHome')}
                 </Link>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-card text-secondary hover:text-primary hover:bg-card-muted transition-all text-sm font-medium"
+                  className="flex items-center justify-center gap-2 w-full py-2 rounded-lg text-muted hover:text-primary hover:bg-card transition-colors text-xs font-medium"
                 >
-                  <LogOut className="w-4 h-4" />
+                  <LogOut className="w-3.5 h-3.5" />
                   {t('signOut')}
                 </button>
               </div>
@@ -357,15 +342,19 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           </div>
         </aside>
 
-        {/* Main Content */}
-        <div className="lg:pl-72">
-          {/* Mobile Header */}
-          <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-surface/90 backdrop-blur-xl border-b border-default lg:hidden">
+        <div className="lg:pl-64 min-h-screen flex flex-col">
+          <header className="sticky top-0 z-30 hidden lg:flex items-center justify-end gap-2 px-6 h-14 border-b border-subtle bg-surface/90 backdrop-blur-md">
+            <GlobalSearch />
+            <NotificationBell />
+            <ThemeToggle />
+          </header>
+
+          <header className="sticky top-0 z-30 flex items-center justify-between px-4 h-14 bg-surface/95 backdrop-blur-md border-b border-subtle lg:hidden">
             <button
               onClick={() => setSidebarOpen(true)}
-              className="p-2 text-secondary hover:text-primary"
+              className="p-2 -ml-1 text-secondary hover:text-primary rounded-lg"
             >
-              <Menu className="w-6 h-6" />
+              <Menu className="w-5 h-5" />
             </button>
             <Link
               href={dashboardHref}
@@ -375,23 +364,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             >
               <BrandLogo size="sm" />
             </Link>
-            <UserButton
-              {...userButtonProps(locale)}
-              appearance={{
-                elements: {
-                  avatarBox: 'w-8 h-8 rounded-full',
-                },
-              }}
-            />
-          </header>
-
-          {/* Page Content */}
-          <main className="p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8">
-            <div className="flex flex-wrap items-center justify-end gap-2 mb-4 sm:mb-6">
+            <div className="flex items-center gap-1">
               <GlobalSearch />
               <NotificationBell />
               <ThemeToggle />
             </div>
+          </header>
+
+          <main className="flex-1 p-4 sm:p-6 lg:p-8 pb-24 lg:pb-8 max-w-[1280px]">
             <PushNotificationManager />
             {children}
           </main>

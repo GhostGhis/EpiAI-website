@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import { FormPageShell, Button, Input, Textarea, Select } from '@/components/ui';
 
 export default function EditBlogPostPage() {
   const params = useParams();
@@ -65,52 +64,43 @@ export default function EditBlogPostPage() {
   ] as const;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div className="flex items-center gap-3">
-        <Link href={`/${locale}/admin/blog`} className="p-2 rounded-lg bg-card text-secondary">
-          <ArrowLeft className="w-5 h-5" />
-        </Link>
-        <h1 className="text-2xl font-bold text-primary">
-          {locale === 'fr' ? 'Modifier l\'article' : 'Edit post'}
-        </h1>
-      </div>
-
-      <form onSubmit={submit} className="space-y-4">
-        {fields.map(([key, label]) => (
-          <div key={key}>
-            <label className="block text-sm text-secondary mb-1">{label}</label>
-            {key.includes('content') || key.includes('excerpt') ? (
-              <textarea
-                rows={key.includes('content') ? 8 : 3}
-                value={form[key] || ''}
-                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary outline-none"
-              />
-            ) : (
-              <input
-                value={form[key] || ''}
-                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary outline-none"
-              />
-            )}
-          </div>
-        ))}
-        <select
+    <FormPageShell
+      backHref={`/${locale}/admin/blog`}
+      backLabel={locale === 'fr' ? 'Retour au blog' : 'Back to blog'}
+      title={locale === 'fr' ? "Modifier l'article" : 'Edit post'}
+      maxWidth="lg"
+    >
+      <form onSubmit={submit} className="space-y-5">
+        {fields.map(([key, label]) =>
+          key.includes('content') || key.includes('excerpt') ? (
+            <Textarea
+              key={key}
+              label={label}
+              rows={key.includes('content') ? 8 : 3}
+              value={form[key] || ''}
+              onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+            />
+          ) : (
+            <Input
+              key={key}
+              label={label}
+              value={form[key] || ''}
+              onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+            />
+          )
+        )}
+        <Select
+          label="Status"
           value={form.status || 'draft'}
           onChange={(e) => setForm({ ...form, status: e.target.value })}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         >
           <option value="draft">Draft</option>
           <option value="published">Published</option>
-        </select>
-        <button
-          type="submit"
-          disabled={saving}
-          className="w-full py-3 rounded-xl bg-brand-600 text-white font-medium disabled:opacity-50"
-        >
+        </Select>
+        <Button type="submit" disabled={saving} className="w-full" size="lg">
           {saving ? '…' : 'Save'}
-        </button>
+        </Button>
       </form>
-    </div>
+    </FormPageShell>
   );
 }

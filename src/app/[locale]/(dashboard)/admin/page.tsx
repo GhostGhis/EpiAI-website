@@ -3,6 +3,8 @@
 import { useAuth } from '@/hooks/useAuth';
 import { PermissionGate } from '@/components/shared/PermissionGate';
 import { getRolesOrderedByLevel, getRoleName } from '@/lib/roles/utils';
+import { getRoleChipClass } from '@/lib/ui/role-styles';
+import { cn } from '@/lib/utils/cn';
 import {
   Users,
   Shield,
@@ -13,28 +15,32 @@ import {
   Briefcase,
   GraduationCap,
   Search,
-  Filter,
-  MoreVertical,
   Edit,
   Trash2,
   Check,
-  X,
   Clock,
   RefreshCw,
   Save,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
-import { routing } from '@/i18n/routing';
 import {
   PageHeader,
   StatCard,
-  Card,
+  Panel,
   Modal,
   FilterBar,
   Input,
   Select,
   Button,
+  Badge,
+  DataTable,
+  DataTableHead,
+  DataTableHeadRow,
+  DataTableTh,
+  DataTableBody,
+  DataTableRow,
+  DataTableTd,
 } from '@/components/ui';
 
 interface AdminPageProps {
@@ -240,20 +246,6 @@ export default function AdminPage({ params }: AdminPageProps) {
     return icons[roleId] || Users;
   };
 
-  const getRoleColor = (roleId: string) => {
-    const colors: Record<string, string> = {
-      president: 'text-red-400 bg-red-400/10 border-red-400/20',
-      admin_general: 'text-orange-400 bg-orange-400/10 border-orange-400/20',
-      chef_pole: 'text-amber-400 bg-amber-400/10 border-amber-400/20',
-      mentor_senior: 'text-purple-400 bg-purple-400/10 border-purple-400/20',
-      mentor: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
-      chef_equipe: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
-      membre_equipe: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
-      membre: 'text-brand-400 bg-blue-400/10 border-blue-400/20',
-    };
-    return colors[roleId] || 'text-gray-400 bg-gray-400/10 border-gray-400/20';
-  };
-
   return (
     <PermissionGate
       permission="dashboard.admin"
@@ -267,13 +259,14 @@ export default function AdminPage({ params }: AdminPageProps) {
         </div>
       }
     >
-      <div className="space-y-6">
+      <div className="space-y-5">
         <PageHeader
+          eyebrow="Admin"
           title="Administration"
           description={
             stats
-              ? `Gérez les utilisateurs et leurs rôles. Dernière mise à jour: ${new Date(stats.lastUpdated).toLocaleTimeString()}`
-              : 'Gérez les utilisateurs et leurs rôles.'
+              ? `Gestion des utilisateurs · MAJ ${new Date(stats.lastUpdated).toLocaleTimeString()}`
+              : 'Gestion des utilisateurs et des rôles'
           }
           actions={
             <Button
@@ -284,75 +277,77 @@ export default function AdminPage({ params }: AdminPageProps) {
               title="Actualiser"
             >
               <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+              Actualiser
             </Button>
           }
         />
 
         {loading ? (
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-12 h-12 border-2 border-default border-t-brand-500 rounded-full" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[1, 2, 3, 4].map((i) => (
+              <StatCard key={i} label="" value="" loading />
+            ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <StatCard label="Total Users" value={stats?.totalUsers || 0} icon={Users} />
-            <StatCard
-              label="Active"
-              value={stats?.approvedMembers || 0}
-              icon={Check}
-              iconClassName="text-brand-600"
-            />
+            <StatCard label="Active" value={stats?.approvedMembers || 0} icon={Check} />
             <StatCard
               label="Pending"
               value={stats?.pendingMembers || 0}
-              icon={Filter}
-              iconClassName="text-amber-600"
+              icon={Clock}
+              iconClassName="text-amber-700"
               iconBgClassName="bg-amber-500/10"
             />
-            <StatCard
-              label="Admins"
-              value={stats?.adminCount || 0}
-              icon={Shield}
-              iconClassName="text-purple-600"
-              iconBgClassName="bg-purple-500/10"
-            />
+            <StatCard label="Admins" value={stats?.adminCount || 0} icon={Shield} />
           </div>
         )}
 
-        <Card>
-          <h2 className="text-lg font-semibold text-primary mb-4">Hiérarchie des Rôles</h2>
-          <div className="flex flex-wrap gap-2">
+        <Panel
+          title="Hiérarchie des rôles"
+          description="Niveaux d'accès de l'association"
+          noPadding
+          bodyClassName="px-5 py-4"
+        >
+          <div className="flex flex-wrap gap-1.5">
             {roles.map((role) => {
               const Icon = getRoleIcon(role.id);
               return (
-                <div
+                <span
                   key={role.id}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg border ${getRoleColor(role.id)}`}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md border text-xs font-medium',
+                    getRoleChipClass(role.level)
+                  )}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="text-sm font-medium">{role.name[locale as 'en' | 'fr'] || role.name.en}</span>
-                  <span className="text-xs opacity-60">Lv.{role.level}</span>
-                </div>
+                  <Icon className="w-3 h-3 opacity-70" />
+                  <span>{role.name[locale as 'en' | 'fr'] || role.name.en}</span>
+                  <span className="text-[10px] opacity-50 tabular-nums">L{role.level}</span>
+                </span>
               );
             })}
           </div>
-        </Card>
+        </Panel>
 
-        <Card padding="none">
-          <div className="p-6 border-b border-subtle">
-            <FilterBar className="border-0 p-0 bg-transparent rounded-none">
-              <div className="relative flex-1 min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted pointer-events-none" />
+        <Panel
+          title="Utilisateurs"
+          description={`${filteredUsers.length} résultat${filteredUsers.length !== 1 ? 's' : ''}`}
+          noPadding
+          actions={
+            <FilterBar>
+              <div className="relative w-full sm:w-56">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted pointer-events-none" />
                 <Input
-                  placeholder="Rechercher un utilisateur..."
+                  placeholder="Rechercher…"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-9"
+                  className="pl-8 h-9 text-sm"
                 />
               </div>
               <Select
                 value={selectedRole || ''}
                 onChange={(e) => setSelectedRole(e.target.value || null)}
-                className="sm:w-48"
+                className="sm:w-40 h-9 text-sm"
               >
                 <option value="">Tous les rôles</option>
                 {roles.map((role) => (
@@ -362,98 +357,103 @@ export default function AdminPage({ params }: AdminPageProps) {
                 ))}
               </Select>
             </FilterBar>
-          </div>
-
-          <div className="overflow-x-auto p-6 pt-0">
-            <table className="w-full">
-              <thead>
-                <tr className="text-left border-b border-default">
-                  <th className="pb-3 text-secondary text-sm font-medium">User</th>
-                  <th className="pb-3 text-secondary text-sm font-medium">Rôle</th>
-                  <th className="pb-3 text-secondary text-sm font-medium">Statut</th>
-                  <th className="pb-3 text-secondary text-sm font-medium">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-subtle">
-                {filteredUsers.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="py-8 text-center text-muted">
-                      {loading ? 'Chargement...' : 'Aucun utilisateur trouvé'}
-                    </td>
-                  </tr>
-                ) : (
-                  filteredUsers.map((user) => {
-                    const Icon = getRoleIcon(user.role);
-                    return (
-                      <tr key={user.id} className="hover:bg-card">
-                        <td className="py-4">
-                          <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-full bg-card-muted flex items-center justify-center overflow-hidden">
-                              {user.imageUrl ? (
-                                <img src={user.imageUrl} alt={user.name} className="w-full h-full object-cover" />
-                              ) : (
-                                <UserCog className="w-5 h-5 text-secondary" />
-                              )}
-                            </div>
-                            <div>
-                              <p className="text-primary font-medium">{user.name}</p>
-                              <p className="text-muted text-sm">{user.email}</p>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${getRoleColor(user.role)}`}>
-                            <Icon className="w-4 h-4" />
-                            <span className="text-sm font-medium">
-                              {getRoleName(user.role, locale as 'en' | 'fr')}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="py-4">
-                          <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${user.status === 'active'
-                            ? 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
-                            : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
-                            }`}>
-                            {user.status === 'active' ? (
-                              <Check className="w-3 h-3" />
+          }
+          bodyClassName="p-0"
+        >
+          <DataTable>
+            <DataTableHead>
+              <DataTableHeadRow>
+                <DataTableTh>Utilisateur</DataTableTh>
+                <DataTableTh>Rôle</DataTableTh>
+                <DataTableTh>Statut</DataTableTh>
+                <DataTableTh className="w-20 text-right">Actions</DataTableTh>
+              </DataTableHeadRow>
+            </DataTableHead>
+            <DataTableBody>
+              {filteredUsers.length === 0 ? (
+                <DataTableRow>
+                  <DataTableTd colSpan={4} className="py-10 text-center text-muted">
+                    {loading ? 'Chargement…' : 'Aucun utilisateur trouvé'}
+                  </DataTableTd>
+                </DataTableRow>
+              ) : (
+                filteredUsers.map((user) => {
+                  const Icon = getRoleIcon(user.role);
+                  const roleMeta = roles.find((r) => r.id === user.role);
+                  const level = roleMeta?.level ?? 1;
+                  return (
+                    <DataTableRow key={user.id}>
+                      <DataTableTd>
+                        <div className="flex items-center gap-2.5">
+                          <div className="w-8 h-8 rounded-full bg-card-muted flex items-center justify-center overflow-hidden ring-1 ring-default shrink-0">
+                            {user.imageUrl ? (
+                              <img src={user.imageUrl} alt={user.name} className="w-full h-full object-cover" />
                             ) : (
-                              <Clock className="w-3 h-3" />
+                              <UserCog className="w-4 h-4 text-muted" />
                             )}
-                            {user.status === 'active'
-                              ? (locale === 'fr' ? 'Actif' : 'Active')
-                              : user.status === 'pending'
-                                ? (locale === 'fr' ? 'En essai' : 'Trial')
-                                : user.status}
-                          </span>
-                        </td>
-                        <td className="py-4">
-                          <PermissionGate permission="admin.roles.assign">
-                            <div className="flex items-center gap-2">
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-primary font-medium text-sm truncate">{user.name}</p>
+                            <p className="text-muted text-xs truncate">{user.email}</p>
+                          </div>
+                        </div>
+                      </DataTableTd>
+                      <DataTableTd>
+                        <span
+                          className={cn(
+                            'inline-flex items-center gap-1 px-2 py-0.5 rounded-md border text-xs font-medium',
+                            getRoleChipClass(level)
+                          )}
+                        >
+                          <Icon className="w-3 h-3 opacity-70" />
+                          {getRoleName(user.role, locale as 'en' | 'fr')}
+                        </span>
+                      </DataTableTd>
+                      <DataTableTd>
+                        <Badge variant={user.status === 'active' ? 'brand' : 'amber'}>
+                          {user.status === 'active' ? (
+                            <Check className="w-3 h-3" />
+                          ) : (
+                            <Clock className="w-3 h-3" />
+                          )}
+                          {user.status === 'active'
+                            ? (locale === 'fr' ? 'Actif' : 'Active')
+                            : user.status === 'pending'
+                              ? (locale === 'fr' ? 'En essai' : 'Trial')
+                              : user.status}
+                        </Badge>
+                      </DataTableTd>
+                      <DataTableTd className="text-right">
+                        <PermissionGate permission="admin.roles.assign">
+                          <div className="flex items-center justify-end gap-0.5">
+                            <button
+                              type="button"
+                              onClick={() => openEditModal(user)}
+                              className="p-1.5 rounded-md hover:bg-card-muted text-muted hover:text-primary transition-colors"
+                              aria-label="Modifier"
+                            >
+                              <Edit className="w-3.5 h-3.5" />
+                            </button>
+                            <PermissionGate permission="admin.users.manage">
                               <button
-                                onClick={() => openEditModal(user)}
-                                className="p-2 rounded-lg hover:bg-card-muted text-secondary hover:text-primary transition-colors"
+                                type="button"
+                                onClick={() => handleDeleteUser(user.id)}
+                                className="p-1.5 rounded-md hover:bg-red-500/10 text-muted hover:text-red-600 transition-colors"
+                                aria-label="Supprimer"
                               >
-                                <Edit className="w-4 h-4" />
+                                <Trash2 className="w-3.5 h-3.5" />
                               </button>
-                              <PermissionGate permission="admin.users.manage">
-                                <button
-                                  onClick={() => handleDeleteUser(user.id)}
-                                  className="p-2 rounded-lg hover:bg-red-500/10 text-secondary hover:text-red-400 transition-colors"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </PermissionGate>
-                            </div>
-                          </PermissionGate>
-                        </td>
-                      </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
-        </Card>
+                            </PermissionGate>
+                          </div>
+                        </PermissionGate>
+                      </DataTableTd>
+                    </DataTableRow>
+                  );
+                })
+              )}
+            </DataTableBody>
+          </DataTable>
+        </Panel>
 
         <Modal
           open={!!editingUser}

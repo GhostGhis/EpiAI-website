@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { Link } from '@/i18n/routing';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { Plus, Edit, Trash2, Eye, EyeOff, Shield } from 'lucide-react';
 import { PermissionGate } from '@/components/shared/PermissionGate';
-import { PageHeader, Button } from '@/components/ui';
+import { PageHeader, Button, Panel, ListRow, EmptyState, Badge } from '@/components/ui';
 
 interface Project {
     _id: string;
@@ -21,7 +21,6 @@ interface Project {
 }
 
 export default function AdminProjectsPage() {
-    const router = useRouter();
     const params = useParams();
     const locale = (params.locale as string) || 'en';
     const [projects, setProjects] = useState<Project[]>([]);
@@ -111,7 +110,7 @@ export default function AdminProjectsPage() {
                 </div>
             }
         >
-            <div className="space-y-6">
+            <div className="space-y-5">
                 <PageHeader
                     title="Projects Management"
                     description="Manage and publish projects for the homepage"
@@ -141,91 +140,90 @@ export default function AdminProjectsPage() {
                         </button>
                     </div>
                 ) : projects.length === 0 ? (
-                    <div className="text-center py-20 rounded-2xl bg-card border border-default">
-                        <Plus className="w-16 h-16 text-muted mx-auto mb-4" />
-                        <p className="text-muted mb-4">No projects yet</p>
-                        <Link
-                            href="/admin/projects/new"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-colors"
-                        >
-                            <Plus className="w-5 h-5" />
-                            Create First Project
-                        </Link>
-                    </div>
+                    <EmptyState
+                        icon={<Plus className="w-12 h-12" />}
+                        title="No projects yet"
+                        action={
+                            <Link href="/admin/projects/new">
+                                <Button>
+                                    <Plus className="w-5 h-5" />
+                                    Create First Project
+                                </Button>
+                            </Link>
+                        }
+                    />
                 ) : (
-                    <div className="space-y-4">
-                        {projects.map((project) => (
-                            <div
-                                key={project._id}
-                                className="p-6 rounded-2xl bg-card border border-default hover:border-brand-500/25 transition-all"
-                            >
-                                <div className="flex items-start gap-4">
-                                    <img
-                                        src={project.imageUrl}
-                                        alt={project.title[locale as 'en' | 'fr']}
-                                        className="w-32 h-24 object-cover rounded-xl border border-default"
-                                    />
-                                    <div className="flex-1">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <div>
-                                                <h3 className="text-xl font-bold text-primary mb-1">
-                                                    {project.title[locale as 'en' | 'fr']}
-                                                </h3>
-                                                <p className="text-secondary text-sm line-clamp-2">
-                                                    {project.description[locale as 'en' | 'fr']}
-                                                </p>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <button
-                                                    onClick={() => togglePublished(project._id, project.published)}
-                                                    className={`p-2 rounded-lg transition-colors ${project.published
-                                                        ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
-                                                        : 'bg-card text-muted hover:bg-card-muted'
-                                                        }`}
-                                                    title={project.published ? 'Published' : 'Draft'}
-                                                >
-                                                    {project.published ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        console.log('Edit clicked for project:', project._id);
-                                                        window.location.href = `/${locale}/admin/projects/${project._id}/edit`;
-                                                    }}
-                                                    className="p-2 rounded-lg bg-card hover:bg-card-muted text-secondary hover:text-primary transition-colors"
-                                                >
-                                                    <Edit className="w-5 h-5" />
-                                                </button>
-                                                <button
-                                                    onClick={() => {
-                                                        console.log('Delete clicked for project:', project._id);
-                                                        deleteProject(project._id);
-                                                    }}
-                                                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors"
-                                                >
-                                                    <Trash2 className="w-5 h-5" />
-                                                </button>
-                                            </div>
+                    <Panel title="All projects" description={`${projects.length} project${projects.length === 1 ? '' : 's'}`}>
+                        <div className="space-y-3">
+                            {projects.map((project) => (
+                                <ListRow
+                                    key={project._id}
+                                    leading={
+                                        <img
+                                            src={project.imageUrl}
+                                            alt={project.title[locale as 'en' | 'fr']}
+                                            className="w-20 h-16 object-cover rounded-lg border border-default"
+                                        />
+                                    }
+                                    actions={
+                                        <>
+                                            <button
+                                                onClick={() => togglePublished(project._id, project.published)}
+                                                className={`p-2 rounded-lg transition-colors ${project.published
+                                                    ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
+                                                    : 'bg-card text-muted hover:bg-card-muted'
+                                                    }`}
+                                                title={project.published ? 'Published' : 'Draft'}
+                                            >
+                                                {project.published ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    console.log('Edit clicked for project:', project._id);
+                                                    window.location.href = `/${locale}/admin/projects/${project._id}/edit`;
+                                                }}
+                                                className="p-2 rounded-lg bg-card hover:bg-card-muted text-secondary hover:text-primary transition-colors"
+                                            >
+                                                <Edit className="w-5 h-5" />
+                                            </button>
+                                            <button
+                                                onClick={() => {
+                                                    console.log('Delete clicked for project:', project._id);
+                                                    deleteProject(project._id);
+                                                }}
+                                                className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition-colors"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        </>
+                                    }
+                                >
+                                    <div>
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <p className="text-sm font-semibold text-primary">
+                                                {project.title[locale as 'en' | 'fr']}
+                                            </p>
+                                            <Badge variant={project.published ? 'success' : 'muted'}>
+                                                {project.published ? 'Published' : 'Draft'}
+                                            </Badge>
                                         </div>
-                                        <div className="flex flex-wrap gap-2 mt-3">
-                                            <span className="px-2 py-1 rounded-md bg-blue-500/10 text-brand-400 text-xs border border-blue-500/20">
-                                                {project.status}
-                                            </span>
+                                        <p className="text-secondary text-xs line-clamp-2 mb-2">
+                                            {project.description[locale as 'en' | 'fr']}
+                                        </p>
+                                        <div className="flex flex-wrap gap-2">
+                                            <Badge variant="brand">{project.status}</Badge>
                                             {project.techStack.slice(0, 3).map((tech) => (
-                                                <span key={tech} className="px-2 py-1 rounded-md bg-card border border-default text-secondary text-xs">
-                                                    {tech}
-                                                </span>
+                                                <Badge key={tech} variant="default">{tech}</Badge>
                                             ))}
                                             {project.techStack.length > 3 && (
-                                                <span className="px-2 py-1 rounded-md bg-card border border-default text-muted text-xs">
-                                                    +{project.techStack.length - 3} more
-                                                </span>
+                                                <Badge variant="muted">+{project.techStack.length - 3} more</Badge>
                                             )}
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                                </ListRow>
+                            ))}
+                        </div>
+                    </Panel>
                 )}
             </div>
         </PermissionGate>

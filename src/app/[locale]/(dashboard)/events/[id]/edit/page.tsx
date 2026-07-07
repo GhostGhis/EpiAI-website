@@ -5,8 +5,9 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { CATEGORIES } from '@/lib/events/categories';
-import { ArrowLeft, Calendar, AlertCircle, ImageIcon } from 'lucide-react';
+import { Calendar, AlertCircle } from 'lucide-react';
 import { normalizeImageUrl } from '@/lib/utils/image-url';
+import { FormPageShell, EmptyState, Button, Input, Textarea, Select } from '@/components/ui';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -57,14 +58,22 @@ export default function EditEventPage() {
 
   if (!canEdit) {
     return (
-      <div className="max-w-2xl mx-auto text-center py-16 text-primary">
-        {locale === 'fr' ? 'Accès refusé' : 'Access denied'}
-      </div>
+      <EmptyState
+        icon={<Calendar className="w-12 h-12" />}
+        title={locale === 'fr' ? 'Accès refusé' : 'Access denied'}
+        action={
+          <Link href={`/${locale}/events`}>
+            <Button variant="secondary">
+              {locale === 'fr' ? 'Retour aux événements' : 'Back to Events'}
+            </Button>
+          </Link>
+        }
+      />
     );
   }
 
   if (loading) {
-    return <div className="animate-pulse h-64 rounded-2xl bg-card" />;
+    return <div className="animate-pulse h-64 rounded-xl bg-card" />;
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -89,92 +98,80 @@ export default function EditEventPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto">
-      <Link
-        href={`/${locale}/events/${eventId}`}
-        className="inline-flex items-center gap-2 text-secondary hover:text-primary mb-6"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        {locale === 'fr' ? 'Retour' : 'Back'}
-      </Link>
-
-      <h1 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2">
-        <Calendar className="w-6 h-6" />
-        {locale === 'fr' ? 'Modifier l\'événement' : 'Edit event'}
-      </h1>
-
+    <FormPageShell
+      backHref={`/${locale}/events/${eventId}`}
+      backLabel={locale === 'fr' ? 'Retour' : 'Back'}
+      title={locale === 'fr' ? "Modifier l'événement" : 'Edit event'}
+      maxWidth="lg"
+    >
       {error && (
-        <div className="mb-4 p-3 rounded-xl bg-red-500/20 text-red-400 text-sm flex items-center gap-2">
+        <div className="mb-5 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm flex items-center gap-2">
           <AlertCircle className="w-4 h-4" />
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <Input
+          label={locale === 'fr' ? 'Titre' : 'Title'}
           required
           value={form.title}
           onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
           placeholder="Titre"
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
-        <textarea
+        <Textarea
+          label={locale === 'fr' ? 'Description' : 'Description'}
           required
           rows={3}
           value={form.description}
           onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
           placeholder="Description"
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
-        <textarea
+        <Textarea
+          label={locale === 'fr' ? 'Contenu' : 'Content'}
           required
           rows={5}
           value={form.content}
           onChange={(e) => setForm((f) => ({ ...f, content: e.target.value }))}
           placeholder="Contenu"
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
-        <select
+        <Select
+          label={locale === 'fr' ? 'Catégorie' : 'Category'}
           value={form.categoryId}
           onChange={(e) => setForm((f) => ({ ...f, categoryId: e.target.value }))}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         >
           {CATEGORIES.map((c) => (
             <option key={c.id} value={c.id}>{c.name[locale as 'fr' | 'en'] || c.name.fr}</option>
           ))}
-        </select>
-        <input
+        </Select>
+        <Input
+          label={locale === 'fr' ? 'Date' : 'Date'}
           type="datetime-local"
           required
           value={form.date}
           onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
-        <input
+        <Input
+          label={locale === 'fr' ? 'Lieu' : 'Location'}
           required
           value={form.location}
           onChange={(e) => setForm((f) => ({ ...f, location: e.target.value }))}
           placeholder="Lieu"
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
-        <input
+        <Input
+          label={locale === 'fr' ? 'Capacité' : 'Capacity'}
           type="number"
           min={1}
           value={form.capacity}
           onChange={(e) => setForm((f) => ({ ...f, capacity: Number(e.target.value) }))}
-          className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
         />
         <div>
-          <label className="block text-secondary text-sm font-medium mb-2 flex items-center gap-2">
-            <ImageIcon className="w-4 h-4" />
-            {locale === 'fr' ? 'URL de l\'image' : 'Image URL'}
-          </label>
-          <input
+          <Input
+            label={locale === 'fr' ? "URL de l'image" : 'Image URL'}
             type="url"
             value={form.imageUrl}
             onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
             placeholder="https://..."
-            className="w-full px-4 py-3 rounded-xl bg-card border border-default text-primary"
           />
           {form.imageUrl.trim() && (
             <div className="mt-3 rounded-xl overflow-hidden border border-default h-40">
@@ -188,14 +185,10 @@ export default function EditEventPage() {
             </div>
           )}
         </div>
-        <button
-          type="submit"
-          disabled={isPending}
-          className="px-6 py-3 rounded-xl bg-white text-black font-semibold disabled:opacity-50"
-        >
+        <Button type="submit" disabled={isPending} size="lg">
           {isPending ? '...' : locale === 'fr' ? 'Enregistrer' : 'Save'}
-        </button>
+        </Button>
       </form>
-    </div>
+    </FormPageShell>
   );
 }

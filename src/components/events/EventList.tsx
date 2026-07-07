@@ -15,14 +15,14 @@ export function EventList({ events: eventsProp, isLoading, className }: EventLis
   const events = eventsProp ?? [];
   if (isLoading) {
     return (
-      <div className={cn('grid gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>
+      <div className={cn('grid gap-3 md:grid-cols-2 lg:grid-cols-3', className)}>
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div
             key={i}
-            className="rounded-2xl bg-card border border-default animate-pulse"
+            className="rounded-xl bg-card border border-default shadow-card animate-pulse"
           >
-            <div className="h-48 bg-card-muted" />
-            <div className="p-5 space-y-3">
+            <div className="h-40 bg-card-muted" />
+            <div className="p-4 space-y-2.5">
               <div className="h-5 w-3/4 bg-card-muted rounded" />
               <div className="h-4 w-full bg-card-muted rounded" />
               <div className="h-4 w-1/2 bg-card-muted rounded" />
@@ -54,7 +54,7 @@ export function EventList({ events: eventsProp, isLoading, className }: EventLis
   }
 
   return (
-    <div className={cn('grid gap-6 md:grid-cols-2 lg:grid-cols-3', className)}>
+    <div className={cn('grid gap-3 md:grid-cols-2 lg:grid-cols-3', className)}>
       {events.map((event) => (
         <EventCard key={event.id} event={event} />
       ))}
