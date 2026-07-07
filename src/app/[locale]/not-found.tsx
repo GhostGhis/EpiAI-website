@@ -6,7 +6,7 @@ export default function NotFound() {
       <div className="text-center">
         <h1 className="text-6xl font-bold text-white mb-4">404</h1>
         <p className="text-xl text-white/60 mb-8">Page not found</p>
-        <Link href="/" className="inline-block px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition">
+        <Link href="/" className="inline-block px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-lg font-semibold transition">
           Back to Home
         </Link>
       </div>

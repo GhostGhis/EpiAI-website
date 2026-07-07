@@ -105,7 +105,7 @@ export function getSpotsPercentage(registered: number, capacity: number): number
 
 // Couleur de progression
 export function getProgressColor(percentage: number): string {
-  if (percentage > 50) return 'bg-emerald-500';
+  if (percentage > 50) return 'bg-brand-500';
   if (percentage > 25) return 'bg-amber-500';
   return 'bg-red-500';
 }

@@ -314,7 +314,7 @@ export default function ResourceDetailPage() {
               {resource.isDownloadable && (hasUploadedFile || externalUrl) && (
                 <button
                   onClick={handleDownload}
-                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-emerald-500/20 text-emerald-400 font-semibold hover:bg-emerald-500/30 border border-emerald-500/30 transition-all"
+                  className="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-brand-500/20 text-brand-400 font-semibold hover:bg-brand-500/30 border border-brand-500/30 transition-all"
                 >
                   <Download className="w-5 h-5" />
                   {t('downloadFile')}
@@ -326,7 +326,7 @@ export default function ResourceDetailPage() {
                 className={cn(
                   'w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-medium transition-all',
                   copied
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                    ? 'bg-brand-500/20 text-brand-400 border border-brand-500/30'
                     : 'bg-white/10 text-white hover:bg-white/20'
                 )}
               >
@@ -430,9 +430,9 @@ export default function ResourceDetailPage() {
 function getTypeColor(type: string): string {
   const colors: Record<string, string> = {
     pdf: 'bg-red-500/20 text-red-400',
-    code: 'bg-blue-500/20 text-blue-400',
+    code: 'bg-brand-500/15 text-brand-400',
     video: 'bg-purple-500/20 text-purple-400',
-    article: 'bg-emerald-500/20 text-emerald-400',
+    article: 'bg-brand-500/20 text-brand-400',
     course: 'bg-amber-500/20 text-amber-400',
     dataset: 'bg-cyan-500/20 text-cyan-400',
   };

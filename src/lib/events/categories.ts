@@ -6,7 +6,7 @@ export const CATEGORIES: ICategory[] = [
     slug: 'workshop',
     name: { en: 'Workshop', fr: 'Workshop' },
     icon: 'Wrench',
-    color: 'text-blue-400',
+    color: 'text-brand-400',
     bgColor: 'bg-blue-400/10',
   },
   {
@@ -30,8 +30,8 @@ export const CATEGORIES: ICategory[] = [
     slug: 'meetup',
     name: { en: 'Meetup', fr: 'Meetup' },
     icon: 'Users',
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-400/10',
+    color: 'text-brand-400',
+    bgColor: 'bg-brand-400/10',
   },
   {
     id: 'formation',

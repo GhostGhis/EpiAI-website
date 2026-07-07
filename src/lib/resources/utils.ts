@@ -59,7 +59,7 @@ export function getDifficultyInfo(difficulty: string, locale: 'en' | 'fr' = 'en'
   const difficulties: Record<string, { label: string; color: string }> = {
     beginner: {
       label: locale === 'fr' ? 'Debutant' : 'Beginner',
-      color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30',
+      color: 'bg-brand-500/20 text-brand-400 border-brand-500/30',
     },
     intermediate: {
       label: locale === 'fr' ? 'Intermediaire' : 'Intermediate',
@@ -104,9 +104,9 @@ export function getTypeLabel(type: string, locale: 'en' | 'fr' = 'en'): string {
 export function getTypeColor(type: string): string {
   const colors: Record<string, string> = {
     pdf: 'text-red-400 bg-red-400/10',
-    code: 'text-blue-400 bg-blue-400/10',
+    code: 'text-brand-400 bg-blue-400/10',
     video: 'text-purple-400 bg-purple-400/10',
-    article: 'text-emerald-400 bg-emerald-400/10',
+    article: 'text-brand-400 bg-brand-400/10',
     course: 'text-amber-400 bg-amber-400/10',
     dataset: 'text-cyan-400 bg-cyan-400/10',
   };

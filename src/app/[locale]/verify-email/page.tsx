@@ -61,7 +61,7 @@ export default function VerifyEmailPage() {
                     {/* Header */}
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
-                            <Mail className="w-8 h-8 text-blue-400" />
+                            <Mail className="w-8 h-8 text-brand-400" />
                         </div>
                         <h1 className="text-2xl font-bold text-white mb-2">
                             Vérifiez votre email
@@ -77,24 +77,24 @@ export default function VerifyEmailPage() {
                     {/* Instructions */}
                     <div className="bg-zinc-900/30 rounded-lg p-4 mb-6">
                         <h3 className="text-white font-medium mb-3 flex items-center gap-2">
-                            <CheckCircle className="w-5 h-5 text-blue-400" />
+                            <CheckCircle className="w-5 h-5 text-brand-400" />
                             Étapes à suivre :
                         </h3>
                         <ol className="space-y-2 text-sm text-zinc-300">
                             <li className="flex gap-2">
-                                <span className="text-blue-400 font-bold">1.</span>
+                                <span className="text-brand-400 font-bold">1.</span>
                                 Ouvrez votre boîte mail
                             </li>
                             <li className="flex gap-2">
-                                <span className="text-blue-400 font-bold">2.</span>
+                                <span className="text-brand-400 font-bold">2.</span>
                                 Recherchez l&apos;email de Epi&apos;AI
                             </li>
                             <li className="flex gap-2">
-                                <span className="text-blue-400 font-bold">3.</span>
+                                <span className="text-brand-400 font-bold">3.</span>
                                 Cliquez sur le lien de vérification
                             </li>
                             <li className="flex gap-2">
-                                <span className="text-blue-400 font-bold">4.</span>
+                                <span className="text-brand-400 font-bold">4.</span>
                                 Revenez sur cette page
                             </li>
                         </ol>
@@ -122,7 +122,7 @@ export default function VerifyEmailPage() {
                     <button
                         onClick={handleResendEmail}
                         disabled={sending || sent}
-                        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 mb-4"
+                        className="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 mb-4"
                     >
                         {sending ? (
                             <span className="flex items-center justify-center gap-2">
@@ -143,7 +143,7 @@ export default function VerifyEmailPage() {
                         </p>
                         <Link
                             href="/"
-                            className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm font-medium"
+                            className="inline-flex items-center gap-2 text-brand-400 hover:text-brand-300 text-sm font-medium"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             Retour à l&apos;accueil

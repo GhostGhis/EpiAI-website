@@ -239,7 +239,7 @@ export default function AdminPage({ params }: AdminPageProps) {
       mentor: 'text-indigo-400 bg-indigo-400/10 border-indigo-400/20',
       chef_equipe: 'text-teal-400 bg-teal-400/10 border-teal-400/20',
       membre_equipe: 'text-cyan-400 bg-cyan-400/10 border-cyan-400/20',
-      membre: 'text-blue-400 bg-blue-400/10 border-blue-400/20',
+      membre: 'text-brand-400 bg-blue-400/10 border-blue-400/20',
     };
     return colors[roleId] || 'text-gray-400 bg-gray-400/10 border-gray-400/20';
   };
@@ -279,7 +279,7 @@ export default function AdminPage({ params }: AdminPageProps) {
         {/* Stats */}
         {loading ? (
           <div className="flex items-center justify-center py-20">
-            <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-emerald-400 rounded-full"></div>
+            <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-brand-500 rounded-full"></div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -289,18 +289,18 @@ export default function AdminPage({ params }: AdminPageProps) {
                   <p className="text-white/60 text-sm">Total Users</p>
                   <p className="text-2xl font-bold text-white">{stats?.totalUsers || 0}</p>
                 </div>
-                <Users className="w-8 h-8 text-blue-400" />
+                <Users className="w-8 h-8 text-brand-400" />
               </div>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/10">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-white/60 text-sm">Active</p>
-                  <p className="text-2xl font-bold text-emerald-400">
+                  <p className="text-2xl font-bold text-brand-400">
                     {stats?.approvedMembers || 0}
                   </p>
                 </div>
-                <Check className="w-8 h-8 text-emerald-400" />
+                <Check className="w-8 h-8 text-brand-400" />
               </div>
             </div>
             <div className="p-4 rounded-xl bg-white/5 border border-white/10">
@@ -422,7 +422,7 @@ export default function AdminPage({ params }: AdminPageProps) {
                         </td>
                         <td className="py-4">
                           <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium ${user.status === 'active'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20'
+                            ? 'bg-brand-500/10 text-brand-400 border border-brand-500/20'
                             : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                             }`}>
                             {user.status === 'active' ? (
@@ -499,7 +499,7 @@ export default function AdminPage({ params }: AdminPageProps) {
                   <select
                     value={newStatus}
                     onChange={(e) => setNewStatus(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all mb-4"
+                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/50 transition-all mb-4"
                   >
                     <option value="pending" className="bg-zinc-900">
                       {locale === 'fr' ? 'En essai' : 'Trial'}
@@ -518,7 +518,7 @@ export default function AdminPage({ params }: AdminPageProps) {
                   <select
                     value={newRole}
                     onChange={(e) => setNewRole(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all"
+                    className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/50 transition-all"
                   >
                     {roles.map((role) => (
                       <option key={role.id} value={role.id} className="bg-zinc-900">
@@ -538,7 +538,7 @@ export default function AdminPage({ params }: AdminPageProps) {
                   <button
                     onClick={handleSaveUser}
                     disabled={isSaving || (newRole === editingUser.role && newStatus === editingUser.status)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-500 text-white font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSaving ? (
                       <>

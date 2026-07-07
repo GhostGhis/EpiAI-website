@@ -192,7 +192,7 @@ export default function ActivityDetailPage() {
             {activity.linkedEventId && (
               <Link
                 href={`/${locale}/events/${activity.linkedEventId}`}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-500/20 text-blue-400 text-sm hover:bg-blue-500/30 transition-colors border border-blue-500/30"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-500/15 text-brand-400 text-sm hover:bg-brand-500/30 transition-colors border border-brand-500/25"
               >
                 <ExternalLink className="w-4 h-4" />
                 {locale === 'fr' ? 'Voir l\'événement' : 'View Event'}
@@ -220,7 +220,7 @@ export default function ActivityDetailPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setShowForceForm(!showForceForm)}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 text-sm hover:bg-blue-600/30 transition-colors border border-blue-500/30"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-600/20 text-brand-400 text-sm hover:bg-brand-600/30 transition-colors border border-brand-500/25"
               >
                 <UserPlus className="w-4 h-4" />
                 {locale === 'fr' ? 'Inscrire de force' : 'Force Register'}
@@ -228,7 +228,7 @@ export default function ActivityDetailPage() {
               <button
                 onClick={handleSaveAttendance}
                 disabled={saving}
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-600 text-white text-sm hover:bg-emerald-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-brand-600 text-white text-sm hover:bg-brand-700 transition-colors disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 {saving ? '...' : (locale === 'fr' ? 'Sauvegarder' : 'Save')}
@@ -264,7 +264,7 @@ export default function ActivityDetailPage() {
               </div>
               <button
                 onClick={handleForceRegister}
-                className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors"
+                className="px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors"
               >
                 {locale === 'fr' ? 'Inscrire' : 'Register'}
               </button>
@@ -288,7 +288,7 @@ export default function ActivityDetailPage() {
                   key={reg.userId}
                   className={`grid grid-cols-[1fr_auto_auto] gap-4 items-center px-4 py-3 rounded-xl border transition-all ${
                     attendanceMap[reg.userId] === true
-                      ? 'bg-emerald-500/10 border-emerald-500/20'
+                      ? 'bg-brand-500/10 border-brand-500/20'
                       : attendanceMap[reg.userId] === false
                       ? 'bg-red-500/10 border-red-500/20'
                       : 'bg-white/5 border-white/10'
@@ -307,8 +307,8 @@ export default function ActivityDetailPage() {
                     onClick={() => setAttendanceMap(m => ({ ...m, [reg.userId]: true }))}
                     className={`p-2 rounded-lg transition-colors ${
                       attendanceMap[reg.userId] === true
-                        ? 'bg-emerald-500 text-white'
-                        : 'bg-white/5 text-white/30 hover:text-emerald-400'
+                        ? 'bg-brand-500 text-white'
+                        : 'bg-white/5 text-white/30 hover:text-brand-400'
                     }`}
                   >
                     <CheckCircle className="w-5 h-5" />

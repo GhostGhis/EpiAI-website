@@ -188,7 +188,7 @@ export default function AdminTeamPage() {
           </div>
           <button
             onClick={openCreateForm}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-all"
           >
             <Plus className="w-5 h-5" />
             {locale === 'fr' ? 'Ajouter' : 'Add Member'}
@@ -387,7 +387,7 @@ export default function AdminTeamPage() {
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={handleSave}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm font-medium hover:bg-emerald-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-600 text-white text-sm font-medium hover:bg-brand-700 transition-colors"
                 >
                   <Save className="w-4 h-4" />
                   {locale === 'fr' ? 'Sauvegarder' : 'Save'}
@@ -453,7 +453,7 @@ export default function AdminTeamPage() {
                         <button
                           onClick={() => handleToggleActive(member)}
                           className={`p-2 rounded-lg transition-colors ${member.isActive
-                              ? 'text-emerald-400 hover:bg-emerald-500/10'
+                              ? 'text-brand-400 hover:bg-brand-500/10'
                               : 'text-white/30 hover:bg-white/5'
                             }`}
                           title={member.isActive ? 'Désactiver' : 'Activer'}
@@ -462,7 +462,7 @@ export default function AdminTeamPage() {
                         </button>
                         <button
                           onClick={() => openEditForm(member)}
-                          className="p-2 rounded-lg text-blue-400 hover:bg-blue-500/10 transition-colors"
+                          className="p-2 rounded-lg text-brand-400 hover:bg-brand-500/10 transition-colors"
                         >
                           <Edit2 className="w-4 h-4" />
                         </button>

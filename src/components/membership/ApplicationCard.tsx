@@ -171,7 +171,7 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
         );
       case 'approved':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-medium border border-emerald-500/30">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-xs font-medium border border-brand-500/30">
             <CheckCircle className="w-3.5 h-3.5" />
             Approved
           </span>
@@ -197,7 +197,7 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 border border-white/10 flex items-center justify-center">
-            <User className="w-6 h-6 text-blue-400" />
+            <User className="w-6 h-6 text-brand-400" />
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">
@@ -262,7 +262,7 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
               <button
                 onClick={handleApprove}
                 disabled={isLoading}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-400 font-medium hover:bg-emerald-500/30 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500/20 text-brand-400 font-medium hover:bg-brand-500/30 transition-all disabled:opacity-50"
               >
                 {isLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -292,7 +292,7 @@ export function ApplicationCard({ application, locale, onUpdate }: ApplicationCa
               <button
                 onClick={handleResendCredentials}
                 disabled={isResending}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/20 text-blue-400 font-medium hover:bg-blue-500/30 transition-all disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-500/15 text-brand-400 font-medium hover:bg-brand-500/30 transition-all disabled:opacity-50"
               >
                 {isResending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />

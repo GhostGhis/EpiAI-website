@@ -60,7 +60,7 @@ export default function MobileBottomNav() {
                 href={`/${locale}${href}`}
                 className={cn(
                   'relative flex flex-col items-center gap-0.5 px-2 py-2 text-xs font-medium min-w-[56px] min-h-[52px] justify-center',
-                  active ? 'text-blue-400' : badge > 0 ? 'text-white/80' : 'text-white/50'
+                  active ? 'text-brand-400' : badge > 0 ? 'text-white/80' : 'text-white/50'
                 )}
                 aria-current={active ? 'page' : undefined}
               >

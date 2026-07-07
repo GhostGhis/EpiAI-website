@@ -10,10 +10,14 @@ import ProjectsSection from '@/components/ProjectsSection';
 import JoinSection from '@/components/JoinSection';
 import Footer from '@/components/Footer';
 import { getTeamMembersForDisplay } from '@/lib/team/repository';
+import { getProjects } from '@/lib/projects/repository';
 
 export default async function Home() {
   const locale = (await getLocale()) as 'fr' | 'en';
-  const teamMembers = await getTeamMembersForDisplay();
+  const [teamMembers, projects] = await Promise.all([
+    getTeamMembersForDisplay(),
+    getProjects(true),
+  ]);
 
   return (
     <div className="relative font-[family-name:var(--font-geist-sans)] text-white overflow-x-hidden scroll-smooth">
@@ -36,7 +40,7 @@ export default async function Home() {
         <ExpertiseSection />
         <ImpactSection />
         <TeamSection initialMembers={teamMembers} locale={locale} />
-        <ProjectsSection />
+        <ProjectsSection initialProjects={projects} />
         <JoinSection />
       </main>
 

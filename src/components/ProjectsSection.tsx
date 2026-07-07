@@ -1,37 +1,25 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Image from 'next/image';
 import { Link } from '@/i18n/routing';
 import { discoveryLinkLabel } from '@/lib/projects/links';
+import type { ProjectApiShape } from '@/lib/projects/repository';
 
-interface Project {
-    _id: string;
-    title: { en: string; fr: string };
-    description: { en: string; fr: string };
-    imageUrl: string;
-    status: string;
-    techStack: string[];
-    githubUrl: string;
-    discoveryUrl: string;
+interface ProjectsSectionProps {
+    initialProjects?: ProjectApiShape[];
 }
 
-export default function ProjectsSection() {
+export default function ProjectsSection({ initialProjects = [] }: ProjectsSectionProps) {
     const tHeader = useTranslations('Header');
-    const [projects, setProjects] = useState<Project[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [locale, setLocale] = useState<'en' | 'fr'>('en');
+    const locale = useLocale() as 'en' | 'fr';
+    const [projects, setProjects] = useState<ProjectApiShape[]>(initialProjects);
+    const [loading, setLoading] = useState(initialProjects.length === 0);
 
-    // Get locale from URL
     useEffect(() => {
-        const path = window.location.pathname;
-        const detectedLocale = path.startsWith('/fr') ? 'fr' : 'en';
-        setLocale(detectedLocale);
-    }, []);
+        if (initialProjects.length > 0) return;
 
-    // Fetch real projects from API
-    useEffect(() => {
         async function fetchProjects() {
             try {
                 const response = await fetch('/api/projects');
@@ -47,25 +35,25 @@ export default function ProjectsSection() {
         }
 
         fetchProjects();
-    }, []);
+    }, [initialProjects.length]);
 
     const statusColors = {
-        "Live": "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
-        "Beta": "bg-yellow-500/20 text-yellow-300 border-yellow-500/30",
-        "In Development": "bg-blue-500/20 text-blue-300 border-blue-500/30",
-        "Prototype": "bg-purple-500/20 text-purple-300 border-purple-500/30",
-        "Archived": "bg-gray-500/20 text-gray-300 border-gray-500/30"
+        "Live": "bg-brand-500/15 text-brand-300 border-brand-500/25",
+        "Beta": "bg-amber-500/15 text-amber-200 border-amber-500/25",
+        "In Development": "bg-zinc-500/15 text-zinc-300 border-zinc-500/25",
+        "Prototype": "bg-zinc-600/15 text-zinc-400 border-zinc-500/20",
+        "Archived": "bg-zinc-700/15 text-zinc-500 border-zinc-600/20"
     };
 
     return (
         <section id="projects" className="py-24 px-4 min-h-screen flex flex-col justify-center relative bg-black/20">
             {/* Tech Grid Background */}
             <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] -z-10 [mask-image:radial-gradient(ellipse_60%_60%_at_50%_50%,#000_70%,transparent_100%)]"></div>
-            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-emerald-600/10 rounded-full blur-[120px] -z-10"></div>
+            <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-brand-600/10 rounded-full blur-[120px] -z-10"></div>
 
             <div className="max-w-7xl mx-auto w-full">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white text-glow tracking-tight">{tHeader('projects')}</h2>
+                    <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tight">{tHeader('projects')}</h2>
                     <p className="text-gray-400 max-w-xl mx-auto text-sm font-light">
                         {locale === 'fr'
                             ? 'Découvrez les solutions innovantes et les défis techniques relevés par nos équipes étudiantes.'
@@ -75,7 +63,7 @@ export default function ProjectsSection() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-emerald-400 rounded-full"></div>
+                        <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-brand-500 rounded-full"></div>
                     </div>
                 ) : projects.length === 0 ? (
                     <div className="text-center py-20">
@@ -91,12 +79,12 @@ export default function ProjectsSection() {
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                         {projects.map((project) => (
-                            <div key={project._id} className="group relative rounded-3xl bg-[#0a0a0a] border border-white/5 hover:border-emerald-500/30 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(16,185,129,0.15)] overflow-hidden flex flex-col h-full">
+                            <div key={project._id} className="group relative rounded-2xl bg-surface-card border border-white/[0.06] hover:border-brand-500/25 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(0,0,0,0.35)] overflow-hidden flex flex-col h-full">
                                 {/* Main Link Overlay */}
                                 <Link href={`/projects/${project._id}`} className="absolute inset-0 z-0" aria-label={project.title[locale]} />
 
                                 {/* Project Header - Image with Overlay */}
-                                <div className="h-48 relative w-full border-b border-white/5 bg-gradient-to-br from-emerald-950/80 to-zinc-900 overflow-hidden">
+                                <div className="h-48 relative w-full border-b border-white/5 bg-gradient-to-br from-brand-900/60 to-zinc-900 overflow-hidden">
                                     {project.imageUrl ? (
                                     <Image
                                         src={project.imageUrl}
@@ -107,7 +95,7 @@ export default function ProjectsSection() {
                                     />
                                     ) : null}
                                     <div className="absolute top-4 right-4">
-                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border backdrop-blur-md ${statusColors[project.status as keyof typeof statusColors] || statusColors['Live']}`}>
+                                        <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border backdrop-blur-md ${statusColors[(project.status ?? 'Live') as keyof typeof statusColors] || statusColors['Live']}`}>
                                             {project.status}
                                         </span>
                                     </div>
@@ -115,7 +103,7 @@ export default function ProjectsSection() {
 
                                 {/* Project Body */}
                                 <div className="p-6 flex-1 flex flex-col">
-                                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-emerald-400 transition-colors font-mono">
+                                    <h3 className="text-xl font-bold mb-2 text-white group-hover:text-brand-400 transition-colors font-mono">
                                         {project.title[locale]}
                                     </h3>
 
@@ -151,7 +139,7 @@ export default function ProjectsSection() {
                                                 href={project.discoveryUrl}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-emerald-600/10 hover:bg-emerald-600/20 border border-emerald-500/20 hover:border-emerald-500/40 text-emerald-400 hover:text-emerald-300 transition-all text-xs font-semibold"
+                                                className="flex items-center justify-center gap-2 py-2 rounded-lg bg-brand-600/10 hover:bg-brand-600/20 border border-brand-500/20 hover:border-brand-500/40 text-brand-400 hover:text-brand-300 transition-all text-xs font-semibold"
                                                 onClick={(e) => e.stopPropagation()}
                                             >
                                                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>

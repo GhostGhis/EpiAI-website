@@ -78,7 +78,7 @@ export function EventDetail({ event, className }: EventDetailProps) {
           <span className="text-white/70">Availability</span>
           <span className={cn(
             'font-medium',
-            isFull ? 'text-red-400' : 'text-emerald-400'
+            isFull ? 'text-red-400' : 'text-brand-400'
           )}>
             {event.spotsLeft} spots remaining
           </span>

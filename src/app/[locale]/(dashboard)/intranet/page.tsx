@@ -105,7 +105,7 @@ export default function IntranetPage() {
         {canCreate && (
           <Link
             href={`/${locale}/intranet/new`}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-all"
           >
             <Plus className="w-5 h-5" />
             {locale === 'fr' ? 'Nouvelle activité' : 'New Activity'}
@@ -225,7 +225,7 @@ export default function IntranetPage() {
                   {!activity.isPast && (
                     activity.isRegistered ? (
                       <div className="flex flex-col items-center gap-1">
-                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-emerald-500/20 text-emerald-400 text-sm border border-emerald-500/30">
+                        <span className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-brand-500/20 text-brand-400 text-sm border border-brand-500/30">
                           <CheckCircle className="w-4 h-4" />
                           {locale === 'fr' ? 'Inscrit' : 'Registered'}
                         </span>
@@ -243,7 +243,7 @@ export default function IntranetPage() {
                       <button
                         onClick={() => handleRegister(activity.id)}
                         disabled={registering === activity.id}
-                        className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold transition-all disabled:opacity-50"
+                        className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold transition-all disabled:opacity-50"
                       >
                         {registering === activity.id
                           ? '...'
@@ -319,7 +319,7 @@ function AttendanceSummaryCard({ locale }: { locale: string }) {
       </h3>
       <div className="flex gap-6">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-emerald-500" />
+          <div className="w-3 h-3 rounded-full bg-brand-500" />
           <span className="text-white text-sm font-bold">{summary.totalPresent}</span>
           <span className="text-white/50 text-xs">{locale === 'fr' ? 'Présences' : 'Present'}</span>
         </div>
@@ -330,7 +330,7 @@ function AttendanceSummaryCard({ locale }: { locale: string }) {
         </div>
         <div className="flex items-center gap-2">
           <span className="text-white/50 text-xs">{locale === 'fr' ? 'Taux:' : 'Rate:'}</span>
-          <span className={`text-sm font-bold ${summary.attendanceRate >= 70 ? 'text-emerald-400' : 'text-red-400'}`}>
+          <span className={`text-sm font-bold ${summary.attendanceRate >= 70 ? 'text-brand-400' : 'text-red-400'}`}>
             {summary.attendanceRate?.toFixed(0)}%
           </span>
         </div>

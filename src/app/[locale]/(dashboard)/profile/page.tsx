@@ -133,7 +133,7 @@ export default function ProfilePage() {
                   <h2 className="text-2xl font-bold text-white flex items-center gap-2">
                     {userName}
                     {user?.emailAddresses[0]?.verification?.status === 'verified' && (
-                      <BadgeCheck className="w-5 h-5 text-blue-400" />
+                      <BadgeCheck className="w-5 h-5 text-brand-400" />
                     )}
                   </h2>
                   <p className="text-white/60">{userEmail}</p>
@@ -224,7 +224,7 @@ export default function ProfilePage() {
                   key={permission}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 text-white/80 text-sm"
                 >
-                  <Shield className="w-4 h-4 text-emerald-400" />
+                  <Shield className="w-4 h-4 text-brand-400" />
                   <span className="capitalize">{permission.replace('.', ': ')}</span>
                 </div>
               ))}

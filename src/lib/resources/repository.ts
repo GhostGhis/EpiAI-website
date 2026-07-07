@@ -15,7 +15,7 @@ export { CATEGORIES, TAGS } from './categories';
 
 // Difficulté colors
 const DIFFICULTY_COLORS = {
-  beginner: { bg: 'bg-emerald-500/20', text: 'text-emerald-400', border: 'border-emerald-500/30' },
+  beginner: { bg: 'bg-brand-500/20', text: 'text-brand-400', border: 'border-brand-500/30' },
   intermediate: { bg: 'bg-amber-500/20', text: 'text-amber-400', border: 'border-amber-500/30' },
   advanced: { bg: 'bg-red-500/20', text: 'text-red-400', border: 'border-red-500/30' },
 };

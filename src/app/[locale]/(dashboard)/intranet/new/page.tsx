@@ -257,7 +257,7 @@ export default function CreateActivityPage() {
         </div>
 
         {/* Info box about deadline */}
-        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm">
+        <div className="p-4 rounded-xl bg-blue-500/10 border border-blue-500/20 text-brand-400 text-sm">
           {locale === 'fr'
             ? 'La deadline d\'inscription sera automatiquement calculée à 24h avant la date de l\'activité. Les membres devront s\'inscrire avant cette deadline.'
             : 'The registration deadline will be automatically calculated to 24h before the activity date. Members must register before this deadline.'}
@@ -270,7 +270,7 @@ export default function CreateActivityPage() {
             disabled={isPending}
             className={cn(
               'flex-1 py-3 rounded-xl font-semibold transition-all',
-              'bg-emerald-600 text-white hover:bg-emerald-700',
+              'bg-brand-600 text-white hover:bg-brand-700',
               isPending && 'opacity-50 cursor-not-allowed'
             )}
           >

@@ -137,7 +137,7 @@ export default function Header() {
                                 </div>
                             </li>
                             <li>
-                                <Link href="/join" onClick={() => setMobileOpen(false)} className="block py-3 px-4 rounded-xl text-blue-400">
+                                <Link href="/join" onClick={() => setMobileOpen(false)} className="block py-3 px-4 rounded-xl text-brand-400">
                                     {t('join')}
                                 </Link>
                             </li>

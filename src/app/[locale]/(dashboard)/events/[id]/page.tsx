@@ -130,7 +130,7 @@ export default function EventDetailPage() {
             {event.linkedActivityId && (
               <Link
                 href={`/${locale}/intranet/${event.linkedActivityId}`}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 transition-colors text-sm border border-emerald-500/30"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 transition-colors text-sm border border-brand-500/30"
               >
                 <ClipboardList className="w-4 h-4" />
                 {locale === 'fr' ? 'Gérer présence' : 'Manage Attendance'}

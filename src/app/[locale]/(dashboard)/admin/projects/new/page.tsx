@@ -93,7 +93,7 @@ export default function NewProjectPage() {
                                 required
                                 value={formData.title.en}
                                 onChange={(e) => setFormData({ ...formData, title: { ...formData.title, en: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                                 placeholder="Traffic Sign Recognition"
                             />
                         </div>
@@ -104,7 +104,7 @@ export default function NewProjectPage() {
                                 required
                                 value={formData.title.fr}
                                 onChange={(e) => setFormData({ ...formData, title: { ...formData.title, fr: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                                 placeholder="Reconnaissance de Panneaux Routiers"
                             />
                         </div>
@@ -122,7 +122,7 @@ export default function NewProjectPage() {
                                 rows={4}
                                 value={formData.description.en}
                                 onChange={(e) => setFormData({ ...formData, description: { ...formData.description, en: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 resize-none"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50 resize-none"
                                 placeholder="A computer vision model achieving 98% accuracy..."
                             />
                         </div>
@@ -133,7 +133,7 @@ export default function NewProjectPage() {
                                 rows={4}
                                 value={formData.description.fr}
                                 onChange={(e) => setFormData({ ...formData, description: { ...formData.description, fr: e.target.value } })}
-                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50 resize-none"
+                                className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50 resize-none"
                                 placeholder="Un modèle de vision par ordinateur atteignant 98% de précision..."
                             />
                         </div>
@@ -149,7 +149,7 @@ export default function NewProjectPage() {
                             required
                             value={formData.imageUrl}
                             onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                             placeholder="https://images.unsplash.com/..."
                         />
                         {formData.imageUrl && (
@@ -162,7 +162,7 @@ export default function NewProjectPage() {
                         <select
                             value={formData.status}
                             onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white focus:outline-none focus:border-brand-500/50"
                         >
                             <option value="Live">Live</option>
                             <option value="Beta">Beta</option>
@@ -182,13 +182,13 @@ export default function NewProjectPage() {
                             value={techInput}
                             onChange={(e) => setTechInput(e.target.value)}
                             onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), addTech())}
-                            className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                            className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                             placeholder="Python, TensorFlow, OpenCV..."
                         />
                         <button
                             type="button"
                             onClick={addTech}
-                            className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors flex items-center gap-2"
+                            className="px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-colors flex items-center gap-2"
                         >
                             <Plus className="w-5 h-5" />
                             Add
@@ -217,7 +217,7 @@ export default function NewProjectPage() {
                             type="url"
                             value={formData.githubUrl}
                             onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                             placeholder="https://github.com/..."
                         />
                     </div>
@@ -228,7 +228,7 @@ export default function NewProjectPage() {
                             type="url"
                             value={formData.discoveryUrl}
                             onChange={(e) => setFormData({ ...formData, discoveryUrl: e.target.value })}
-                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-emerald-500/50"
+                            className="w-full px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/40 focus:outline-none focus:border-brand-500/50"
                             placeholder="https://..."
                         />
                     </div>
@@ -241,7 +241,7 @@ export default function NewProjectPage() {
                             type="checkbox"
                             checked={formData.published}
                             onChange={(e) => setFormData({ ...formData, published: e.target.checked })}
-                            className="w-5 h-5 rounded bg-white/5 border-white/20 text-emerald-600 focus:ring-emerald-500"
+                            className="w-5 h-5 rounded bg-white/5 border-white/20 text-brand-600 focus:ring-brand-500"
                         />
                         <div>
                             <p className="text-white font-semibold">Publish immediately</p>
@@ -262,7 +262,7 @@ export default function NewProjectPage() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="flex-1 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 disabled:bg-emerald-600/50 text-white font-semibold transition-colors"
+                        className="flex-1 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 disabled:bg-brand-600/50 text-white font-semibold transition-colors"
                     >
                         {loading ? 'Creating...' : 'Create Project'}
                     </button>

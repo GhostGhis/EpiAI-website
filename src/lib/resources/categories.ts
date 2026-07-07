@@ -17,7 +17,7 @@ export const CATEGORIES: ICategory[] = [
     name: { en: 'Machine Learning', fr: 'Machine Learning' },
     description: { en: 'ML resources', fr: 'Ressources ML' },
     icon: 'TrendingUp',
-    color: 'text-blue-400',
+    color: 'text-brand-400',
     bgColor: 'bg-blue-400/10',
     resourceCount: 0,
   },
@@ -37,8 +37,8 @@ export const CATEGORIES: ICategory[] = [
     name: { en: 'Web Development', fr: 'Developpement Web' },
     description: { en: 'Web resources', fr: 'Ressources Web' },
     icon: 'Globe',
-    color: 'text-emerald-400',
-    bgColor: 'bg-emerald-400/10',
+    color: 'text-brand-400',
+    bgColor: 'bg-brand-400/10',
     resourceCount: 0,
   },
   {
@@ -71,5 +71,5 @@ export const TAGS = [
   { id: 'javascript', name: 'JavaScript', color: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30', resourceCount: 3 },
   { id: 'nlp', name: 'NLP', color: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30', resourceCount: 2 },
   { id: 'cv', name: 'Computer Vision', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30', resourceCount: 2 },
-  { id: 'sql', name: 'SQL', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30', resourceCount: 2 },
+  { id: 'sql', name: 'SQL', color: 'bg-brand-500/15 text-brand-400 border-brand-500/25', resourceCount: 2 },
 ];

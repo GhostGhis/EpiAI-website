@@ -70,9 +70,9 @@ export function RegistrationForm({
 
   if (isRegistered) {
     return (
-      <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
-        <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-          <Check className="w-7 h-7 text-emerald-400" />
+      <div className="p-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-center">
+        <div className="w-14 h-14 rounded-full bg-brand-500/20 flex items-center justify-center mx-auto mb-3">
+          <Check className="w-7 h-7 text-brand-400" />
         </div>
         <h3 className="text-lg font-semibold text-white mb-2">
           You're Registered!
@@ -132,9 +132,9 @@ export function RegistrationForm({
 
   if (success) {
     return (
-      <div className="p-6 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-center">
-        <div className="w-14 h-14 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
-          <Check className="w-7 h-7 text-emerald-400" />
+      <div className="p-6 rounded-2xl bg-brand-500/10 border border-brand-500/20 text-center">
+        <div className="w-14 h-14 rounded-full bg-brand-500/20 flex items-center justify-center mx-auto mb-3">
+          <Check className="w-7 h-7 text-brand-400" />
         </div>
         <h3 className="text-lg font-semibold text-white mb-2">
           Registration Successful!
@@ -187,7 +187,7 @@ export function RegistrationForm({
           <div
             className={cn(
               'h-full rounded-full transition-all',
-              spotsLeft <= 5 ? 'bg-red-500' : spotsLeft <= 20 ? 'bg-amber-500' : 'bg-emerald-500'
+              spotsLeft <= 5 ? 'bg-red-500' : spotsLeft <= 20 ? 'bg-amber-500' : 'bg-brand-500'
             )}
             style={{ width: `${Math.min(100, (100 - (spotsLeft / (spotsLeft + 10)) * 100))}%` }}
           />

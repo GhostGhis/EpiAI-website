@@ -44,14 +44,14 @@ export default function MyAttendancePage() {
         <>
           <div className="grid sm:grid-cols-3 gap-4">
             <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-              <UserCheck className="w-6 h-6 text-emerald-400 mb-2" aria-hidden />
+              <UserCheck className="w-6 h-6 text-brand-400 mb-2" aria-hidden />
               <p className="text-2xl font-bold text-white">{summary.totalPresent}</p>
               <p className="text-white/50 text-sm">
                 {locale === 'fr' ? 'Présences' : 'Present'}
               </p>
             </div>
             <div className="p-5 rounded-2xl bg-white/5 border border-white/10">
-              <TrendingUp className="w-6 h-6 text-blue-400 mb-2" aria-hidden />
+              <TrendingUp className="w-6 h-6 text-brand-400 mb-2" aria-hidden />
               <p className="text-2xl font-bold text-white">{Math.round(rate)}%</p>
               <p className="text-white/50 text-sm">
                 {locale === 'fr' ? 'Taux' : 'Rate'}
@@ -105,7 +105,7 @@ export default function MyAttendancePage() {
                           : '—'}
                       </td>
                       <td className="p-4">
-                        <span className={r.isPresent ? 'text-emerald-400' : 'text-red-400'}>
+                        <span className={r.isPresent ? 'text-brand-400' : 'text-red-400'}>
                           {r.isPresent
                             ? locale === 'fr'
                               ? 'Présent'
@@ -124,7 +124,7 @@ export default function MyAttendancePage() {
 
           <Link
             href="/intranet"
-            className="inline-block text-blue-400 hover:text-blue-300 text-sm"
+            className="inline-block text-brand-400 hover:text-brand-300 text-sm"
           >
             {locale === 'fr' ? 'Voir les activités intranet →' : 'View intranet activities →'}
           </Link>

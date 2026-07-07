@@ -121,7 +121,7 @@ export default function MyRegistrationsPage() {
                     )}
                   </div>
                 </div>
-                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-400 text-sm border border-emerald-500/30">
+                <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-brand-500/20 text-brand-400 text-sm border border-brand-500/30">
                   <Check className="w-3 h-3" />
                   {t('registered')}
                 </span>

@@ -92,8 +92,8 @@ export default function ResetPasswordPage() {
     return (
       <div className="min-h-screen bg-zinc-950 flex items-center justify-center p-4">
         <div className="w-full max-w-md text-center">
-          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-emerald-400" />
+          <div className="w-20 h-20 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-brand-400" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-4">{t('successTitle')}</h1>
           <p className="text-white/60 mb-6">{t('successMessage')}</p>
@@ -156,9 +156,9 @@ export default function ResetPasswordPage() {
                   <div key={i} className="flex items-center gap-2 text-sm">
                     <CheckCircle className={cn(
                       'w-4 h-4',
-                      req.met ? 'text-emerald-400' : 'text-white/20'
+                      req.met ? 'text-brand-400' : 'text-white/20'
                     )} />
-                    <span className={req.met ? 'text-emerald-400/80' : 'text-white/40'}>
+                    <span className={req.met ? 'text-brand-400/80' : 'text-white/40'}>
                       {req.text}
                     </span>
                   </div>

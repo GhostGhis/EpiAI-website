@@ -23,7 +23,7 @@ export default function RootError({
           </p>
           <button
             onClick={reset}
-            className="px-8 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition"
+            className="px-8 py-3 bg-brand-600 hover:bg-brand-700 rounded-lg font-semibold transition"
           >
             Try Again
           </button>

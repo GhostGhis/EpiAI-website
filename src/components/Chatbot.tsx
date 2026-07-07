@@ -131,8 +131,8 @@ export default function Chatbot() {
               <div className="min-w-0">
                 <h3 className="text-sm font-bold text-white leading-tight truncate">{t('title')}</h3>
                 <div className="flex items-center gap-1.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span className="text-[10px] text-emerald-400/80 font-medium uppercase tracking-wider">
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-400 animate-pulse" />
+                  <span className="text-[10px] text-brand-400/80 font-medium uppercase tracking-wider">
                     {t('online')}
                   </span>
                 </div>
@@ -156,7 +156,7 @@ export default function Chatbot() {
                 <div
                   className={`rounded-2xl p-3 text-xs sm:text-sm leading-relaxed max-w-[90%] ${
                     msg.role === 'user'
-                      ? 'bg-blue-600/20 border border-blue-500/30 text-blue-100 ml-auto'
+                      ? 'bg-brand-600/20 border border-brand-500/25 text-blue-100 ml-auto'
                       : 'bg-white/5 border border-white/10 text-gray-200'
                   }`}
                 >
@@ -174,7 +174,7 @@ export default function Chatbot() {
                           type="button"
                           onClick={() => askChip(id, false)}
                           disabled={loading}
-                          className="px-2.5 py-1 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-[11px] hover:bg-emerald-500/25 transition-colors disabled:opacity-50"
+                          className="px-2.5 py-1 rounded-lg bg-brand-500/15 border border-brand-500/30 text-brand-300 text-[11px] hover:bg-brand-500/25 transition-colors disabled:opacity-50"
                         >
                           {t(`questions.${id}`)}
                         </button>
@@ -229,7 +229,7 @@ export default function Chatbot() {
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="absolute right-2 top-1.5 p-2 rounded-lg bg-blue-600/80 hover:bg-blue-600 text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center disabled:opacity-40"
+                className="absolute right-2 top-1.5 p-2 rounded-lg bg-brand-600/80 hover:bg-brand-600 text-white transition-all min-w-[44px] min-h-[44px] flex items-center justify-center disabled:opacity-40"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />

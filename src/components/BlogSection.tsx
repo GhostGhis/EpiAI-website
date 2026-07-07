@@ -29,10 +29,10 @@ export default async function BlogSection() {
 
   return (
     <section id="blog" className="py-24 px-4 min-h-screen relative">
-      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-blue-900/20 to-transparent -z-10" />
+      <div className="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-brand-900/15 to-transparent -z-10" />
       <div className="max-w-7xl mx-auto w-full">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white text-glow tracking-tight">
+          <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white tracking-tight">
             {tHeader('blog')}
           </h2>
           <p className="text-gray-400 max-w-2xl mx-auto text-sm font-light">
@@ -79,7 +79,7 @@ export default async function BlogSection() {
                     <span className="w-1 h-1 rounded-full bg-blue-500" />
                     <span>{post.authorName}</span>
                   </div>
-                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-blue-300 transition-colors">
+                  <h3 className="text-xl font-bold mb-3 text-white group-hover:text-brand-300 transition-colors">
                     {title}
                   </h3>
                   <p className="text-gray-400 text-sm line-clamp-3 flex-1">{excerpt}</p>

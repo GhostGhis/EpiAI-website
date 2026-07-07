@@ -114,7 +114,7 @@ export default function NewBlogPostPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50"
+          className="w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium disabled:opacity-50"
         >
           {loading ? '…' : locale === 'fr' ? 'Publier' : 'Save'}
         </button>

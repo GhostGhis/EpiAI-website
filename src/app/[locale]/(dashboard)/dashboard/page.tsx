@@ -57,9 +57,9 @@ export default function DashboardPage() {
   }, []);
 
   const statsConfig = [
-    { label: t('stats.discussions'), value: stats?.discussions || 0, icon: MessageSquare, color: 'text-blue-400', bgColor: 'bg-blue-400/10' },
+    { label: t('stats.discussions'), value: stats?.discussions || 0, icon: MessageSquare, color: 'text-brand-400', bgColor: 'bg-blue-400/10' },
     { label: t('stats.events'), value: stats?.events || 0, icon: Calendar, color: 'text-purple-400', bgColor: 'bg-purple-400/10' },
-    { label: t('stats.resources'), value: stats?.resources || 0, icon: FileText, color: 'text-emerald-400', bgColor: 'bg-emerald-400/10' },
+    { label: t('stats.resources'), value: stats?.resources || 0, icon: FileText, color: 'text-brand-400', bgColor: 'bg-brand-400/10' },
     { label: t('stats.members'), value: stats?.members || 0, icon: Users, color: 'text-amber-400', bgColor: 'bg-amber-400/10' },
   ];
 
@@ -68,7 +68,7 @@ export default function DashboardPage() {
       permission: 'content.create' as Permission,
       href: '/forum/new',
       icon: MessageSquare,
-      iconClass: 'text-blue-400',
+      iconClass: 'text-brand-400',
       label: t('actions.newDiscussion'),
     },
     {
@@ -82,7 +82,7 @@ export default function DashboardPage() {
       permission: 'resources.create' as Permission,
       href: '/resources/new',
       icon: FileText,
-      iconClass: 'text-emerald-400',
+      iconClass: 'text-brand-400',
       label: t('actions.addResource'),
     },
     {

@@ -116,7 +116,7 @@ export default function OnboardingWizard() {
         >
           <X className="w-5 h-5" />
         </button>
-        <p className="text-xs text-blue-400 font-semibold uppercase tracking-wider mb-2">
+        <p className="text-xs text-brand-400 font-semibold uppercase tracking-wider mb-2">
           {t('label')} {step + 1}/{STEP_KEYS.length}
         </p>
         <h2 id="onboarding-title" className="text-xl font-bold text-white mb-3">
@@ -138,7 +138,7 @@ export default function OnboardingWizard() {
             <button
               type="button"
               onClick={() => void finish(false)}
-              className="flex-1 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm min-w-[120px]"
+              className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm min-w-[120px]"
             >
               {t('next')}
             </button>
@@ -146,7 +146,7 @@ export default function OnboardingWizard() {
             <button
               type="button"
               onClick={() => void finish(true)}
-              className="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-medium text-sm"
+              className="flex-1 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-medium text-sm"
             >
               {t('finish')}
             </button>

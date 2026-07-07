@@ -26,9 +26,9 @@ export function TypeFilter({ className }: TypeFilterProps) {
 
   const types = [
     { id: 'pdf', icon: FileText, color: 'text-red-400 bg-red-400/10' },
-    { id: 'code', icon: Code, color: 'text-blue-400 bg-blue-400/10' },
+    { id: 'code', icon: Code, color: 'text-brand-400 bg-blue-400/10' },
     { id: 'video', icon: Play, color: 'text-purple-400 bg-purple-400/10' },
-    { id: 'article', icon: BookOpen, color: 'text-emerald-400 bg-emerald-400/10' },
+    { id: 'article', icon: BookOpen, color: 'text-brand-400 bg-brand-400/10' },
     { id: 'course', icon: GraduationCap, color: 'text-amber-400 bg-amber-400/10' },
     { id: 'dataset', icon: Database, color: 'text-cyan-400 bg-cyan-400/10' },
   ];

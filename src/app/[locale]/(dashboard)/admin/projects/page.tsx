@@ -25,6 +25,7 @@ export default function AdminProjectsPage() {
     const locale = (params.locale as string) || 'en';
     const [projects, setProjects] = useState<Project[]>([]);
     const [loading, setLoading] = useState(true);
+    const [fetchError, setFetchError] = useState<string | null>(null);
 
     useEffect(() => {
         fetchProjects();
@@ -32,13 +33,25 @@ export default function AdminProjectsPage() {
 
     async function fetchProjects() {
         try {
+            setFetchError(null);
             const response = await fetch('/api/projects?all=true');
             if (response.ok) {
                 const data = await response.json();
                 setProjects(data);
+                return;
+            }
+
+            if (response.status === 401) {
+                setFetchError('Session expirée — reconnectez-vous.');
+            } else if (response.status === 403) {
+                setFetchError('Permissions insuffisantes pour voir les projets.');
+            } else {
+                const body = await response.json().catch(() => ({}));
+                setFetchError(body.error || `Erreur serveur (${response.status}).`);
             }
         } catch (error) {
             console.error('Error fetching projects:', error);
+            setFetchError('Impossible de charger les projets.');
         } finally {
             setLoading(false);
         }
@@ -124,7 +137,18 @@ export default function AdminProjectsPage() {
 
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
-                        <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-emerald-400 rounded-full"></div>
+                        <div className="animate-spin w-12 h-12 border-2 border-white/20 border-t-brand-500 rounded-full"></div>
+                    </div>
+                ) : fetchError ? (
+                    <div className="text-center py-20 rounded-2xl bg-red-500/10 border border-red-500/20">
+                        <p className="text-red-300 mb-4">{fetchError}</p>
+                        <button
+                            type="button"
+                            onClick={() => { setLoading(true); void fetchProjects(); }}
+                            className="px-4 py-2 rounded-xl bg-white/10 text-white text-sm hover:bg-white/15"
+                        >
+                            Réessayer
+                        </button>
                     </div>
                 ) : projects.length === 0 ? (
                     <div className="text-center py-20 rounded-2xl bg-white/5 border border-white/10">
@@ -132,7 +156,7 @@ export default function AdminProjectsPage() {
                         <p className="text-white/40 mb-4">No projects yet</p>
                         <Link
                             href="/admin/projects/new"
-                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-semibold transition-colors"
+                            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-semibold transition-colors"
                         >
                             <Plus className="w-5 h-5" />
                             Create First Project
@@ -165,7 +189,7 @@ export default function AdminProjectsPage() {
                                                 <button
                                                     onClick={() => togglePublished(project._id, project.published)}
                                                     className={`p-2 rounded-lg transition-colors ${project.published
-                                                        ? 'bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30'
+                                                        ? 'bg-brand-500/20 text-brand-400 hover:bg-brand-500/30'
                                                         : 'bg-white/5 text-white/40 hover:bg-white/10'
                                                         }`}
                                                     title={project.published ? 'Published' : 'Draft'}
@@ -193,7 +217,7 @@ export default function AdminProjectsPage() {
                                             </div>
                                         </div>
                                         <div className="flex flex-wrap gap-2 mt-3">
-                                            <span className="px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 text-xs border border-blue-500/20">
+                                            <span className="px-2 py-1 rounded-md bg-blue-500/10 text-brand-400 text-xs border border-blue-500/20">
                                                 {project.status}
                                             </span>
                                             {project.techStack.slice(0, 3).map((tech) => (

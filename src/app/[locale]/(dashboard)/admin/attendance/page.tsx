@@ -122,9 +122,9 @@ export default function AttendanceReportPage() {
                       <ChevronDown className="w-4 h-4 text-white/30 ml-auto" />
                     )}
                   </div>
-                  <span className="text-center text-emerald-400 font-bold">{member.totalPresent}</span>
+                  <span className="text-center text-brand-400 font-bold">{member.totalPresent}</span>
                   <span className="text-center text-red-400 font-bold">{member.totalAbsent}</span>
-                  <span className={`text-center font-bold ${member.attendanceRate >= 70 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  <span className={`text-center font-bold ${member.attendanceRate >= 70 ? 'text-brand-400' : 'text-red-400'}`}>
                     {member.attendanceRate.toFixed(0)}%
                   </span>
                 </button>
@@ -151,7 +151,7 @@ export default function AttendanceReportPage() {
                             )}
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
                               d.isPresent
-                                ? 'bg-emerald-500/20 text-emerald-400'
+                                ? 'bg-brand-500/20 text-brand-400'
                                 : 'bg-red-500/20 text-red-400'
                             }`}>
                               {d.isPresent

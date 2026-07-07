@@ -69,7 +69,7 @@ export function InviteUserForm() {
           console.log('[InviteUserForm] Button clicked, opening modal');
           setIsOpen(true);
         }}
-        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 font-medium border border-emerald-500/30 hover:bg-emerald-500/30 transition-all"
+        className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-500/20 text-brand-400 font-medium border border-brand-500/30 hover:bg-brand-500/30 transition-all"
       >
         <Plus className="w-5 h-5" />
         {t('invite')}
@@ -93,8 +93,8 @@ export function InviteUserForm() {
 
         {success ? (
           <div className="text-center py-8">
-            <div className="w-16 h-16 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="w-8 h-8 text-emerald-400" />
+            <div className="w-16 h-16 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="w-8 h-8 text-brand-400" />
             </div>
             <h4 className="text-lg font-semibold text-white mb-2">{t('success')}</h4>
             <p className="text-white/60 text-sm">{t('emailSent')}</p>

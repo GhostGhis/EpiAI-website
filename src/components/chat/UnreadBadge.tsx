@@ -16,7 +16,7 @@ export function UnreadBadge({ count, className, size = 'sm', variant = 'notifica
     <span
       className={cn(
         'rounded-full text-white font-semibold flex items-center justify-center shrink-0',
-        variant === 'notification' ? 'bg-emerald-500' : 'bg-indigo-500',
+        variant === 'notification' ? 'bg-brand-600' : 'bg-brand-700',
         size === 'sm' ? 'min-w-[18px] h-[18px] text-[10px] px-1' : 'min-w-[22px] h-[22px] text-xs px-1.5',
         className
       )}

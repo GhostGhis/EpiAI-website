@@ -103,8 +103,8 @@ export default function MembershipAdminClient() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-blue-500/20">
-              <Users className="w-5 h-5 text-blue-400" />
+            <div className="p-2 rounded-lg bg-brand-500/15">
+              <Users className="w-5 h-5 text-brand-400" />
             </div>
             <span className="text-white/60 text-sm">{t('total')}</span>
           </div>
@@ -123,12 +123,12 @@ export default function MembershipAdminClient() {
 
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 rounded-lg bg-emerald-500/20">
-              <CheckCircle className="w-5 h-5 text-emerald-400" />
+            <div className="p-2 rounded-lg bg-brand-500/20">
+              <CheckCircle className="w-5 h-5 text-brand-400" />
             </div>
             <span className="text-white/60 text-sm">{t('approved')}</span>
           </div>
-          <p className="text-2xl font-bold text-emerald-400">{stats.approved}</p>
+          <p className="text-2xl font-bold text-brand-400">{stats.approved}</p>
         </div>
 
         <div className="p-4 rounded-xl bg-white/5 border border-white/10">
@@ -197,7 +197,7 @@ export default function MembershipAdminClient() {
       <div className="pt-8 border-t border-white/10">
         <div className="mb-4">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <FileSpreadsheet className="w-5 h-5 text-emerald-400" />
+            <FileSpreadsheet className="w-5 h-5 text-brand-400" />
             {t('bulkInvite')}
           </h2>
           <p className="text-white/60 text-sm">{t('bulkInviteDescription')}</p>

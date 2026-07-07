@@ -12,7 +12,7 @@ export const ROLES: Record<string, RoleDefinition> = {
     name: { en: 'Member', fr: 'Membre' },
     level: 1,
     permissions: [...MEMBER_PERMISSIONS],
-    color: 'text-blue-400',
+    color: 'text-brand-400',
     icon: 'Users',
   },
   membre_equipe: {

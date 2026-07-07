@@ -106,7 +106,7 @@ export default function EditBlogPostPage() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3 rounded-xl bg-blue-600 text-white font-medium disabled:opacity-50"
+          className="w-full py-3 rounded-xl bg-brand-600 text-white font-medium disabled:opacity-50"
         >
           {saving ? '…' : 'Save'}
         </button>

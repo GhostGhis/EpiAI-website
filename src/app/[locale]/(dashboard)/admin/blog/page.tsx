@@ -52,7 +52,7 @@ export default function AdminBlogPage() {
           </div>
           <Link
             href={`/${locale}/admin/blog/new`}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium"
           >
             <Plus className="w-4 h-4" />
             {locale === 'fr' ? 'Nouvel article' : 'New post'}

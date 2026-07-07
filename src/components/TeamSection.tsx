@@ -70,15 +70,15 @@ export default function TeamSection({ initialMembers, locale: localeProp }: Team
     };
 
     const MemberCard = ({ member, large = false }: { member: ITeamMember; large?: boolean }) => (
-        <div className={`p-6 rounded-[1.5rem] bg-gradient-to-br from-blue-900/30 to-slate-900/30 backdrop-blur-xl border border-white/10 hover:border-blue-500/50 shadow-2xl transform hover:scale-105 transition-all duration-300 group hover:shadow-[0_0_30px_rgba(59,130,246,0.3)] ${large ? 'max-w-sm mx-auto' : ''}`}>
-            <div className={`${large ? 'w-24 h-24' : 'w-20 h-20'} mx-auto mb-4 rounded-full bg-black border-2 border-blue-400/30 flex items-center justify-center overflow-hidden group-hover:border-blue-400/80 transition-colors shadow-[0_0_20px_rgba(59,130,246,0.2)] relative`}>
+        <div className={`p-6 rounded-2xl bg-white/[0.03] backdrop-blur-xl border border-white/[0.08] hover:border-brand-500/30 transition-all duration-300 group ${large ? 'max-w-sm mx-auto' : ''}`}>
+            <div className={`${large ? 'w-24 h-24' : 'w-20 h-20'} mx-auto mb-4 rounded-full bg-zinc-900 border-2 border-brand-500/25 flex items-center justify-center overflow-hidden group-hover:border-brand-400/50 transition-colors relative`}>
                 {member.photoUrl ? (
                     <Image src={member.photoUrl} alt={member.name} fill className="object-cover" sizes="96px" />
                 ) : (
                     <span className="text-2xl font-bold text-white/40">{member.name.charAt(0)}</span>
                 )}
             </div>
-            <div className="text-sm text-blue-300 font-bold mb-1 tracking-widest uppercase">{member.role}</div>
+            <div className="text-sm text-brand-300 font-bold mb-1 tracking-widest uppercase">{member.role}</div>
             <div className="text-lg font-bold text-white mb-1">{member.name}</div>
             {member.title && <div className="text-xs text-gray-400 mb-2">{member.title}</div>}
             {member.description && <p className="text-xs text-gray-400 mb-3">{member.description}</p>}
@@ -114,7 +114,7 @@ export default function TeamSection({ initialMembers, locale: localeProp }: Team
                     )}
                 </div>
                 <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-bold mb-0.5 text-emerald-300 group-hover:brightness-125 transition-all leading-tight">{name}</h4>
+                    <h4 className="text-sm font-bold mb-0.5 text-brand-300 group-hover:brightness-125 transition-all leading-tight">{name}</h4>
                     <div className="text-[10px] text-gray-400 uppercase tracking-wider mb-0.5 font-bold">
                         {isVacant
                             ? (locale === 'fr' ? 'Responsable à nommer' : 'Lead to be assigned')
@@ -166,11 +166,11 @@ export default function TeamSection({ initialMembers, locale: localeProp }: Team
 
     return (
         <section id="team" className="py-16 sm:py-20 px-4 min-h-0 sm:min-h-screen flex flex-col justify-center relative">
-            <div className="absolute top-1/4 left-0 w-96 h-96 bg-blue-900/20 rounded-full blur-[100px] -z-10" />
-            <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-purple-900/20 rounded-full blur-[100px] -z-10" />
+            <div className="absolute top-1/4 left-0 w-96 h-96 bg-brand-900/15 rounded-full blur-[100px] -z-10" />
+            <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-zinc-800/20 rounded-full blur-[100px] -z-10" />
 
             <div className="max-w-6xl mx-auto w-full text-center z-10">
-                <h2 className="text-2xl md:text-3xl font-bold mb-12 text-white text-glow drop-shadow-lg">
+                <h2 className="text-2xl md:text-3xl font-bold mb-12 text-white tracking-tight">
                     {locale === 'fr' ? 'Notre Équipe' : 'Our Team'}
                 </h2>
 
@@ -233,7 +233,7 @@ export default function TeamSection({ initialMembers, locale: localeProp }: Team
                                     </div>
                                     <div>
                                         <p className="text-white text-sm font-semibold leading-tight">{mentor.name}</p>
-                                        {mentor.title && <p className="text-[10px] text-blue-300/80 mt-1">{mentor.title}</p>}
+                                        {mentor.title && <p className="text-[10px] text-brand-300/80 mt-1">{mentor.title}</p>}
                                     </div>
                                 </div>
                             ))}

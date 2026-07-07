@@ -39,7 +39,7 @@ export default async function PartnersPage() {
                 )}
                 <h2 className="text-xl font-bold text-white mb-2">{p.name}</h2>
                 {p.type && (
-                  <span className="text-xs uppercase tracking-wider text-blue-400">{p.type}</span>
+                  <span className="text-xs uppercase tracking-wider text-brand-400">{p.type}</span>
                 )}
                 {p.description && (
                   <p className="text-white/60 text-sm mt-3">{p.description}</p>
@@ -49,7 +49,7 @@ export default async function PartnersPage() {
                     href={p.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block mt-4 text-sm text-blue-400 hover:text-blue-300"
+                    className="inline-block mt-4 text-sm text-brand-400 hover:text-brand-300"
                   >
                     {locale === 'fr' ? 'Visiter le site →' : 'Visit website →'}
                   </a>

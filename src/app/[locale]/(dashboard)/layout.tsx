@@ -253,7 +253,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     className={cn(
                       'flex items-center gap-3 px-4 py-3 rounded-xl transition-all',
                       item.active
-                        ? 'bg-white/10 text-white'
+                        ? 'bg-brand-500/10 text-white border border-brand-500/20'
                         : 'text-white/60 hover:text-white hover:bg-white/5'
                     )}
                   >
@@ -303,7 +303,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
                     <div className="px-4 pt-2">
                       <a
                         href={`/${locale}/admin/projects/new`}
-                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-all no-underline shadow-lg"
+                        className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-bold transition-all no-underline shadow-lg"
                       >
                         <Plus className="w-5 h-5" />
                         <span>{t('newProject')}</span>
@@ -340,7 +340,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
               <div className="space-y-2">
                 <Link
                   href={`/${locale}`}
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-blue-600/10 text-blue-400 hover:text-white hover:bg-blue-600 transition-all text-sm font-medium border border-blue-600/20 hover:border-blue-600"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-brand-600/10 text-brand-400 hover:text-white hover:bg-brand-600 transition-all text-sm font-medium border border-brand-600/20 hover:border-brand-600"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   {t('backHome')}

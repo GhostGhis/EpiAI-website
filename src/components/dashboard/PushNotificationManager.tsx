@@ -77,9 +77,9 @@ export default function PushNotificationManager() {
   if (!supported || permission === 'granted' || dismissed) return null;
 
   return (
-    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-emerald-500/25 bg-emerald-500/10 px-4 py-3">
+    <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-brand-500/25 bg-brand-500/10 px-4 py-3">
       <div className="flex items-start gap-3 min-w-0">
-        <Bell className="mt-0.5 h-5 w-5 shrink-0 text-emerald-400" />
+        <Bell className="mt-0.5 h-5 w-5 shrink-0 text-brand-400" />
         <div>
           <p className="text-sm font-medium text-white">
             Activer les alertes hors ligne
@@ -95,7 +95,7 @@ export default function PushNotificationManager() {
           type="button"
           onClick={subscribe}
           disabled={loading}
-          className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500 disabled:opacity-50"
+          className="rounded-lg bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-500 disabled:opacity-50"
         >
           {loading ? 'Activation…' : 'Activer'}
         </button>
@@ -151,7 +151,7 @@ export function PushSettingsToggle() {
       }}
       className="inline-flex items-center gap-1.5 text-xs text-white/50 hover:text-white"
     >
-      {enabled ? <Bell className="h-3.5 w-3.5 text-emerald-400" /> : <BellOff className="h-3.5 w-3.5" />}
+      {enabled ? <Bell className="h-3.5 w-3.5 text-brand-400" /> : <BellOff className="h-3.5 w-3.5" />}
       {enabled ? 'Alertes activées' : 'Alertes désactivées'}
     </button>
   );

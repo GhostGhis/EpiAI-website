@@ -41,13 +41,13 @@ export default async function BlogDetailPage({
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-24 sm:py-32 relative z-10">
         <Link
           href="/blog"
-          className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 mb-12"
+          className="inline-flex items-center gap-2 text-brand-400 hover:text-brand-300 mb-12"
         >
           ← {t('back_btn')}
         </Link>
         <article>
           <header className="mb-12">
-            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-blue-400 mb-6">
+            <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-widest text-brand-400 mb-6">
               <span>{post.category}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-blue-500/50" />
               <span className="text-gray-500">{date}</span>

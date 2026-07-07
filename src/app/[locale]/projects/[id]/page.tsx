@@ -57,7 +57,7 @@ export default function ProjectDetailPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-white gap-4">
         <p>{t('notFound')}</p>
-        <Link href="/#projects" className="text-blue-400 hover:underline">{t('back_btn')}</Link>
+        <Link href="/#projects" className="text-brand-400 hover:underline">{t('back_btn')}</Link>
       </div>
     );
   }
@@ -82,7 +82,7 @@ export default function ProjectDetailPage() {
       </div>
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-24 sm:py-32 relative z-10">
-        <Link href="/#projects" className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors mb-12 group">
+        <Link href="/#projects" className="inline-flex items-center gap-2 text-brand-400 hover:text-brand-300 transition-colors mb-12 group">
           <svg className="w-5 h-5 transform group-hover:-translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
@@ -92,7 +92,7 @@ export default function ProjectDetailPage() {
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <div>
             {project.status && (
-              <div className="mb-6 inline-block px-4 py-1.5 rounded-full bg-blue-600/20 border border-blue-500/30 text-[10px] font-bold uppercase tracking-widest text-blue-300">
+              <div className="mb-6 inline-block px-4 py-1.5 rounded-full bg-brand-600/20 border border-brand-500/25 text-[10px] font-bold uppercase tracking-widest text-brand-300">
                 {project.status}
               </div>
             )}
@@ -101,14 +101,14 @@ export default function ProjectDetailPage() {
 
             {content && (
               <section className="mb-12">
-                <h2 className="text-blue-400 text-sm font-bold uppercase tracking-widest mb-4">{t('challenge_title')}</h2>
+                <h2 className="text-brand-400 text-sm font-bold uppercase tracking-widest mb-4">{t('challenge_title')}</h2>
                 <p className="text-gray-400 font-light leading-relaxed whitespace-pre-line">{content}</p>
               </section>
             )}
 
             {project.techStack && project.techStack.length > 0 && (
               <section>
-                <h2 className="text-purple-400 text-sm font-bold uppercase tracking-widest mb-4">{t('tech_stack')}</h2>
+                <h2 className="text-brand-400 text-sm font-bold uppercase tracking-widest mb-4">{t('tech_stack')}</h2>
                 <div className="flex flex-wrap gap-3">
                   {project.techStack.map((tech) => (
                     <span key={tech} className="px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-mono text-gray-300">
@@ -126,7 +126,7 @@ export default function ProjectDetailPage() {
                 </a>
               )}
               {project.discoveryUrl && (
-                <a href={project.discoveryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-sm hover:bg-blue-500 transition-all">
+                <a href={project.discoveryUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-600 text-sm hover:bg-brand-500 transition-all">
                   {discoveryIsRoadmap ? (
                     <>
                       <FileText className="w-4 h-4" />

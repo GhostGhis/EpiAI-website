@@ -95,7 +95,7 @@ export function ResourceCard({ resource, className }: ResourceCardProps) {
 
             {/* Downloadable badge */}
             {resource.isDownloadable && (
-              <span className="px-2 py-0.5 rounded-lg bg-emerald-500/15 text-emerald-400/80 text-xs border border-emerald-500/20 flex items-center gap-1">
+              <span className="px-2 py-0.5 rounded-lg bg-brand-500/15 text-brand-400/80 text-xs border border-brand-500/20 flex items-center gap-1">
                 <Download className="w-3 h-3" />
                 {locale === 'fr' ? 'Téléchargeable' : 'Downloadable'}
               </span>
@@ -129,7 +129,7 @@ export function ResourceCard({ resource, className }: ResourceCardProps) {
                 {resource.viewCount}
               </span>
               {resource.isDownloadable && (
-                <span className="flex items-center gap-1 text-emerald-400/70">
+                <span className="flex items-center gap-1 text-brand-400/70">
                   <Download className="w-3.5 h-3.5" />
                   {resource.downloadCount}
                 </span>

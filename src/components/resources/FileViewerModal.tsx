@@ -126,7 +126,7 @@ export function FileViewerModal({
                     {isDownloadable && (
                         <a
                             href={downloadUrl}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 transition-all text-sm font-medium"
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 border border-brand-500/30 transition-all text-sm font-medium"
                         >
                             <Download className="w-4 h-4" />
                             Télécharger
@@ -255,7 +255,7 @@ export function FileViewerModal({
                             {isDownloadable && (
                                 <a
                                     href={downloadUrl}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500/30 border border-emerald-500/30 transition-all text-sm font-medium"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-brand-500/20 text-brand-400 hover:bg-brand-500/30 border border-brand-500/30 transition-all text-sm font-medium"
                                 >
                                     <Download className="w-4 h-4" />
                                     Télécharger le fichier

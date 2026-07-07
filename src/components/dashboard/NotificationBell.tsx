@@ -109,14 +109,14 @@ export default function NotificationBell() {
             <span className="text-white font-medium text-sm">
               {locale === 'fr' ? 'Notifications' : 'Notifications'}
               {unread > 0 && (
-                <span className="ml-2 text-emerald-400 text-xs">({unread})</span>
+                <span className="ml-2 text-brand-400 text-xs">({unread})</span>
               )}
             </span>
             {unread > 0 && (
               <button
                 type="button"
                 onClick={markAll}
-                className="text-xs text-emerald-400 hover:text-emerald-300"
+                className="text-xs text-brand-400 hover:text-brand-300"
               >
                 {locale === 'fr' ? 'Tout lire' : 'Mark all read'}
               </button>
@@ -131,7 +131,7 @@ export default function NotificationBell() {
               notifications.map((n) => (
                 <div
                   key={n.id}
-                  className={`px-4 py-3 border-b border-white/5 ${!n.isRead ? 'bg-emerald-500/5 border-l-2 border-l-emerald-500' : ''}`}
+                  className={`px-4 py-3 border-b border-white/5 ${!n.isRead ? 'bg-brand-500/5 border-l-2 border-l-brand-500' : ''}`}
                 >
                   {n.link ? (
                     <Link

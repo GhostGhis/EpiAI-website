@@ -73,7 +73,7 @@ export default function ChangePasswordPage() {
                     {/* Header */}
                     <div className="text-center mb-8">
                         <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-500/10 mb-4">
-                            <Lock className="w-8 h-8 text-blue-400" />
+                            <Lock className="w-8 h-8 text-brand-400" />
                         </div>
                         <h1 className="text-2xl font-bold text-white mb-2">
                             Changement de mot de passe requis
@@ -166,7 +166,7 @@ export default function ChangePasswordPage() {
                         <button
                             type="submit"
                             disabled={!isValid || loading || success}
-                            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                            className="w-full py-3 px-4 bg-brand-600 hover:bg-brand-700 disabled:bg-zinc-700 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
                         >
                             {loading ? (
                                 <>

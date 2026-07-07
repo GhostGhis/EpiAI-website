@@ -7,7 +7,7 @@ export const CATEGORIES: ICategory[] = [
     name: { en: 'General', fr: 'General' },
     description: { en: 'General discussions about the association', fr: 'Discussions generales sur l\'association' },
     icon: 'MessageSquare',
-    color: 'text-blue-400',
+    color: 'text-brand-400',
     threadCount: 0,
   },
   {
@@ -25,7 +25,7 @@ export const CATEGORIES: ICategory[] = [
     name: { en: 'Web', fr: 'Web' },
     description: { en: 'Web development topics', fr: 'Sujets de developpement web' },
     icon: 'Globe',
-    color: 'text-emerald-400',
+    color: 'text-brand-400',
     threadCount: 0,
   },
   {

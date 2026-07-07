@@ -173,8 +173,8 @@ export function BulkInviteForm() {
     return (
       <div className="p-6 rounded-2xl bg-white/5 border border-white/10">
         <div className="text-center py-8">
-          <div className="w-20 h-20 rounded-full bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center mx-auto mb-6">
-            <CheckCircle className="w-10 h-10 text-emerald-400" />
+          <div className="w-20 h-20 rounded-full bg-brand-500/20 border border-brand-500/30 flex items-center justify-center mx-auto mb-6">
+            <CheckCircle className="w-10 h-10 text-brand-400" />
           </div>
           <h3 className="text-2xl font-bold text-white mb-2">{t('completed')}</h3>
           <p className="text-white/60 mb-6">
@@ -229,7 +229,7 @@ export function BulkInviteForm() {
 
         <Upload className={cn(
           'w-12 h-12 mx-auto mb-4 transition-colors',
-          isDragging ? 'text-blue-400' : 'text-white/30'
+          isDragging ? 'text-brand-400' : 'text-white/30'
         )} />
         <p className="text-white font-medium mb-2">{t('dropTitle')}</p>
         <p className="text-white/50 text-sm">{t('dropSubtitle')}</p>

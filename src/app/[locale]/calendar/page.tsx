@@ -31,7 +31,7 @@ export default async function CalendarPage() {
           </div>
           <a
             href="/api/events/calendar"
-            className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium"
+            className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-sm font-medium"
             download
           >
             {locale === 'fr' ? 'Télécharger iCal (.ics)' : 'Download iCal (.ics)'}
@@ -50,7 +50,7 @@ export default async function CalendarPage() {
                 className="p-5 rounded-2xl bg-white/5 border border-white/10 flex flex-col sm:flex-row sm:items-center gap-4"
               >
                 <div className="text-center sm:w-20 shrink-0">
-                  <p className="text-2xl font-bold text-blue-400">
+                  <p className="text-2xl font-bold text-brand-400">
                     {e.date.getDate()}
                   </p>
                   <p className="text-xs text-white/50 uppercase">
@@ -61,7 +61,7 @@ export default async function CalendarPage() {
                   <h2 className="text-lg font-semibold text-white">{e.title}</h2>
                   <p className="text-white/50 text-sm mt-1">{e.location}</p>
                 </div>
-                <Link href="/sign-in" className="text-sm text-blue-400 hover:text-blue-300 shrink-0">
+                <Link href="/sign-in" className="text-sm text-brand-400 hover:text-brand-300 shrink-0">
                   {locale === 'fr' ? 'Membre ? Se connecter' : 'Member? Sign in'}
                 </Link>
               </li>

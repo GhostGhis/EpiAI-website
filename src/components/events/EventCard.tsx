@@ -95,7 +95,7 @@ export function EventCard({ event, className }: EventCardProps) {
             </div>
             <span className={cn(
               'font-medium text-sm',
-              isFull ? 'text-red-400' : 'text-emerald-400'
+              isFull ? 'text-red-400' : 'text-brand-400'
             )}>
               {event.spotsLeft} spots left
             </span>
@@ -105,7 +105,7 @@ export function EventCard({ event, className }: EventCardProps) {
               className={cn(
                 'h-full rounded-full transition-all',
                 spotsPercentage >= 90 ? 'bg-red-500' :
-                spotsPercentage >= 70 ? 'bg-amber-500' : 'bg-emerald-500'
+                spotsPercentage >= 70 ? 'bg-amber-500' : 'bg-brand-500'
               )}
               style={{ width: `${Math.min(100, spotsPercentage)}%` }}
             />

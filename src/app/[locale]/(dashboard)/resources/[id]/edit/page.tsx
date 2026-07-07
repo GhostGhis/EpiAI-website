@@ -30,15 +30,15 @@ import {
 
 const typeOptions = [
   { id: 'pdf', icon: FileText, label: 'PDF Document', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
-  { id: 'code', icon: Code, label: 'Code', color: 'bg-blue-500/20 text-blue-400 border-blue-500/30' },
+  { id: 'code', icon: Code, label: 'Code', color: 'bg-brand-500/15 text-brand-400 border-brand-500/25' },
   { id: 'video', icon: Play, label: 'Video', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
-  { id: 'article', icon: BookOpen, label: 'Article', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
+  { id: 'article', icon: BookOpen, label: 'Article', color: 'bg-brand-500/20 text-brand-400 border-brand-500/30' },
   { id: 'course', icon: GraduationCap, label: 'Course', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
   { id: 'dataset', icon: Database, label: 'Dataset', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' },
 ];
 
 const difficultyOptions = [
-  { id: 'beginner', label: 'Beginner', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
+  { id: 'beginner', label: 'Beginner', color: 'bg-brand-500/20 text-brand-400 border-brand-500/30' },
   { id: 'intermediate', label: 'Intermediate', color: 'bg-amber-500/20 text-amber-400 border-amber-500/30' },
   { id: 'advanced', label: 'Advanced', color: 'bg-red-500/20 text-red-400 border-red-500/30' },
 ];
@@ -394,7 +394,7 @@ export default function EditResourcePage() {
               <div className="flex items-center gap-2 mb-2">
                 <LinkIcon className="w-4 h-4 text-white/50" />
                 <span className="text-sm text-white/60">URL Link</span>
-                {hasUrl && <Check className="w-4 h-4 text-emerald-400" />}
+                {hasUrl && <Check className="w-4 h-4 text-brand-400" />}
               </div>
               <input
                 type="url"
@@ -410,12 +410,12 @@ export default function EditResourcePage() {
               <div className="flex items-center gap-2 mb-2">
                 <Upload className="w-4 h-4 text-white/50" />
                 <span className="text-sm text-white/60">Upload File</span>
-                {hasFile && <Check className="w-4 h-4 text-emerald-400" />}
+                {hasFile && <Check className="w-4 h-4 text-brand-400" />}
               </div>
 
               {hasFile ? (
-                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                  <File className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-brand-500/10 border border-brand-500/20">
+                  <File className="w-5 h-5 text-brand-400 flex-shrink-0" />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-white truncate">{uploadedFileName}</p>
                     {formData.fileSize > 0 && (
@@ -477,7 +477,7 @@ export default function EditResourcePage() {
                 <div className={cn(
                   'p-2 rounded-lg',
                   formData.isDownloadable
-                    ? 'bg-emerald-500/20 text-emerald-400'
+                    ? 'bg-brand-500/20 text-brand-400'
                     : 'bg-white/10 text-white/40'
                 )}>
                   {formData.isDownloadable ? <Download className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -498,7 +498,7 @@ export default function EditResourcePage() {
                 onClick={() => setFormData(prev => ({ ...prev, isDownloadable: !prev.isDownloadable }))}
                 className={cn(
                   'relative w-12 h-7 rounded-full transition-all',
-                  formData.isDownloadable ? 'bg-emerald-500' : 'bg-white/20'
+                  formData.isDownloadable ? 'bg-brand-500' : 'bg-white/20'
                 )}
               >
                 <span

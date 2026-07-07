@@ -73,28 +73,34 @@ Le lien du dataset et les ressources complémentaires seront publiés ici procha
   },
 ];
 
-async function main() {
+export async function seedProjects(client: PrismaClient = prisma) {
   for (const project of PROJECTS) {
-    const existing = await prisma.project.findFirst({
+    const existing = await client.project.findFirst({
       where: { titleFr: project.titleFr },
     });
 
     if (existing) {
-      await prisma.project.update({
+      await client.project.update({
         where: { id: existing.id },
         data: project.data,
       });
       console.log(`✓ Mis à jour : ${project.titleFr} (${existing.id})`);
     } else {
-      const created = await prisma.project.create({ data: project.data });
+      const created = await client.project.create({ data: project.data });
       console.log(`✓ Créé : ${project.titleFr} (${created.id})`);
     }
   }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(() => prisma.$disconnect());
+async function main() {
+  await seedProjects();
+}
+
+if (process.argv[1]?.includes('seed-projects')) {
+  main()
+    .catch((e) => {
+      console.error(e);
+      process.exit(1);
+    })
+    .finally(() => prisma.$disconnect());
+}
