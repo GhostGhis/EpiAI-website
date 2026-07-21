@@ -6,8 +6,9 @@ import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { CATEGORIES } from '@/lib/events/categories';
 import { Calendar, AlertCircle } from 'lucide-react';
-import { normalizeImageUrl } from '@/lib/utils/image-url';
 import { FormPageShell, EmptyState, Button, Input, Textarea, Select } from '@/components/ui';
+import { EventMediaPicker } from '@/components/events/EventMediaPicker';
+import { GenerateEventBlogButton } from '@/components/events/GenerateEventBlogButton';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -27,6 +28,8 @@ export default function EditEventPage() {
     location: '',
     capacity: 50,
     imageUrl: '',
+    gallery: [] as string[],
+    videoUrls: [] as string[],
   });
 
   const canEdit = hasPermission('dashboard.admin');
@@ -46,6 +49,8 @@ export default function EditEventPage() {
           location: event.location || '',
           capacity: event.capacity || 50,
           imageUrl: event.imageUrl || '',
+          gallery: event.gallery || [],
+          videoUrls: event.videoUrls || [],
         });
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : 'Erreur');
@@ -84,7 +89,19 @@ export default function EditEventPage() {
         const res = await fetch(`/api/events/${eventId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'update', ...form }),
+          body: JSON.stringify({
+            action: 'update',
+            title: form.title,
+            description: form.description,
+            content: form.content,
+            categoryId: form.categoryId,
+            date: form.date,
+            location: form.location,
+            capacity: form.capacity,
+            imageUrl: form.imageUrl || undefined,
+            gallery: form.gallery,
+            videoUrls: form.videoUrls,
+          }),
         });
         if (!res.ok) {
           const data = await res.json();
@@ -110,6 +127,10 @@ export default function EditEventPage() {
           {error}
         </div>
       )}
+
+      <div className="mb-5">
+        <GenerateEventBlogButton eventId={eventId} />
+      </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <Input
@@ -165,26 +186,17 @@ export default function EditEventPage() {
           value={form.capacity}
           onChange={(e) => setForm((f) => ({ ...f, capacity: Number(e.target.value) }))}
         />
-        <div>
-          <Input
-            label={locale === 'fr' ? "URL de l'image" : 'Image URL'}
-            type="url"
-            value={form.imageUrl}
-            onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-            placeholder="https://..."
-          />
-          {form.imageUrl.trim() && (
-            <div className="mt-3 rounded-xl overflow-hidden border border-default h-40">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={normalizeImageUrl(form.imageUrl) || form.imageUrl}
-                alt="Preview"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-              />
-            </div>
-          )}
-        </div>
+
+        <EventMediaPicker
+          locale={locale}
+          imageUrl={form.imageUrl}
+          gallery={form.gallery}
+          videoUrls={form.videoUrls}
+          onChange={({ imageUrl, gallery, videoUrls }) =>
+            setForm((f) => ({ ...f, imageUrl, gallery, videoUrls }))
+          }
+        />
+
         <Button type="submit" disabled={isPending} size="lg">
           {isPending ? '...' : locale === 'fr' ? 'Enregistrer' : 'Save'}
         </Button>

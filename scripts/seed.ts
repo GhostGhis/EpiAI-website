@@ -65,6 +65,8 @@ async function main() {
   await seedTeam();
   await seedProjects(prisma);
   await seedResources(prisma);
+  const { seedTalks } = await import('./seed-talks');
+  await seedTalks();
   console.log('Seed complete.');
 }
 

@@ -38,7 +38,8 @@ function transformEvent(doc: any, isRegistered: boolean = false): EventWithDetai
     registeredCount: doc.registeredCount || 0,
     spotsLeft: Math.max(0, doc.capacity - (doc.registeredCount || 0)),
     imageUrl: normalizeImageUrl(doc.imageUrl),
-    gallery: doc.gallery || [],
+    gallery: (doc.gallery || []).map((u: string) => normalizeImageUrl(u) || u).filter(Boolean),
+    videoUrls: doc.videoUrls || [],
     isPublished: doc.isPublished || false,
     isFeatured: doc.isFeatured || false,
     isRegistered,
@@ -180,7 +181,10 @@ export async function createEvent(
         onlineLink: input.onlineLink,
         capacity: input.capacity,
         imageUrl: normalizeImageUrl(input.imageUrl),
-        gallery: input.gallery || [],
+        gallery: (input.gallery || [])
+          .map((u) => normalizeImageUrl(u) || u)
+          .filter(Boolean) as string[],
+        videoUrls: input.videoUrls || [],
         isPublished: true,
         isFeatured: false,
         registeredCount: 0,
@@ -227,6 +231,14 @@ export async function updateEvent(
   if (updates.endDate) updateData.endDate = new Date(updates.endDate);
   if ('imageUrl' in updates) {
     updateData.imageUrl = normalizeImageUrl(updates.imageUrl) ?? null;
+  }
+  if ('gallery' in updates && updates.gallery) {
+    updateData.gallery = updates.gallery
+      .map((u) => normalizeImageUrl(u) || u)
+      .filter(Boolean);
+  }
+  if ('videoUrls' in updates && updates.videoUrls) {
+    updateData.videoUrls = updates.videoUrls;
   }
 
   const event = await prisma.event.update({

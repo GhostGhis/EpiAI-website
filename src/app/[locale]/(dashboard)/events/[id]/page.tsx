@@ -11,6 +11,7 @@ import type { EventWithDetails } from '@/lib/events/types';
 import { ArrowLeft, Calendar, Users, Clock, ClipboardList } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { PageHeader, Panel, Button } from '@/components/ui';
+import { GenerateEventBlogButton } from '@/components/events/GenerateEventBlogButton';
 
 export default function EventDetailPage() {
   const params = useParams();
@@ -118,7 +119,7 @@ export default function EventDetailPage() {
 
       {isAdmin && (
         <Panel title="Admin Actions">
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row flex-wrap gap-3 items-start">
             <Link href={`/${locale}/events/${event.id}/edit`}>
               <Button variant="secondary" size="sm">Edit Event</Button>
             </Link>
@@ -130,6 +131,7 @@ export default function EventDetailPage() {
                 </Button>
               </Link>
             )}
+            <GenerateEventBlogButton eventId={event.id} />
           </div>
         </Panel>
       )}

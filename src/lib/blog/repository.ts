@@ -45,6 +45,7 @@ export async function createPost(data: {
   authorName: string;
   status?: BlogPostStatus;
   createdBy: string;
+  linkedEventId?: string;
 }) {
   const baseSlug = slugify(data.titleEn || data.titleFr);
   let slug = baseSlug;
@@ -56,7 +57,17 @@ export async function createPost(data: {
   return prisma.blogPost.create({
     data: {
       slug,
-      ...data,
+      titleEn: data.titleEn,
+      titleFr: data.titleFr,
+      excerptEn: data.excerptEn,
+      excerptFr: data.excerptFr,
+      contentEn: data.contentEn,
+      contentFr: data.contentFr,
+      category: data.category,
+      imageUrl: data.imageUrl,
+      authorName: data.authorName,
+      createdBy: data.createdBy,
+      linkedEventId: data.linkedEventId,
       status: data.status || 'draft',
       publishedAt: data.status === 'published' ? new Date() : null,
     },

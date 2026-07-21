@@ -9,6 +9,7 @@ import { CATEGORIES } from '@/lib/events/categories';
 import { Calendar, Globe, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { FormPageShell, EmptyState, Button, Input, Textarea } from '@/components/ui';
+import { EventMediaPicker } from '@/components/events/EventMediaPicker';
 
 export default function CreateEventPage() {
   const params = useParams();
@@ -31,6 +32,9 @@ export default function CreateEventPage() {
     onlineLink: '',
     capacity: 50,
     imageUrl: '',
+    gallery: [] as string[],
+    videoUrls: [] as string[],
+    generateBlog: true,
   });
 
   const canCreate = hasPermission('dashboard.admin');
@@ -105,6 +109,8 @@ export default function CreateEventPage() {
             onlineLink: form.isOnline ? form.onlineLink : undefined,
             capacity: form.capacity,
             imageUrl: normalizeImageUrl(form.imageUrl) || undefined,
+            gallery: form.gallery,
+            videoUrls: form.videoUrls,
           }),
         });
 
@@ -113,8 +119,26 @@ export default function CreateEventPage() {
           throw new Error(data.error || 'Failed to create event');
         }
 
-        await response.json();
-        router.push(`/${locale}/events`);
+        const created = await response.json();
+
+        if (form.generateBlog && created?.id) {
+          try {
+            const blogRes = await fetch(`/api/events/${created.id}/generate-blog`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({}),
+            });
+            if (blogRes.ok) {
+              const blog = await blogRes.json();
+              router.push(`/${locale}/admin/blog/${blog.slug}/edit`);
+              return;
+            }
+          } catch {
+            // Event created; blog optional — fall through to events list
+          }
+        }
+
+        router.push(`/${locale}/events/${created.id || ''}`);
       } catch (err: any) {
         setError(err.message);
       }
@@ -254,33 +278,37 @@ export default function CreateEventPage() {
         />
 
         <div>
-          <Input
-            label={locale === 'fr' ? "URL de l'image (optionnel)" : 'Image URL (optional)'}
-            type="url"
-            value={form.imageUrl}
-            onChange={(e) => updateForm('imageUrl', e.target.value)}
-            placeholder="https://... (Google Drive, Dropbox, lien direct)"
+          <EventMediaPicker
+            locale={locale}
+            imageUrl={form.imageUrl}
+            gallery={form.gallery}
+            videoUrls={form.videoUrls}
+            onChange={({ imageUrl, gallery, videoUrls }) =>
+              setForm((prev) => ({ ...prev, imageUrl, gallery, videoUrls }))
+            }
           />
-          {form.imageUrl.trim() && (
-            <div className="mt-3 rounded-xl overflow-hidden border border-default h-40">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={normalizeImageUrl(form.imageUrl) || form.imageUrl}
-                alt="Preview"
-                className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-          )}
-          <p className="text-muted text-xs mt-2">
-            {locale === 'fr'
-              ? 'Utilise un lien direct ou un partage Google Drive / Dropbox.'
-              : 'Use a direct link or Google Drive / Dropbox share URL.'}
-          </p>
         </div>
+
+        <label className="flex items-start gap-3 p-3 rounded-xl border border-default bg-card-muted cursor-pointer">
+          <input
+            type="checkbox"
+            checked={form.generateBlog}
+            onChange={(e) => updateForm('generateBlog', e.target.checked)}
+            className="mt-1 rounded border-default"
+          />
+          <span>
+            <span className="block text-sm font-medium text-primary">
+              {locale === 'fr'
+                ? 'Générer un article blog (brouillon IA)'
+                : 'Generate a blog post (AI draft)'}
+            </span>
+            <span className="block text-xs text-muted mt-0.5">
+              {locale === 'fr'
+                ? 'Après création, l’IA rédige un article bilingue à partir du contenu et des médias. Tu pourras le relire avant publication.'
+                : 'After create, AI drafts a bilingual article from content & media. You can review before publishing.'}
+            </span>
+          </span>
+        </label>
 
         <div className="flex gap-3 pt-2">
           <Button type="submit" disabled={isPending} className="flex-1" size="lg">

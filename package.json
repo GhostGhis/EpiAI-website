@@ -17,6 +17,8 @@
     "db:seed:projects:prod": "tsx scripts/seed-projects.ts",
     "db:seed:resources": "dotenv -e .env.local -- tsx scripts/seed-resources.ts",
     "db:seed:resources:prod": "tsx scripts/seed-resources.ts",
+    "db:seed:talks": "dotenv -e .env.local -- tsx scripts/seed-talks.ts",
+    "db:seed:talks:prod": "tsx scripts/seed-talks.ts",
     "db:migrate-roles": "dotenv -e .env.local -- tsx scripts/migrate-member-role.ts",
     "db:deploy": "prisma db push",
     "test": "vitest run",

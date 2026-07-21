@@ -136,6 +136,7 @@ export function EventDetail({ event, className }: EventDetailProps) {
                 key={index}
                 className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={image}
                   alt={`Gallery ${index + 1}`}
@@ -143,6 +144,34 @@ export function EventDetail({ event, className }: EventDetailProps) {
                 />
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {event.videoUrls && event.videoUrls.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-primary mb-4">Videos</h2>
+          <div className="space-y-4">
+            {event.videoUrls.map((url, index) => {
+              const isFile = url.startsWith('/') || /\.(mp4|webm|mov)(\?|$)/i.test(url);
+              return (
+                <div key={url} className="rounded-xl overflow-hidden border border-default bg-card-muted">
+                  {isFile ? (
+                    <video src={url} controls className="w-full max-h-96 bg-black" />
+                  ) : (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 p-4 text-brand-600 hover:underline text-sm"
+                    >
+                      <ExternalLink className="w-4 h-4" />
+                      Video {index + 1}
+                    </a>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

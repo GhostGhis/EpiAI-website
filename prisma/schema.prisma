@@ -148,6 +148,7 @@ model Event {
   registeredCount  Int      @default(0) @map("registered_count")
   imageUrl         String?  @map("image_url")
   gallery          String[] @default([])
+  videoUrls        String[] @default([]) @map("video_urls")
   isPublished      Boolean  @default(false) @map("is_published")
   isFeatured       Boolean  @default(false) @map("is_featured")
   createdBy        String   @map("created_by")
@@ -349,22 +350,23 @@ model Project {
 // ─── Blog ────────────────────────────────────────────────────────────────────
 
 model BlogPost {
-  id          String         @id @default(cuid())
-  slug        String         @unique
-  titleEn     String         @map("title_en")
-  titleFr     String         @map("title_fr")
-  excerptEn   String         @map("excerpt_en")
-  excerptFr   String         @map("excerpt_fr")
-  contentEn   String         @map("content_en")
-  contentFr   String         @map("content_fr")
-  category    String
-  imageUrl    String?        @map("image_url")
-  authorName  String         @map("author_name")
-  status      BlogPostStatus @default(draft)
-  publishedAt DateTime?      @map("published_at")
-  createdBy   String         @map("created_by")
-  createdAt   DateTime       @default(now()) @map("created_at")
-  updatedAt   DateTime       @updatedAt @map("updated_at")
+  id            String         @id @default(cuid())
+  slug          String         @unique
+  titleEn       String         @map("title_en")
+  titleFr       String         @map("title_fr")
+  excerptEn     String         @map("excerpt_en")
+  excerptFr     String         @map("excerpt_fr")
+  contentEn     String         @map("content_en")
+  contentFr     String         @map("content_fr")
+  category      String
+  imageUrl      String?        @map("image_url")
+  authorName    String         @map("author_name")
+  status        BlogPostStatus @default(draft)
+  publishedAt   DateTime?      @map("published_at")
+  linkedEventId String?        @unique @map("linked_event_id")
+  createdBy     String         @map("created_by")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
 
   @@index([status, publishedAt])
   @@map("blog_posts")

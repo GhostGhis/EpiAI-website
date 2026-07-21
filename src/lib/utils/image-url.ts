@@ -1,11 +1,17 @@
 /**
  * Normalize external image URLs for display (Google Drive, Dropbox, protocol-less URLs).
+ * Local public paths (/assets/..., /uploads/...) are left unchanged.
  */
 export function normalizeImageUrl(raw?: string | null): string | undefined {
   if (!raw) return undefined;
 
   let url = raw.trim();
   if (!url) return undefined;
+
+  // Site-relative assets (Next.js public/)
+  if (url.startsWith('/') && !url.startsWith('//')) {
+    return url;
+  }
 
   if (url.startsWith('//')) {
     url = `https:${url}`;

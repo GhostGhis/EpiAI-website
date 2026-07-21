@@ -26,6 +26,7 @@ export interface IEvent {
   registeredCount: number;
   imageUrl?: string;
   gallery: string[];
+  videoUrls: string[];
   isPublished: boolean;
   isFeatured: boolean;
   createdBy: string;
@@ -64,6 +65,7 @@ export interface EventWithDetails {
   spotsLeft: number;
   imageUrl?: string;
   gallery: string[];
+  videoUrls: string[];
   isPublished: boolean;
   isFeatured: boolean;
   isRegistered?: boolean;
@@ -97,6 +99,7 @@ export interface CreateEventInput {
   capacity: number;
   imageUrl?: string;
   gallery?: string[];
+  videoUrls?: string[];
 }
 
 export interface EventFilters {
