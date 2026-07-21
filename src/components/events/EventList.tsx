@@ -1,5 +1,6 @@
 'use client';
 
+import { useParams } from 'next/navigation';
 import type { EventWithDetails } from '@/lib/events/types';
 import { EventCard } from './EventCard';
 import { cn } from '@/lib/utils/cn';
@@ -9,9 +10,19 @@ interface EventListProps {
   events: EventWithDetails[];
   isLoading?: boolean;
   className?: string;
+  /** Base path for detail links, e.g. /fr/events */
+  linkBase?: string;
 }
 
-export function EventList({ events: eventsProp, isLoading, className }: EventListProps) {
+export function EventList({
+  events: eventsProp,
+  isLoading,
+  className,
+  linkBase,
+}: EventListProps) {
+  const params = useParams();
+  const locale = (params.locale as string) || 'en';
+  const base = linkBase ?? `/${locale}/events`;
   const events = eventsProp ?? [];
   if (isLoading) {
     return (
@@ -56,7 +67,7 @@ export function EventList({ events: eventsProp, isLoading, className }: EventLis
   return (
     <div className={cn('grid gap-3 md:grid-cols-2 lg:grid-cols-3', className)}>
       {events.map((event) => (
-        <EventCard key={event.id} event={event} />
+        <EventCard key={event.id} event={event} href={`${base}/${event.id}`} />
       ))}
     </div>
   );

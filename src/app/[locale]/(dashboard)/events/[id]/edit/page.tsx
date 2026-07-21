@@ -9,6 +9,7 @@ import { Calendar, AlertCircle } from 'lucide-react';
 import { FormPageShell, EmptyState, Button, Input, Textarea, Select } from '@/components/ui';
 import { EventMediaPicker } from '@/components/events/EventMediaPicker';
 import { GenerateEventBlogButton } from '@/components/events/GenerateEventBlogButton';
+import { EventVisibilitySettings } from '@/components/events/EventVisibilitySettings';
 
 export default function EditEventPage() {
   const params = useParams();
@@ -30,6 +31,8 @@ export default function EditEventPage() {
     imageUrl: '',
     gallery: [] as string[],
     videoUrls: [] as string[],
+    isPublished: false,
+    isFeatured: false,
   });
 
   const canEdit = hasPermission('dashboard.admin');
@@ -51,6 +54,8 @@ export default function EditEventPage() {
           imageUrl: event.imageUrl || '',
           gallery: event.gallery || [],
           videoUrls: event.videoUrls || [],
+          isPublished: !!event.isPublished,
+          isFeatured: !!event.isFeatured,
         });
       } catch (e: unknown) {
         setError(e instanceof Error ? e.message : 'Erreur');
@@ -101,6 +106,8 @@ export default function EditEventPage() {
             imageUrl: form.imageUrl || undefined,
             gallery: form.gallery,
             videoUrls: form.videoUrls,
+            isPublished: form.isPublished,
+            isFeatured: form.isFeatured,
           }),
         });
         if (!res.ok) {
@@ -194,6 +201,15 @@ export default function EditEventPage() {
           videoUrls={form.videoUrls}
           onChange={({ imageUrl, gallery, videoUrls }) =>
             setForm((f) => ({ ...f, imageUrl, gallery, videoUrls }))
+          }
+        />
+
+        <EventVisibilitySettings
+          locale={locale}
+          isPublished={form.isPublished}
+          isFeatured={form.isFeatured}
+          onChange={({ isPublished, isFeatured }) =>
+            setForm((f) => ({ ...f, isPublished, isFeatured }))
           }
         />
 

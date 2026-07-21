@@ -70,7 +70,7 @@ export async function getEvents(
   pagination: PaginationParams = { page: 1, limit: 10 },
   userId?: string
 ): Promise<PaginatedResponse<EventWithDetails>> {
-  const where: any = { isPublished: true };
+  const where: any = filters.includeUnpublished ? {} : { isPublished: true };
 
   if (filters.categoryId) where.categoryId = filters.categoryId;
 
@@ -159,6 +159,32 @@ export async function getFeaturedEvents(limit: number = 3): Promise<EventWithDet
   return events.map(e => transformEvent(e));
 }
 
+/** Public homepage / marketing: published events, upcoming first then recent past */
+export async function getPublicEvents(limit: number = 6): Promise<EventWithDetails[]> {
+  const now = new Date();
+  const upcoming = await prisma.event.findMany({
+    where: { isPublished: true, date: { gte: now } },
+    orderBy: [{ isFeatured: 'desc' }, { date: 'asc' }],
+    take: limit,
+  });
+
+  if (upcoming.length >= limit) {
+    return upcoming.map(e => transformEvent(e));
+  }
+
+  const past = await prisma.event.findMany({
+    where: {
+      isPublished: true,
+      date: { lt: now },
+      id: { notIn: upcoming.map(e => e.id) },
+    },
+    orderBy: { date: 'desc' },
+    take: limit - upcoming.length,
+  });
+
+  return [...upcoming, ...past].map(e => transformEvent(e));
+}
+
 export async function createEvent(
   input: CreateEventInput,
   creatorId: string,
@@ -185,8 +211,8 @@ export async function createEvent(
           .map((u) => normalizeImageUrl(u) || u)
           .filter(Boolean) as string[],
         videoUrls: input.videoUrls || [],
-        isPublished: true,
-        isFeatured: false,
+        isPublished: input.isPublished ?? false,
+        isFeatured: input.isFeatured ?? false,
         registeredCount: 0,
         createdBy: creatorId,
       },
@@ -226,7 +252,26 @@ export async function updateEvent(
   const existing = await prisma.event.findUnique({ where: { id }, select: { id: true } });
   if (!existing) return null;
 
-  const updateData: any = { ...updates };
+  const updateData: Record<string, unknown> = {};
+  const assignable = [
+    'title',
+    'description',
+    'content',
+    'categoryId',
+    'location',
+    'isOnline',
+    'onlineLink',
+    'capacity',
+    'isPublished',
+    'isFeatured',
+  ] as const;
+
+  for (const key of assignable) {
+    if (key in updates) {
+      updateData[key] = updates[key];
+    }
+  }
+
   if (updates.date) updateData.date = new Date(updates.date);
   if (updates.endDate) updateData.endDate = new Date(updates.endDate);
   if ('imageUrl' in updates) {
@@ -247,6 +292,18 @@ export async function updateEvent(
   });
 
   return transformEvent(event);
+}
+
+export async function toggleFeaturedEvent(id: string): Promise<EventWithDetails | null> {
+  const event = await prisma.event.findUnique({ where: { id } });
+  if (!event) return null;
+
+  const updated = await prisma.event.update({
+    where: { id },
+    data: { isFeatured: !event.isFeatured },
+  });
+
+  return transformEvent(updated);
 }
 
 export async function deleteEvent(id: string): Promise<boolean> {

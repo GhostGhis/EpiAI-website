@@ -30,7 +30,7 @@ export default function Header() {
         { href: '/#team', label: t('team') },
         { href: '/blog', label: t('blog') },
         { href: '/partners', label: t('partners') },
-        { href: '/calendar', label: t('calendar') },
+        { href: '/#events', label: t('events') },
         { href: '/#projects', label: t('projects') },
     ];
 

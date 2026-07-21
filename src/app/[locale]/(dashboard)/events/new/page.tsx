@@ -10,6 +10,7 @@ import { Calendar, Globe, AlertCircle } from 'lucide-react';
 import { cn } from '@/lib/utils/cn';
 import { FormPageShell, EmptyState, Button, Input, Textarea } from '@/components/ui';
 import { EventMediaPicker } from '@/components/events/EventMediaPicker';
+import { EventVisibilitySettings } from '@/components/events/EventVisibilitySettings';
 
 export default function CreateEventPage() {
   const params = useParams();
@@ -34,6 +35,8 @@ export default function CreateEventPage() {
     imageUrl: '',
     gallery: [] as string[],
     videoUrls: [] as string[],
+    isPublished: false,
+    isFeatured: false,
     generateBlog: true,
   });
 
@@ -111,6 +114,8 @@ export default function CreateEventPage() {
             imageUrl: normalizeImageUrl(form.imageUrl) || undefined,
             gallery: form.gallery,
             videoUrls: form.videoUrls,
+            isPublished: form.isPublished,
+            isFeatured: form.isFeatured,
           }),
         });
 
@@ -288,6 +293,15 @@ export default function CreateEventPage() {
             }
           />
         </div>
+
+        <EventVisibilitySettings
+          locale={locale}
+          isPublished={form.isPublished}
+          isFeatured={form.isFeatured}
+          onChange={({ isPublished, isFeatured }) =>
+            setForm((prev) => ({ ...prev, isPublished, isFeatured }))
+          }
+        />
 
         <label className="flex items-start gap-3 p-3 rounded-xl border border-default bg-card-muted cursor-pointer">
           <input

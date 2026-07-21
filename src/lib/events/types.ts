@@ -100,6 +100,10 @@ export interface CreateEventInput {
   imageUrl?: string;
   gallery?: string[];
   videoUrls?: string[];
+  /** Visible on the public site (homepage, calendar, public detail) */
+  isPublished?: boolean;
+  /** Highlighted on the homepage Events section */
+  isFeatured?: boolean;
 }
 
 export interface EventFilters {
@@ -107,6 +111,8 @@ export interface EventFilters {
   upcoming?: boolean;
   past?: boolean;
   search?: string;
+  /** When true, include unpublished events (admin management) */
+  includeUnpublished?: boolean;
 }
 
 export interface PaginationParams {

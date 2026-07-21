@@ -90,12 +90,19 @@ export default function EventsPage() {
               {showPast ? t('upcoming') : t('past')}
             </Button>
             {canCreateEvent ? (
-              <Link href={`/${locale}/events/new`}>
-                <Button size="sm">
-                  <Plus className="w-4 h-4" />
-                  {t('createEvent')}
-                </Button>
-              </Link>
+              <>
+                <Link href={`/${locale}/admin/events`}>
+                  <Button variant="secondary" size="sm">
+                    {locale === 'fr' ? 'Gérer' : 'Manage'}
+                  </Button>
+                </Link>
+                <Link href={`/${locale}/events/new`}>
+                  <Button size="sm">
+                    <Plus className="w-4 h-4" />
+                    {t('createEvent')}
+                  </Button>
+                </Link>
+              </>
             ) : null}
           </div>
         }

@@ -14,6 +14,7 @@
         "projects": "Projects",
         "partners": "Partners",
         "calendar": "Calendar",
+        "events": "Events",
         "join": "Join the Association",
         "sign_in": "Sign in",
         "language": "Language"
@@ -29,6 +30,7 @@
         "join": "Join",
         "partners": "Partners",
         "calendar": "Calendar",
+        "events": "Events",
         "follow": "Follow us"
     },
     "About": {
@@ -168,6 +170,7 @@
         "newProject": "New Project",
         "myAttendance": "My attendance",
         "blogAdmin": "Blog",
+        "eventsAdmin": "Events",
         "signIn": "Sign In",
         "signInRequired": "Sign In Required"
     },

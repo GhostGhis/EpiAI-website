@@ -6,6 +6,7 @@ import {
   updateEvent,
   deleteEvent,
   togglePublishEvent,
+  toggleFeaturedEvent,
 } from '@/lib/events/repository';
 import type { CreateEventInput } from '@/lib/events/types';
 
@@ -27,6 +28,16 @@ export async function GET(
       );
     }
 
+    if (!event.isPublished) {
+      const permCheck = await checkUserPermission('dashboard.admin');
+      if ('error' in permCheck) {
+        return NextResponse.json(
+          { error: 'Event not found' },
+          { status: 404 }
+        );
+      }
+    }
+
     return NextResponse.json(event);
   } catch (error: any) {
     console.error('Error fetching event:', error);
@@ -44,7 +55,6 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    // Vérifier permission admin
     const permCheck = await checkUserPermission('dashboard.admin');
     if ('error' in permCheck) {
       return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });
@@ -58,6 +68,9 @@ export async function PATCH(
     switch (action) {
       case 'publish':
         event = await togglePublishEvent(id);
+        break;
+      case 'feature':
+        event = await toggleFeaturedEvent(id);
         break;
       case 'update':
         event = await updateEvent(id, updates as CreateEventInput);
@@ -90,7 +103,6 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params;
-    // Vérifier permission admin
     const permCheck = await checkUserPermission('dashboard.admin');
     if ('error' in permCheck) {
       return NextResponse.json({ error: permCheck.error }, { status: permCheck.status });

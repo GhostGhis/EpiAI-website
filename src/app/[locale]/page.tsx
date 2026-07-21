@@ -7,16 +7,19 @@ import ExpertiseSection from '@/components/ExpertiseSection';
 import ImpactSection from '@/components/ImpactSection';
 import TeamSection from '@/components/TeamSection';
 import ProjectsSection from '@/components/ProjectsSection';
+import EventsSection from '@/components/EventsSection';
 import JoinSection from '@/components/JoinSection';
 import Footer from '@/components/Footer';
 import { getTeamMembersForDisplay } from '@/lib/team/repository';
 import { getProjects } from '@/lib/projects/repository';
+import { getPublicEvents } from '@/lib/events/repository';
 
 export default async function Home() {
   const locale = (await getLocale()) as 'fr' | 'en';
-  const [teamMembers, projects] = await Promise.all([
+  const [teamMembers, projects, events] = await Promise.all([
     getTeamMembersForDisplay(),
     getProjects(true),
+    getPublicEvents(6),
   ]);
 
   return (
@@ -41,6 +44,7 @@ export default async function Home() {
         <ImpactSection />
         <TeamSection initialMembers={teamMembers} locale={locale} />
         <ProjectsSection initialProjects={projects} />
+        <EventsSection initialEvents={events} />
         <JoinSection />
       </main>
 

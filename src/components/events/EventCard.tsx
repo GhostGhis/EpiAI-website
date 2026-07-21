@@ -1,6 +1,7 @@
 'use client';
 
 import type { ComponentType } from 'react';
+import Link from 'next/link';
 import type { EventWithDetails } from '@/lib/events/types';
 import { formatDate } from '@/lib/utils/date';
 import { cn } from '@/lib/utils/cn';
@@ -27,19 +28,21 @@ const iconComponents: Record<string, ComponentType<{ className?: string }>> = {
 
 interface EventCardProps {
   event: EventWithDetails;
+  href?: string;
   className?: string;
 }
 
-export function EventCard({ event, className }: EventCardProps) {
+export function EventCard({ event, href, className }: EventCardProps) {
   const Icon = iconComponents[event.categoryIcon] || Calendar;
   const isFull = event.spotsLeft <= 0;
   const spotsPercentage = (event.registeredCount / event.capacity) * 100;
 
-  return (
+  const card = (
     <div
       className={cn(
-        'group rounded-xl bg-card border border-default shadow-card overflow-hidden',
+        'group relative rounded-xl bg-card border border-default shadow-card overflow-hidden',
         'hover:border-brand-500/20 transition-all duration-300',
+        href && 'cursor-pointer',
         className
       )}
     >
@@ -113,5 +116,13 @@ export function EventCard({ event, className }: EventCardProps) {
         </div>
       </div>
     </div>
+  );
+
+  if (!href) return card;
+
+  return (
+    <Link href={href} className="block focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-xl">
+      {card}
+    </Link>
   );
 }

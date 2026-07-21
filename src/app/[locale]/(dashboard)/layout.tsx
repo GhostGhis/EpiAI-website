@@ -188,6 +188,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
       adminOnly: true,
     },
     {
+      label: t('eventsAdmin'),
+      href: `/${locale}/admin/events`,
+      icon: Calendar,
+      active: pathname.startsWith(`/${locale}/admin/events`),
+      adminOnly: true,
+    },
+    {
       label: t('admin'),
       href: `/${locale}/admin`,
       icon: Users,

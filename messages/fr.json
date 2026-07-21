@@ -14,6 +14,7 @@
         "projects": "Projets réalisés",
         "partners": "Partenaires",
         "calendar": "Calendrier",
+        "events": "Événements",
         "join": "Rejoindre l'association",
         "sign_in": "Se connecter",
         "language": "Langue"
@@ -29,6 +30,7 @@
         "join": "Rejoindre",
         "partners": "Partenaires",
         "calendar": "Calendrier",
+        "events": "Événements",
         "follow": "Suivez-nous"
     },
     "About": {
@@ -168,6 +170,7 @@
         "newProject": "Nouveau projet",
         "myAttendance": "Mes présences",
         "blogAdmin": "Blog",
+        "eventsAdmin": "Événements",
         "signIn": "Se connecter",
         "signInRequired": "Connexion requise"
     },

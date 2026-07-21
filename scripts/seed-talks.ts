@@ -46,6 +46,8 @@ Parcours & expertise :
         '/assets/talks/talk1/talk1-gallery-03.jpeg',
       ],
       videoUrls: [] as string[],
+      isPublished: true,
+      isFeatured: true,
     },
     blogFallback: {
       titleEn: 'Talk 001 Recap: Building your AI career with Arnauld Adjovi',
@@ -143,6 +145,8 @@ Un échange riche entre expertise technique, vision nationale de l'IA, et inspir
         '/assets/talks/talk2/talk2-recap-01.mp4',
         '/assets/talks/talk2/talk2-recap-02.mp4',
       ],
+      isPublished: true,
+      isFeatured: true,
     },
     blogFallback: {
       titleEn: "Talk 002 Recap: AI serving the country with Kevin Degila",

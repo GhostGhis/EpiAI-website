@@ -3,7 +3,6 @@ import { auth, clerkClient } from '@clerk/nextjs/server';
 import {
   getEvents,
   createEvent,
-  getFeaturedEvents,
 } from '@/lib/events/repository';
 import type { EventFilters, CreateEventInput } from '@/lib/events/types';
 import { checkUserPermission } from '@/lib/auth/checkPermission';
@@ -13,16 +12,27 @@ import { notifyAllActiveMembers } from '@/lib/notifications/service';
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const all = searchParams.get('all') === 'true';
+
+    let includeUnpublished = false;
+    if (all) {
+      const check = await checkUserPermission('dashboard.admin');
+      if (!('allowed' in check)) {
+        return NextResponse.json({ error: check.error }, { status: check.status });
+      }
+      includeUnpublished = true;
+    }
 
     const filters: EventFilters = {
       categoryId: searchParams.get('category') || undefined,
       upcoming: searchParams.get('upcoming') === 'true',
       past: searchParams.get('past') === 'true',
       search: searchParams.get('search') || undefined,
+      includeUnpublished,
     };
 
     const page = parseInt(searchParams.get('page') || '1');
-    const limit = parseInt(searchParams.get('limit') || '9');
+    const limit = parseInt(searchParams.get('limit') || (all ? '100' : '9'));
 
     const { userId } = await auth();
 

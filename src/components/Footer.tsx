@@ -65,6 +65,7 @@ export default function Footer() {
                     <a href="#home" className="text-gray-400 hover:text-white transition-colors text-xs">{t('home')}</a>
                     <a href="#team" className="text-gray-400 hover:text-white transition-colors text-xs">{t('team')}</a>
                     <a href="#projects" className="text-gray-400 hover:text-white transition-colors text-xs">{t('projects')}</a>
+                    <a href="#events" className="text-gray-400 hover:text-white transition-colors text-xs">{t('events')}</a>
                     <Link href="/blog" className="text-gray-400 hover:text-white transition-colors text-xs">{t('blog')}</Link>
                     <Link href="/partners" className="text-gray-400 hover:text-white transition-colors text-xs">{t('partners')}</Link>
                     <Link href="/calendar" className="text-gray-400 hover:text-white transition-colors text-xs">{t('calendar')}</Link>
