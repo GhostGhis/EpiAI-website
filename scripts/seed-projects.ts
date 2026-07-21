@@ -12,6 +12,15 @@ const ROADMAP_HOUSING =
 const ROADMAP_SPAM =
   'https://docs.google.com/document/d/1kwp2ARzAd53ILGt3-buYjqfOapddW8FEvKt-cM6wwc4/edit?usp=sharing';
 
+const ROADMAP_MOVIES =
+  'https://docs.google.com/document/d/1JjZ8Se7oGzQwk4iQaRClK8uw4KrblapVxr5kaY-QRFM/edit?usp=sharing';
+
+const DATASET_SPAM =
+  'https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset';
+
+const DATASET_MOVIELENS =
+  'https://www.kaggle.com/datasets/trishna8/movielens-100k-dataset';
+
 const PROJECTS = [
   {
     titleFr: 'Prédire les prix de logements',
@@ -21,17 +30,19 @@ const PROJECTS = [
       descEn:
         'Machine learning project to predict real estate prices from housing features (surface, location, rooms, etc.).',
       descFr:
-        'Projet de machine learning pour prédire les prix de l\'immobilier à partir de caractéristiques des logements (surface, localisation, nombre de pièces, etc.).',
+        "Projet de machine learning pour prédire les prix de l'immobilier à partir de caractéristiques des logements (surface, localisation, nombre de pièces, etc.).",
       contentEn: `Goal: build a regression model that estimates housing prices from structured data.
 
 The full roadmap (milestones, deliverables, evaluation criteria) is available in the linked Google Doc.
 
-Additional resources (dataset link, starter notebook, etc.) will be added to this project page soon.`,
+Dataset (shared pedagogical corpus for projects 1 & 2):
+${DATASET_SPAM}`,
       contentFr: `Objectif : construire un modèle de régression capable d'estimer le prix d'un logement à partir de données structurées.
 
 La roadmap complète (jalons, livrables, critères d'évaluation) est disponible via le lien Google Docs.
 
-D'autres ressources (lien du dataset, notebook de départ, etc.) seront ajoutées prochainement sur cette fiche projet.`,
+Dataset (corpus pédagogique partagé projets 1 & 2) :
+${DATASET_SPAM}`,
       imageUrl:
         'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80',
       status: 'In Development',
@@ -55,18 +66,57 @@ D'autres ressources (lien du dataset, notebook de départ, etc.) seront ajoutée
 
 Follow the roadmap in the linked Google Doc for step-by-step milestones.
 
-Dataset link and supplementary materials will be published here soon.`,
+Dataset (UCI SMS Spam Collection on Kaggle):
+${DATASET_SPAM}`,
       contentFr: `Objectif : implémenter un pipeline de détection de spam (prétraitement texte, extraction de features, entraînement, évaluation) entièrement from scratch.
 
 Suivre la roadmap du Google Docs lié pour les jalons étape par étape.
 
-Le lien du dataset et les ressources complémentaires seront publiés ici prochainement.`,
+Dataset (UCI SMS Spam Collection sur Kaggle) :
+${DATASET_SPAM}`,
       imageUrl:
         'https://images.unsplash.com/photo-1555949963-aa79d882987c?w=800&q=80',
       status: 'In Development',
       techStack: ['Python', 'NLP', 'scikit-learn', 'Naive Bayes', 'TF-IDF'],
       githubUrl: null,
       discoveryUrl: ROADMAP_SPAM,
+      published: true,
+      createdBy: 'epiai-admin',
+    },
+  },
+  {
+    titleFr: 'Moteur de recommandation de films',
+    data: {
+      titleEn: 'Movie Recommendation Engine',
+      titleFr: 'Moteur de recommandation de films',
+      descEn:
+        'Build a movie recommendation system from the MovieLens 100K dataset — collaborative filtering, evaluation, and ranking.',
+      descFr:
+        'Construire un système de recommandation de films à partir du dataset MovieLens 100K — filtrage collaboratif, évaluation et ranking.',
+      contentEn: `Goal: design and evaluate a movie recommender (user–item interactions, collaborative filtering / content-based approaches, metrics).
+
+The full roadmap is available in the linked Google Doc.
+
+Dataset (MovieLens 100K on Kaggle):
+${DATASET_MOVIELENS}`,
+      contentFr: `Objectif : concevoir et évaluer un moteur de recommandation de films (interactions utilisateur–film, filtrage collaboratif / approches content-based, métriques).
+
+La roadmap complète est disponible via le Google Docs lié.
+
+Dataset (MovieLens 100K sur Kaggle) :
+${DATASET_MOVIELENS}`,
+      imageUrl:
+        'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=800&q=80',
+      status: 'In Development',
+      techStack: [
+        'Python',
+        'pandas',
+        'scikit-learn',
+        'Collaborative Filtering',
+        'MovieLens',
+      ],
+      githubUrl: null,
+      discoveryUrl: ROADMAP_MOVIES,
       published: true,
       createdBy: 'epiai-admin',
     },

@@ -1,6 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { buildDefaultTeamMembers } from '../src/lib/team/seed-data';
 import { seedProjects } from './seed-projects';
+import { seedResources } from './seed-resources';
 
 const prisma = new PrismaClient();
 
@@ -63,6 +64,7 @@ async function main() {
   await seedPartners();
   await seedTeam();
   await seedProjects(prisma);
+  await seedResources(prisma);
   console.log('Seed complete.');
 }
 
