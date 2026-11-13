@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer } from '@/lib/admission/admin';
 import { sendInterviewInviteEmail, sendTestInviteEmail } from '@/lib/admission/emails';
 import { admissionStatusLabel } from '@/lib/admission/status';
 
@@ -26,7 +26,7 @@ function person(row: {
 }
 
 export async function GET() {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
 
   const [applications, examSlots, interviewSlots] = await Promise.all([
@@ -127,7 +127,7 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const body = (await request.json()) as { applicationId?: string; kind?: 'test' | 'interview' };
   if (!body.applicationId) return NextResponse.json({ error: 'applicationId requis' }, { status: 400 });

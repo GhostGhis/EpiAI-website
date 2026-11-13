@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer } from '@/lib/admission/admin';
 
 export async function GET() {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
 
   const attempts = await prisma.examAttempt.findMany({

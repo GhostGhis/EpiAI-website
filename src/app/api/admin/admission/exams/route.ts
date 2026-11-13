@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer, requireMembershipAdmin } from '@/lib/admission/admin';
 import { parseExamPdfs } from '@/lib/admission/parse-pdf';
 
 const MAX_PDF = 6 * 1024 * 1024;
@@ -35,7 +35,7 @@ function examJson(exam: {
 }
 
 export async function GET() {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const exams = await prisma.entranceExam.findMany({
     orderBy: { createdAt: 'desc' },

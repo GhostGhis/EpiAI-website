@@ -6,9 +6,9 @@ import { useTranslations } from 'next-intl';
 import { ApplicationCard } from '@/components/membership/ApplicationCard';
 import { InviteUserForm } from '@/components/admin/InviteUserForm';
 import { BulkInviteForm } from '@/components/admin/BulkInviteForm';
-import { formatDistanceToNow } from '@/lib/utils/date';
 import { Users, Clock, CheckCircle, XCircle, FileSpreadsheet, ClipboardCheck } from 'lucide-react';
 import { AdmissionWorkspace } from '@/components/admin/admission/AdmissionWorkspace';
+import { AdmissionReviewersPanel } from '@/components/admin/admission/AdmissionReviewersPanel';
 import type { PaginatedResponse } from '@/lib/membership/types';
 import { PageHeader, StatCard, Button, EmptyState, Panel, Pagination } from '@/components/ui';
 
@@ -34,7 +34,7 @@ interface Stats {
   total: number;
 }
 
-export default function MembershipAdminClient() {
+export default function MembershipAdminClient({ canManage = true }: { canManage?: boolean }) {
   const params = useParams();
   const locale = (params.locale as string) || 'en';
   const t = useTranslations('MembershipAdmin');
@@ -43,12 +43,12 @@ export default function MembershipAdminClient() {
   const [stats, setStats] = useState<Stats>({ pending: 0, testing: 0, interviewing: 0, approved: 0, rejected: 0, total: 0 });
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState('pending');
-  const [section, setSection] = useState<'applications' | 'pipeline'>('applications');
+  const [section, setSection] = useState<'applications' | 'pipeline'>(canManage ? 'applications' : 'pipeline');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // Fetch stats
   useEffect(() => {
+    if (!canManage) return;
     async function fetchStats() {
       try {
         const response = await fetch('/api/membership?stats=true');
@@ -59,10 +59,13 @@ export default function MembershipAdminClient() {
       }
     }
     fetchStats();
-  }, []);
+  }, [canManage]);
 
-  // Fetch applications
   useEffect(() => {
+    if (!canManage) {
+      setIsLoading(false);
+      return;
+    }
     async function fetchApplications() {
       setIsLoading(true);
       try {
@@ -78,10 +81,9 @@ export default function MembershipAdminClient() {
     }
 
     fetchApplications();
-  }, [filter, page]);
+  }, [filter, page, canManage]);
 
   const handleApplicationUpdate = () => {
-    // Refresh data
     fetch(`/api/membership?stats=true`)
       .then(res => res.json())
       .then(data => setStats(data));
@@ -98,16 +100,26 @@ export default function MembershipAdminClient() {
     <div className="space-y-5">
       <PageHeader
         title={t('title')}
-        description={locale === 'fr'
-          ? 'Candidatures, tests d’entrée, copies, entretiens - l’accès membre n’est donné qu’à la fin.'
-          : 'Applications, entrance tests, papers, interviews - member access only at the end.'}
-        actions={<InviteUserForm />}
+        description={
+          canManage
+            ? (locale === 'fr'
+              ? 'Candidatures, tests d’entrée, copies, entretiens - l’accès membre n’est donné qu’à la fin.'
+              : 'Applications, entrance tests, papers, interviews - member access only at the end.')
+            : (locale === 'fr'
+              ? 'Correction des copies et évaluation des entretiens d’admission.'
+              : 'Grade entrance papers and score admission interviews.')
+        }
+        actions={canManage ? <InviteUserForm /> : undefined}
       />
 
+      {canManage ? <AdmissionReviewersPanel locale={locale} /> : null}
+
       <div className="flex flex-wrap gap-2">
-        <Button variant={section === 'applications' ? 'primary' : 'secondary'} size="sm" onClick={() => setSection('applications')}>
-          {locale === 'fr' ? 'Candidatures' : 'Applications'}
-        </Button>
+        {canManage ? (
+          <Button variant={section === 'applications' ? 'primary' : 'secondary'} size="sm" onClick={() => setSection('applications')}>
+            {locale === 'fr' ? 'Candidatures' : 'Applications'}
+          </Button>
+        ) : null}
         <Button variant={section === 'pipeline' ? 'primary' : 'secondary'} size="sm" onClick={() => setSection('pipeline')}>
           <ClipboardCheck className="h-4 w-4" />
           <span className="sm:hidden">{locale === 'fr' ? 'Suivi & tests' : 'Status & tests'}</span>
@@ -117,7 +129,7 @@ export default function MembershipAdminClient() {
 
       {section === 'pipeline' ? <AdmissionWorkspace locale={locale} /> : null}
 
-      {section === 'applications' ? (
+      {canManage && section === 'applications' ? (
       <>
       <div className="grid grid-cols-2 gap-2 sm:gap-4 md:grid-cols-3 lg:grid-cols-6">
         <StatCard label={t('total')} value={stats.total} icon={Users} />

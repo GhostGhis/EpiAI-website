@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer, requireMembershipAdmin } from '@/lib/admission/admin';
 
 export async function GET(request: NextRequest) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const kind = request.nextUrl.searchParams.get('kind') || 'exam';
 

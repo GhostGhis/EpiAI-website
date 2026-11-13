@@ -24,6 +24,7 @@ import {
   ArrowLeft,
   Plus,
   ClipboardList,
+  ClipboardCheck,
   UserCheck,
   UsersRound,
   MessagesSquare,
@@ -68,6 +69,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const { total: chatUnreadTotal } = useChatUnreadCount(!!isSignedIn);
   const { counts: notifCounts } = useNotificationCounts(!!isSignedIn);
   const [leadsModule, setLeadsModule] = useState(false);
+  const [canReviewAdmission, setCanReviewAdmission] = useState(false);
 
   useEffect(() => {
     if (!isSignedIn || isAdmin) return;
@@ -78,6 +80,25 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
         if (!cancelled) setLeadsModule(Array.isArray(rows) && rows.some((row) => row?.isLead));
       })
       .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [isSignedIn, isAdmin]);
+
+  useEffect(() => {
+    if (!isSignedIn || isAdmin) {
+      setCanReviewAdmission(false);
+      return;
+    }
+    let cancelled = false;
+    fetch('/api/admin/admission/reviewers/me')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled) setCanReviewAdmission(Boolean(data?.canReview));
+      })
+      .catch(() => {
+        if (!cancelled) setCanReviewAdmission(false);
+      });
     return () => {
       cancelled = true;
     };
@@ -171,6 +192,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
             href: `/${locale}/suivi`,
             icon: GitCommitHorizontal,
             active: pathname.startsWith(`/${locale}/suivi`),
+          },
+        ]
+      : []),
+    ...(canReviewAdmission
+      ? [
+          {
+            label: t('membership'),
+            href: `/${locale}/admin/membership`,
+            icon: ClipboardCheck,
+            active: pathname.startsWith(`/${locale}/admin/membership`),
           },
         ]
       : []),

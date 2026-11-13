@@ -1,13 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer, requireMembershipAdmin } from '@/lib/admission/admin';
 import { parseExamPdfs } from '@/lib/admission/parse-pdf';
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const { id } = await params;
   const exam = await prisma.entranceExam.findUnique({

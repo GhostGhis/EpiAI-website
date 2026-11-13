@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer } from '@/lib/admission/admin';
 import { sendInterviewInviteEmail, sendAdmissionRejectedEmail } from '@/lib/admission/emails';
 import { setApplicationPipeline } from '@/lib/membership/repository';
 
@@ -8,7 +8,7 @@ export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const { id } = await params;
   const attempt = await prisma.examAttempt.findUnique({
@@ -72,7 +72,7 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
   const { id } = await params;
   const body = (await request.json()) as {

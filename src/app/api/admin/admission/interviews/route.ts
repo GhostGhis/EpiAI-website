@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { requireMembershipAdmin } from '@/lib/admission/admin';
+import { requireAdmissionReviewer } from '@/lib/admission/admin';
 import { parseInterviewPdf } from '@/lib/admission/parse-pdf';
 import { sendAdmissionRejectedEmail } from '@/lib/admission/emails';
 import { admitApplicationToMembership } from '@/lib/membership/admit';
@@ -9,7 +9,7 @@ import { setApplicationPipeline } from '@/lib/membership/repository';
 const MAX_PDF = 6 * 1024 * 1024;
 
 export async function GET() {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
 
   const [template, bookings] = await Promise.all([
@@ -70,11 +70,14 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const perm = await requireMembershipAdmin();
+  const perm = await requireAdmissionReviewer();
   if ('error' in perm) return NextResponse.json({ error: perm.error }, { status: perm.status });
 
   const contentType = request.headers.get('content-type') || '';
   if (contentType.includes('multipart/form-data')) {
+    if (!perm.canManage) {
+      return NextResponse.json({ error: 'Forbidden: insufficient permissions' }, { status: 403 });
+    }
     const form = await request.formData();
     const title = String(form.get('title') || "Entretien de motivation").trim();
     const file = form.get('pdf');
@@ -119,6 +122,9 @@ export async function POST(request: NextRequest) {
   };
 
   if (body.action === 'save-questions' && body.templateId && body.questions) {
+    if (!perm.canManage) {
+      return NextResponse.json({ error: 'Forbidden: insufficient permissions' }, { status: 403 });
+    }
     await prisma.interviewQuestion.deleteMany({ where: { templateId: body.templateId } });
     await prisma.interviewQuestion.createMany({
       data: body.questions.map((q, i) => ({

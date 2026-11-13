@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { auth, clerkClient } from '@clerk/nextjs/server';
-import { hasPermission, resolveRoleSlug } from '@/lib/roles/utils';
+import { resolveRoleSlug } from '@/lib/roles/utils';
+import { getAdmissionAccess } from '@/lib/admission/admin';
 import MembershipAdminClient from './client-page';
 
 export default async function MembershipAdminPage() {
@@ -24,9 +25,9 @@ export default async function MembershipAdminPage() {
     }
   }
 
-  const canManage = hasPermission(roleSlug, 'membership.manage');
+  const access = await getAdmissionAccess(userId, roleSlug);
 
-  if (!canManage) {
+  if (!access.canReview) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-page">
         <div className="text-center">
@@ -38,5 +39,5 @@ export default async function MembershipAdminPage() {
     );
   }
 
-  return <MembershipAdminClient />;
+  return <MembershipAdminClient canManage={access.canManage} />;
 }

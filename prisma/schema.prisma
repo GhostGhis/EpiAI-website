@@ -716,6 +716,20 @@ model InterviewScore {
   @@map("interview_scores")
 }
 
+/// Membres autorisés à voir/corriger les copies et évaluer les entretiens
+/// (sans rôle admin ni membership.manage).
+model AdmissionReviewer {
+  id          String   @id @default(cuid())
+  clerkUserId String   @unique @map("clerk_user_id")
+  email       String   @default("")
+  displayName String   @default("") @map("display_name")
+  addedBy     String   @map("added_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("admission_reviewers")
+}
+
 // ─── Projects (bilingue) ─────────────────────────────────────────────────────
 
 model Project {
