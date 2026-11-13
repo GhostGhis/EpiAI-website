@@ -1,6 +1,10 @@
 import { sendGenericEmail, getSiteUrl } from '@/lib/email/resend';
 import { formatParis } from './time';
 
+/** Groupe WhatsApp « Entretien et test d’entrée » — envoyé à la convocation au test. */
+export const ADMISSION_WHATSAPP_GROUP_URL =
+  'https://chat.whatsapp.com/C0uDGFghoYbBmqCPp4dcgk';
+
 function wrap(title: string, body: string) {
   return `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;max-width:600px;margin:0 auto;background:#18181b;border-radius:12px;overflow:hidden;color:#d4d4d8;">
@@ -46,6 +50,9 @@ export async function sendTestInviteEmail(params: {
       `<p>Bonjour ${params.firstName},</p>
        <p>Ta candidature a été retenue pour l’étape suivante : le test <strong>${params.examTitle}</strong>.</p>
        <p>Choisis un créneau parmi ceux proposés. Tu recevras tes identifiants de composition <strong>10 minutes avant le début</strong>, avec le lien vers la salle d’examen.</p>
+       <p>Rejoins aussi le groupe WhatsApp <strong>Entretien et test d’entrée</strong> pour suivre les infos du process :</p>
+       ${btn(ADMISSION_WHATSAPP_GROUP_URL, 'Rejoindre le groupe WhatsApp')}
+       <p style="margin-top:8px;font-size:13px;color:#a1a1aa;word-break:break-all;">${ADMISSION_WHATSAPP_GROUP_URL}</p>
        ${btn(url, 'Choisir mon créneau')}`,
     ),
   });

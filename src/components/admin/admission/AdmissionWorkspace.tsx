@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { ClipboardCheck, Loader2, Plus, ShieldAlert, Trash2 } from 'lucide-react';
 import { Button, Panel, StatCard } from '@/components/ui';
 import { PdfPages } from '@/components/admission/PdfPages';
+import { InterviewScoreSheet } from '@/components/admin/admission/InterviewScoreSheet';
 import { admissionStatusLabel, admissionStatusTone } from '@/lib/admission/status';
 
 type Exam = {
@@ -585,9 +586,45 @@ function CopiesPanel({ fr }: { fr: boolean }) {
 }
 
 function InterviewsPanel({ fr }: { fr: boolean }) {
+  type RichQuestion = {
+    id: string;
+    code: string;
+    section: string;
+    prompt: string;
+    kind: string;
+    maxPoints: number;
+    lookingFor: string;
+    followUp: string;
+    criteria: Array<{ scores: string; level: string; indicators: string }>;
+    isVeto: boolean;
+  };
+  type Closure = {
+    candidateQuestions?: string;
+    engagement?: Record<string, 'yes' | 'no' | 'reserve'>;
+    engagementNotes?: Record<string, string>;
+  };
+
   const [data, setData] = useState<{
-    template: { id: string; title: string; hasPdf?: boolean; questions: Array<{ id: string; prompt: string; kind: string; maxPoints: number }> } | null;
-    bookings: Array<{ id: string; status: string; totalScore: number | null; maxScore: number; notes: string; startsAt: string; room: string; candidate: { name: string; email: string }; scores: Array<{ questionId: string; points: number; remark: string }> }>;
+    canManage?: boolean;
+    template: {
+      id: string;
+      title: string;
+      hasPdf?: boolean;
+      official?: boolean;
+      questions: RichQuestion[];
+    } | null;
+    bookings: Array<{
+      id: string;
+      status: string;
+      totalScore: number | null;
+      maxScore: number;
+      notes: string;
+      closure?: Closure;
+      startsAt: string;
+      room: string;
+      candidate: { name: string; email: string };
+      scores: Array<{ questionId: string; points: number; remark: string }>;
+    }>;
     waiting: Array<{ id: string; name: string; email: string }>;
   } | null>(null);
   const [startsAt, setStartsAt] = useState(datetimeLocalValue());
@@ -596,8 +633,10 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
   const [points, setPoints] = useState<Record<string, number>>({});
   const [remarks, setRemarks] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
+  const [closure, setClosure] = useState<Closure>({});
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
+  const [preview, setPreview] = useState(false);
 
   async function reload() {
     const res = await fetch('/api/admin/admission/interviews');
@@ -619,6 +658,7 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
     setPoints(nextP);
     setRemarks(nextR);
     setNotes(open.notes);
+    setClosure(open.closure || {});
   }, [openId, data, open]);
 
   async function addSlot(e: React.FormEvent) {
@@ -632,13 +672,38 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
     await reload();
   }
 
+  async function installOfficial() {
+    setBusy(true);
+    setMessage(null);
+    const res = await fetch('/api/admin/admission/interviews', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'install-official' }),
+    });
+    const json = await res.json();
+    setBusy(false);
+    if (!res.ok) {
+      setMessage(json.error || (fr ? 'Échec' : 'Failed'));
+      return;
+    }
+    setMessage(fr ? `Grille officielle installée (${json.parsed} questions).` : `Official grid installed (${json.parsed} questions).`);
+    await reload();
+  }
+
   async function uploadPdf(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBusy(true);
-    const res = await fetch('/api/admin/admission/interviews', { method: 'POST', body: new FormData(e.currentTarget) });
+    const form = new FormData(e.currentTarget);
+    form.set('official', '1');
+    const res = await fetch('/api/admin/admission/interviews', { method: 'POST', body: form });
     const json = await res.json();
     setBusy(false);
-    setMessage(json.parseError || `${json.parsed || 0} questions`);
+    setMessage(
+      json.parseError
+        || (json.official
+          ? (fr ? `Grille numérique prête (${json.parsed} questions).` : `Digital grid ready (${json.parsed} questions).`)
+          : `${json.parsed || 0} questions`),
+    );
     await reload();
   }
 
@@ -652,6 +717,7 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
         action: 'score',
         bookingId: open.id,
         notes,
+        closure,
         decision,
         scores: data.template.questions.map((q) => ({
           questionId: q.id,
@@ -696,26 +762,78 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
 
   return (
     <div className="space-y-5">
-      <Panel title={fr ? 'Grille d’entretien' : 'Interview grid'} description={fr ? 'Le PDF original s’affiche en entier. La grille extraite sert seulement à noter.' : 'The original PDF is shown in full. The extracted grid is for scoring only.'}>
-        <form onSubmit={uploadPdf} className="flex flex-wrap items-end gap-2">
-          <input name="title" defaultValue="Entretien de motivation" className={fieldClass} />
+      <Panel
+        title={fr ? 'Grille d’entretien' : 'Interview grid'}
+        description={
+          fr
+            ? 'Le jury note en numérique (1–5). Le PDF reste archivé en référence ; il n’est plus l’écran de notation.'
+            : 'The jury scores digitally (1–5). The PDF stays as archive; it is no longer the scoring UI.'
+        }
+      >
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" size="sm" disabled={busy || data?.canManage === false} onClick={() => void installOfficial()}>
+            {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            {fr ? 'Installer la grille officielle Epi’AI' : 'Install official Epi’AI grid'}
+          </Button>
+          {data?.template ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              onClick={() => {
+                const nextP: Record<string, number> = {};
+                const nextR: Record<string, string> = {};
+                for (const q of data.template!.questions) {
+                  nextP[q.id] = 0;
+                  nextR[q.id] = '';
+                }
+                setPoints(nextP);
+                setRemarks(nextR);
+                setNotes('');
+                setClosure({});
+                setOpenId(null);
+                setPreview(true);
+              }}
+            >
+              {fr ? 'Aperçu de la notation' : 'Preview scoring UI'}
+            </Button>
+          ) : null}
+        </div>
+        <form onSubmit={uploadPdf} className="mt-3 flex flex-wrap items-end gap-2">
+          <input name="title" defaultValue="Grille d'entretien — Admission" className={fieldClass} />
           <input name="pdf" type="file" accept="application/pdf" className={fileClass} />
-          <Button type="submit" size="sm" disabled={busy}>{fr ? 'Enregistrer le PDF' : 'Save PDF'}</Button>
+          <Button type="submit" size="sm" variant="secondary" disabled={busy || data?.canManage === false}>
+            {fr ? 'Joindre le PDF (archive)' : 'Attach PDF (archive)'}
+          </Button>
         </form>
-        {data?.template?.hasPdf ? (
-          <div className="mt-4">
-            <p className="mb-2 text-xs text-secondary">{fr ? 'Document original, toutes les pages.' : 'Original document, every page.'}</p>
-            <PdfPages src={`/api/admin/admission/interviews/file?t=${data.template.id}`} />
-          </div>
-        ) : null}
         {data?.template ? (
-          <ul className="mt-3 list-decimal space-y-1 pl-5 text-sm text-secondary">
-            {data.template.questions.map((q) => (
-              <li key={q.id}>{q.prompt} ({q.maxPoints} pts)</li>
-            ))}
-          </ul>
+          <div className="mt-4 rounded-xl border border-default bg-card-muted/40 p-3">
+            <p className="text-sm font-medium text-primary">
+              {data.template.title}
+              {data.template.official ? (
+                <span className="ml-2 rounded-md bg-brand-500/15 px-1.5 py-0.5 text-[11px] font-semibold text-brand-300">
+                  {fr ? 'Numérique' : 'Digital'}
+                </span>
+              ) : null}
+            </p>
+            <p className="mt-1 text-xs text-secondary">
+              {data.template.questions.length} {fr ? 'questions · notation 1 à 5 · total /70' : 'questions · score 1–5 · total /70'}
+            </p>
+            <ul className="mt-2 grid gap-1 text-xs text-secondary sm:grid-cols-2">
+              {data.template.questions.map((q) => (
+                <li key={q.id}>
+                  <span className="font-medium text-primary/80">{q.code || '·'}</span> {q.prompt.slice(0, 72)}
+                  {q.prompt.length > 72 ? '…' : ''}
+                </li>
+              ))}
+            </ul>
+          </div>
         ) : (
-          <p className="mt-3 text-sm text-secondary">{fr ? 'Pas encore de grille. Tu peux aussi attendre le PDF.' : 'No grid yet.'}</p>
+          <p className="mt-3 text-sm text-secondary">
+            {fr
+              ? 'Pas encore de grille. Clique « Installer la grille officielle » (ou uploade ton PDF).'
+              : 'No grid yet. Install the official grid (or upload your PDF).'}
+          </p>
         )}
         {message ? <p className="mt-2 text-sm text-secondary">{message}</p> : null}
       </Panel>
@@ -736,46 +854,66 @@ function InterviewsPanel({ fr }: { fr: boolean }) {
         </ul>
       </Panel>
 
-      <Panel title={fr ? 'Candidats' : 'Candidates'}>
+      <Panel title={fr ? 'Candidats à évaluer' : 'Candidates to score'} description={fr ? 'Ouvre une fiche pour noter en numérique.' : 'Open a card to score digitally.'}>
         <div className="space-y-2">
           {(data?.bookings || []).map((b) => (
             <button key={b.id} type="button" onClick={() => setOpenId(b.id)} className={`${clickRowClass} items-center`}>
               <span className="text-sm text-primary">{b.candidate.name}</span>
-              <span className="text-xs text-secondary">{b.status} · {new Date(b.startsAt).toLocaleString(fr ? 'fr-FR' : 'en-GB')} {b.room}</span>
+              <span className="text-xs text-secondary">
+                {b.status}
+                {b.totalScore != null ? ` · ${b.totalScore}/${b.maxScore || 70}` : ''}
+                {' · '}
+                {new Date(b.startsAt).toLocaleString(fr ? 'fr-FR' : 'en-GB')}
+                {b.room ? ` · ${b.room}` : ''}
+              </span>
             </button>
           ))}
+          {(data?.bookings || []).length === 0 ? (
+            <p className="text-sm text-secondary">{fr ? 'Aucun entretien planifié pour l’instant.' : 'No interviews scheduled yet.'}</p>
+          ) : null}
         </div>
-        {open && data?.template ? (
-          <div className="mt-4 space-y-3 border-t border-default pt-4">
-            <h3 className="font-medium text-primary">{open.candidate.name}</h3>
-            {data.template.questions.map((q) => (
-              <div key={q.id} className="rounded-xl border border-default p-3">
-                <p className="text-sm text-primary">{q.prompt}</p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {q.kind === 'pass_fail' ? (
-                    <>
-                      <Button size="sm" variant={points[q.id] > 0 ? 'primary' : 'secondary'} onClick={() => setPoints((p) => ({ ...p, [q.id]: q.maxPoints }))}>OK</Button>
-                      <Button size="sm" variant={points[q.id] === 0 ? 'danger' : 'secondary'} onClick={() => setPoints((p) => ({ ...p, [q.id]: 0 }))}>{fr ? 'Non' : 'No'}</Button>
-                    </>
-                  ) : (
-                    <input type="number" min={0} max={q.maxPoints} step="0.5" value={points[q.id] ?? 0} onChange={(e) => setPoints((p) => ({ ...p, [q.id]: Number(e.target.value) }))} className={`w-24 ${fieldClass}`} />
-                  )}
-                </div>
-                <input value={remarks[q.id] || ''} onChange={(e) => setRemarks((p) => ({ ...p, [q.id]: e.target.value }))} placeholder={fr ? 'Remarque' : 'Note'} className={`mt-2 w-full ${fieldClass}`} />
-              </div>
-            ))}
-            <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} className={fieldClass} placeholder={fr ? 'Synthèse' : 'Summary'} />
-            <p className="text-sm text-secondary">
-              {fr ? 'Total' : 'Total'} : {Object.values(points).reduce((a, b) => a + b, 0)} / {data.template.questions.reduce((a, q) => a + q.maxPoints, 0)}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              <Button size="sm" variant="secondary" disabled={busy} onClick={() => void decide()}>{fr ? 'Enregistrer' : 'Save'}</Button>
-              <Button size="sm" disabled={busy} onClick={() => void decide('validated')}>{fr ? 'Valider → membre' : 'Admit as member'}</Button>
-              <Button size="sm" variant="danger" disabled={busy} onClick={() => void decide('rejected')}>{fr ? 'Recaler' : 'Reject'}</Button>
-            </div>
-          </div>
-        ) : null}
       </Panel>
+
+      {open && data?.template ? (
+        <InterviewScoreSheet
+          fr={fr}
+          candidateName={open.candidate.name}
+          questions={data.template.questions}
+          points={points}
+          remarks={remarks}
+          notes={notes}
+          closure={closure}
+          busy={busy}
+          onPoints={(id, value) => setPoints((p) => ({ ...p, [id]: value }))}
+          onRemark={(id, value) => setRemarks((p) => ({ ...p, [id]: value }))}
+          onNotes={setNotes}
+          onClosure={setClosure}
+          onClose={() => setOpenId(null)}
+          onSave={(decision) => void decide(decision)}
+        />
+      ) : null}
+
+      {preview && data?.template ? (
+        <InterviewScoreSheet
+          fr={fr}
+          candidateName={fr ? 'Aperçu — Candidat(e) exemple' : 'Preview — Sample candidate'}
+          questions={data.template.questions}
+          points={points}
+          remarks={remarks}
+          notes={notes}
+          closure={closure}
+          busy={false}
+          onPoints={(id, value) => setPoints((p) => ({ ...p, [id]: value }))}
+          onRemark={(id, value) => setRemarks((p) => ({ ...p, [id]: value }))}
+          onNotes={setNotes}
+          onClosure={setClosure}
+          onClose={() => setPreview(false)}
+          onSave={() => {
+            setMessage(fr ? 'Aperçu uniquement — rien n’a été enregistré.' : 'Preview only — nothing was saved.');
+            setPreview(false);
+          }}
+        />
+      ) : null}
     </div>
   );
 }

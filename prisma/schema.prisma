@@ -638,14 +638,16 @@ model ExamIntegrityEvent {
 }
 
 model InterviewTemplate {
-  id        String   @id @default(cuid())
-  title     String   @default("Entretien de motivation")
-  pdfName   String?  @map("pdf_name")
-  pdfBytes  Bytes?   @map("pdf_bytes")
-  active    Boolean  @default(true)
-  createdBy String   @map("created_by")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id         String   @id @default(cuid())
+  title      String   @default("Entretien de motivation")
+  pdfName    String?  @map("pdf_name")
+  pdfBytes   Bytes?   @map("pdf_bytes")
+  official   Boolean  @default(false)
+  guideJson  String   @default("") @map("guide_json")
+  active     Boolean  @default(true)
+  createdBy  String   @map("created_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
 
   questions InterviewQuestion[]
 
@@ -653,12 +655,18 @@ model InterviewTemplate {
 }
 
 model InterviewQuestion {
-  id         String @id @default(cuid())
-  templateId String @map("template_id")
-  sortOrder  Int    @default(0) @map("sort_order")
-  prompt     String
-  kind       String @default("scale")
-  maxPoints  Float  @default(5) @map("max_points")
+  id           String  @id @default(cuid())
+  templateId   String  @map("template_id")
+  sortOrder    Int     @default(0) @map("sort_order")
+  code         String  @default("")
+  section      String  @default("")
+  prompt       String
+  kind         String  @default("scale")
+  maxPoints    Float   @default(5) @map("max_points")
+  lookingFor   String  @default("") @map("looking_for")
+  followUp     String  @default("") @map("follow_up")
+  criteriaJson String  @default("[]") @map("criteria_json")
+  isVeto       Boolean @default(false) @map("is_veto")
 
   template InterviewTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
   scores   InterviewScore[]
@@ -687,6 +695,7 @@ model InterviewBooking {
   totalScore    Float?    @map("total_score")
   maxScore      Float     @default(0) @map("max_score")
   notes         String    @default("")
+  closureJson   String    @default("{}") @map("closure_json")
   status        String    @default("scheduled")
   scoredBy      String?   @map("scored_by")
   scoredAt      DateTime? @map("scored_at")
